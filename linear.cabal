@@ -39,6 +39,7 @@ library
     Linear.Matrix
     Linear.Metric
     Linear.Plucker
+    Linear.Quaternion
     Linear.V2
     Linear.V3
     Linear.V4
