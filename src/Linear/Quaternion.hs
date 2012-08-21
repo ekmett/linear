@@ -273,6 +273,10 @@ slerp q p t
 --slerp :: RealFloat a => Quaternion a -> Quaternion a -> a -> Quaternion a
 --slerp q0 q1 = let q10 = q1 / q0 in \t -> pow q10 t * q0
 
+rotate :: (Conjugate a, RealFloat a) => Quaternion a -> V3 a -> V3 a
+rotate q (V3 a b c) = (q * Quaternion 0 a b c * conjugate q)^._ijk
+
+{-
 rotate :: Num a => Quaternion a -> V3 a -> V3 a
 rotate (Quaternion a' b c d) (V3 x y z) = V3
   (2*((t8+t10)*x+(t6- t4)*y+(t3+t7)*z)+x)
@@ -289,6 +293,7 @@ rotate (Quaternion a' b c d) (V3 x y z) = V3
     t8 = -c*c
     t9 = c*d
     t10 = -d*d
+-}
 {-# SPECIALIZE rotate :: Quaternion Float -> V3 Float -> V3 Float #-}
 {-# SPECIALIZE rotate :: Quaternion Double -> V3 Double -> V3 Double #-}
 
