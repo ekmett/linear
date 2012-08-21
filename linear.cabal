@@ -1,0 +1,61 @@
+name:          linear
+category:      Math, Algebra
+version:       0.1
+license:       BSD3
+cabal-version: >= 1.8
+license-file:  LICENSE
+author:        Edward A. Kmett
+maintainer:    Edward A. Kmett <ekmett@gmail.com>
+stability:     provisional
+homepage:      http://github.com/ekmett/linear/
+bug-reports:   http://github.com/ekmett/linear/issues
+copyright:     Copyright (C) 2012 Edward A. Kmett
+synopsis:      Linear Algebra
+description:   Linear Algebra
+build-type:    Simple
+tested-with:   GHC == 7.4.1
+extra-source-files:
+  .travis.yml
+  .ghci
+  .gitignore
+  .vim.custom
+  config
+  README.markdown
+  CHANGELOG.markdown
+
+source-repository head
+  type: git
+  location: git://github.com/ekmett/linear.git
+
+library
+  build-depends:
+    base == 4.*,
+    distributive >= 0.2.2 && < 0.3,
+    lens == 2.4.*
+
+  exposed-modules: 
+    Linear.Conjugate
+    Linear.Epsilon
+    Linear.Matrix
+    Linear.Metric
+    Linear.Plucker
+    Linear.V2
+    Linear.V3
+    Linear.V4
+    Linear.Vector
+
+  ghc-options: -Wall -fwarn-tabs -O2 -fdicts-cheap -funbox-strict-fields
+  hs-source-dirs: src
+
+-- Verify the results of the examples
+test-suite doctests
+  type:    exitcode-stdio-1.0
+  main-is: doctests.hs
+  build-depends:
+    base == 4.*,
+    directory >= 1.0 && < 1.2,
+    doctest >= 0.8 && <= 0.9,
+    filepath >= 1.3 && < 1.4
+  ghc-options: -Wall -Werror -threaded
+  hs-source-dirs: tests
+
