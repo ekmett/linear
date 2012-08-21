@@ -1,0 +1,3 @@
+language: haskell
+notifications:
+  irc: "irc.freenode.org#haskell-lens"
