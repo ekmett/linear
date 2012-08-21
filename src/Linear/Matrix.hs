@@ -37,6 +37,7 @@ adjoint = collect (fmap conjugate)
 
 trace :: (Monad f, Foldable f, Num a) => f (f a) -> a
 trace m = Foldable.sum (m >>= id)
+{-# INLINE trace #-}
 
 type M44 a = V4 (V4 a)
 type M43 a = V4 (V3 a)
@@ -54,4 +55,4 @@ m43_to_m44
 
 -- extract the translation elements from the last row of a 4x3 or 4x4 matrix
 translation :: (R3 v, Functor f) => (V3 a -> f (V3 a)) -> V4 (v a) -> f (V4 (v a))
-translation = w.xyz
+translation = _w._xyz

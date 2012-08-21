@@ -53,24 +53,24 @@ instance Metric V4 where
   dot (V4 a b c d) (V4 e f g h) = a * e + b * f + c * g + d * h
 
 class R3 t => R4 t where
-  w :: Functor f => (a -> f a) -> t a -> f (t a)
-  xyzw :: Functor f => (V4 a -> f (V4 a)) -> t a -> f (t a)
+  _w :: Functor f => (a -> f a) -> t a -> f (t a)
+  _xyzw :: Functor f => (V4 a -> f (V4 a)) -> t a -> f (t a)
 
 instance R2 V4 where
-  x f (V4 a b c d) = (\a' -> V4 a' b c d) <$> f a
-  y f (V4 a b c d) = (\b' -> V4 a b' c d) <$> f b
-  xy f (V4 a b c d) = (\(V2 a' b') -> V4 a' b' c d) <$> f (V2 a b)
+  _x f (V4 a b c d) = (\a' -> V4 a' b c d) <$> f a
+  _y f (V4 a b c d) = (\b' -> V4 a b' c d) <$> f b
+  _xy f (V4 a b c d) = (\(V2 a' b') -> V4 a' b' c d) <$> f (V2 a b)
 
 instance R3 V4 where
-  z f (V4 a b c d) = (\c' -> V4 a b c' d) <$> f c
-  xyz f (V4 a b c d) = (\(V3 a' b' c') -> V4 a' b' c' d) <$> f (V3 a b c)
+  _z f (V4 a b c d) = (\c' -> V4 a b c' d) <$> f c
+  _xyz f (V4 a b c d) = (\(V3 a' b' c') -> V4 a' b' c' d) <$> f (V3 a b c)
 
 instance R4 V4 where
-  w f (V4 a b c d) = V4 a b c <$> f d
-  xyzw = id
+  _w f (V4 a b c d) = V4 a b c <$> f d
+  _xyzw = id
 
 instance Representable V4 where
-  rep f = V4 (f x) (f y) (f z) (f w)
+  rep f = V4 (f _x) (f _y) (f _z) (f _w)
 
 vector :: Num a => V3 a -> V4 a
 vector (V3 a b c) = V4 a b c 0

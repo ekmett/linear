@@ -1,5 +1,4 @@
 {-# LANGUAGE DeriveDataTypeable, PatternGuards #-}
-{-# OPTIONS_GHC -fno-warn-name-shadowing #-}
 module Linear.Quaternion
   ( Quaternion(..)
   , Complicated(..)
@@ -45,7 +44,7 @@ instance Monad Quaternion where
   (>>=) = bindRep -- the diagonal of a sedenion is super useful!
 
 instance Representable Quaternion where
-  rep f = Quaternion (f e) (f i) (f j) (f k)
+  rep f = Quaternion (f _e) (f _i) (f _j) (f _k)
 
 instance Foldable Quaternion where
   foldMap f (Quaternion e i j k) = f e `mappend` f i `mappend` f j `mappend` f k
@@ -109,27 +108,27 @@ instance Metric Quaternion where
   Quaternion e i j k `dot` Quaternion e' i' j' k' = e*e' + i*i' + j*j' + k*k'
 
 class Complicated t where
-  e :: Functor f => (a -> f a) -> t a -> f (t a)
-  i :: Functor f => (a -> f a) -> t a -> f (t a)
+  _e :: Functor f => (a -> f a) -> t a -> f (t a)
+  _i :: Functor f => (a -> f a) -> t a -> f (t a)
 
 instance Complicated Complex where
-  e f (a :+ b) = (:+ b) <$> f a
-  i f (a :+ b) = (a :+) <$> f b
+  _e f (a :+ b) = (:+ b) <$> f a
+  _i f (a :+ b) = (a :+) <$> f b
 
 instance Complicated Quaternion where
-  e f (Quaternion a b c d) = (\a' -> Quaternion a' b c d) <$> f a
-  i f (Quaternion a b c d) = (\b' -> Quaternion a b' c d) <$> f b
+  _e f (Quaternion a b c d) = (\a' -> Quaternion a' b c d) <$> f a
+  _i f (Quaternion a b c d) = (\b' -> Quaternion a b' c d) <$> f b
 
 class Complicated t => Hamiltonian t where
-  j :: Functor f => (a -> f a) -> t a -> f (t a)
-  k :: Functor f => (a -> f a) -> t a -> f (t a)
-  ijk :: Functor f => (V3 a -> f (V3 a)) -> t a -> f (t a)
+  _j :: Functor f => (a -> f a) -> t a -> f (t a)
+  _k :: Functor f => (a -> f a) -> t a -> f (t a)
+  _ijk :: Functor f => (V3 a -> f (V3 a)) -> t a -> f (t a)
 
 instance Hamiltonian Quaternion where
-  j f (Quaternion a b c d) = (\c' -> Quaternion a b c' d) <$> f c
-  k f (Quaternion a b c d) = Quaternion a b c <$> f d
+  _j f (Quaternion a b c d) = (\c' -> Quaternion a b c' d) <$> f c
+  _k f (Quaternion a b c d) = Quaternion a b c <$> f d
 
-  ijk f (Quaternion a b c d) = (\(V3 b' c' d') -> Quaternion a b' c' d') <$> f (V3 b c d)
+  _ijk f (Quaternion a b c d) = (\(V3 b' c' d') -> Quaternion a b' c' d') <$> f (V3 b c d)
 
 instance Distributive Quaternion where
   distribute = distributeRep

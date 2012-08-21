@@ -52,24 +52,24 @@ instance Metric V2 where
   dot (V2 a b) (V2 c d) = a * c + b * d
 
 class R2 t where
-  x :: Functor f => (a -> f a) -> t a -> f (t a)
-  x = xy . x
+  _x :: Functor f => (a -> f a) -> t a -> f (t a)
+  _x = _xy._x
 
-  y :: Functor f => (a -> f a) -> t a -> f (t a)
-  y = xy . y
+  _y :: Functor f => (a -> f a) -> t a -> f (t a)
+  _y = _xy._y
 
-  xy :: Functor f => (V2 a -> f (V2 a)) -> t a -> f (t a)
+  _xy :: Functor f => (V2 a -> f (V2 a)) -> t a -> f (t a)
 
 instance R2 V2 where
-  x f (V2 a b) = (`V2` b) <$> f a
-  y f (V2 a b) = (V2 a) <$> f b
-  xy = id
+  _x f (V2 a b) = (`V2` b) <$> f a
+  _y f (V2 a b) = (V2 a) <$> f b
+  _xy = id
 
 instance Representable V2 where
-  rep f = V2 (f x) (f y)
+  rep f = V2 (f _x) (f _y)
 
 instance Distributive V2 where
-  distribute f = V2 (fmap (^.x) f) (fmap (^.y) f)
+  distribute f = V2 (fmap (^._x) f) (fmap (^._y) f)
 
 -- the counter-clockwise perpendicular vector
 perp :: Num a => V2 a -> V2 a

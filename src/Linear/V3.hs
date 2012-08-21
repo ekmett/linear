@@ -52,23 +52,23 @@ instance Metric V3 where
   dot (V3 a b c) (V3 d e f) = a * d + b * e + c * f
 
 instance Distributive V3 where
-  distribute f = V3 (fmap (^.x) f) (fmap (^.y) f) (fmap (^.z) f)
+  distribute f = V3 (fmap (^._x) f) (fmap (^._y) f) (fmap (^._z) f)
 
 class R2 t => R3 t where
-  z :: Functor f => (a -> f a) -> t a -> f (t a)
-  xyz :: Functor f => (V3 a -> f (V3 a)) -> t a -> f (t a)
+  _z :: Functor f => (a -> f a) -> t a -> f (t a)
+  _xyz :: Functor f => (V3 a -> f (V3 a)) -> t a -> f (t a)
 
 instance R2 V3 where
-  x f (V3 a b c) = (\a' -> V3 a' b c) <$> f a
-  y f (V3 a b c) = (\b' -> V3 a b' c) <$> f b
-  xy f (V3 a b c) = (\(V2 a' b') -> V3 a' b' c) <$> f (V2 a b)
+  _x f (V3 a b c) = (\a' -> V3 a' b c) <$> f a
+  _y f (V3 a b c) = (\b' -> V3 a b' c) <$> f b
+  _xy f (V3 a b c) = (\(V2 a' b') -> V3 a' b' c) <$> f (V2 a b)
 
 instance R3 V3 where
-  z f (V3 a b c) = V3 a b <$> f c
-  xyz = id
+  _z f (V3 a b c) = V3 a b <$> f c
+  _xyz = id
 
 instance Representable V3 where
-  rep f = V3 (f x) (f y) (f z)
+  rep f = V3 (f _x) (f _y) (f _z)
 
 -- | cross product
 cross :: Num a => V3 a -> V3 a -> V3 a
