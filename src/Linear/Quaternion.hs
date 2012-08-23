@@ -176,7 +176,7 @@ instance RealFloat a => Floating (Quaternion a) where
     | qiq == 0 = Quaternion (exp e) v
     | ai <- sqrt qiq, ee <- exp e = reimagine (ee * cos ai) (ee * (sin ai / ai)) q
     where qiq = qi q
-  log q@(Quaternion e v@(V3 i j k))
+  log q@(Quaternion e v@(V3 _i j k))
     | qiq == 0 = if e >= 0 
                  then Quaternion (log e) v 
                  else Quaternion (log (negate e)) (V3 pi j k) -- mmm, pi
