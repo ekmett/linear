@@ -1,8 +1,9 @@
 module Linear.Metric
-  ( Metric(..)
+  ( Metric(..), normalize
   ) where
 
 import Control.Applicative
+import Linear.Epsilon
 
 -- free inner product/metric space
 class Applicative f => Metric f where
@@ -23,3 +24,9 @@ class Applicative f => Metric f where
   signorm :: Floating a => f a -> f a
   signorm v = fmap (/m) v where
     m = norm v
+
+-- |Normalize a 'Metric' functor to have unit 'norm'. This function
+-- does not change the functor if its 'norm' is 0 or 1.
+normalize :: (Floating a, Metric f, Epsilon a) => f a -> f a
+normalize v = if nearZero l || nearZero (1-l) then v else fmap (/sqrt l) v
+  where l = quadrance v

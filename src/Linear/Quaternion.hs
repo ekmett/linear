@@ -13,6 +13,7 @@ module Linear.Quaternion
   , absi
   , pow
   , rotate
+  , axisAngle
   ) where
 import Control.Applicative
 import Control.Lens
@@ -290,6 +291,7 @@ slerp q p t
 --slerp :: RealFloat a => Quaternion a -> Quaternion a -> a -> Quaternion a
 --slerp q0 q1 = let q10 = q1 / q0 in \t -> pow q10 t * q0
 
+-- |Apply a rotation to a vector.
 rotate :: (Conjugate a, RealFloat a) => Quaternion a -> V3 a -> V3 a
 rotate q v = (q * Quaternion 0 v * conjugate q)^._ijk
 
@@ -316,3 +318,9 @@ rotate (Quaternion a' b c d) (V3 x y z) = V3
 
 instance (RealFloat a, Epsilon a) => Epsilon (Quaternion a) where
   nearZero = nearZero . quadrance
+
+-- |@axisAngle axis theta@ builds a 'Quaternion' representing a
+-- rotation of @theta@ radians about @axis@.
+axisAngle :: (Epsilon a, Floating a) => V3 a -> a -> Quaternion a
+axisAngle axis theta = normalize $ Quaternion (cos half) $ (sin half) *^ axis
+  where half = theta / 2
