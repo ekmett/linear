@@ -14,15 +14,15 @@ module Linear.Quaternion
   , pow
   , rotate
   ) where
-
 import Control.Applicative
 import Control.Lens
 import Data.Complex (Complex((:+)))
 import Data.Data
 import Data.Distributive
 import Data.Foldable
+import qualified Data.Foldable as F
 import Data.Monoid
-import Foreign.Ptr (castPtr)
+import Foreign.Ptr (castPtr, plusPtr)
 import Foreign.Storable (Storable(..))
 import Linear.Epsilon
 import Linear.Conjugate
@@ -31,46 +31,40 @@ import Linear.V3
 import Linear.Vector
 import Prelude hiding (any)
 
-data Quaternion a = Quaternion a a a a deriving (Eq,Ord,Read,Show,Data,Typeable)
+data Quaternion a = Quaternion a {-# UNPACK #-}!(V3 a) 
+                    deriving (Eq,Ord,Read,Show,Data,Typeable)
 
 instance Functor Quaternion where
-  fmap f (Quaternion e i j k) = Quaternion (f e) (f i) (f j) (f k)
-  a <$ _ = Quaternion a a a a
+  fmap f (Quaternion e v) = Quaternion (f e) (fmap f v)
+  a <$ _ = Quaternion a (V3 a a a)
 
 instance Applicative Quaternion where
-  pure a = Quaternion a a a a
-  Quaternion f g h i <*> Quaternion a b c d = Quaternion (f a) (g b) (h c) (i d)
+  pure a = Quaternion a (pure a)
+  Quaternion f fv <*> Quaternion a v = Quaternion (f a) (fv <*> v)
 
 instance Monad Quaternion where
   return = pure
   (>>=) = bindRep -- the diagonal of a sedenion is super useful!
 
 instance Representable Quaternion where
-  rep f = Quaternion (f _e) (f _i) (f _j) (f _k)
+  rep f = Quaternion (f _e) (V3 (f _i) (f _j) (f _k))
 
 instance Foldable Quaternion where
-  foldMap f (Quaternion e i j k) = f e `mappend` f i `mappend` f j `mappend` f k
-  foldr f z (Quaternion e i j k) = f e (f i (f j (f k z)))
+  foldMap f (Quaternion e v) = f e `mappend` foldMap f v
+  foldr f z (Quaternion e v) = f e (F.foldr f z v)
 
 instance Traversable Quaternion where
-  traverse f (Quaternion e i j k) = Quaternion <$> f e <*> f i <*> f j <*> f k
+  traverse f (Quaternion e v) = Quaternion <$> f e <*> traverse f v
 
 instance forall a. Storable a => Storable (Quaternion a) where
   sizeOf _ = 4 * sizeOf (undefined::a)
   alignment _ = alignment (undefined::a)
-  poke ptr (Quaternion e i j k) = do poke ptr' e
-                                     pokeElemOff ptr' sz i
-                                     pokeElemOff ptr' (2*sz) j
-                                     pokeElemOff ptr' (3*sz) k
-    where ptr' = castPtr ptr
-          sz = sizeOf (undefined::a)
-  peek ptr = Quaternion 
-          <$> peek ptr' 
-          <*> peekElemOff ptr' sz 
-          <*> peekElemOff ptr' (2*sz) 
-          <*> peekElemOff ptr' (3*sz)
-    where ptr' = castPtr ptr
-          sz = sizeOf (undefined::a)
+  poke ptr (Quaternion e v) = poke (castPtr ptr) e >>
+                              poke (castPtr (ptr `plusPtr` sz)) v
+    where sz = sizeOf (undefined::a)
+  peek ptr = Quaternion <$> peek (castPtr ptr) 
+                        <*> peek (castPtr (ptr `plusPtr` sz))
+    where sz = sizeOf (undefined::a)
 
 instance RealFloat a => Num (Quaternion a) where
   {-# SPECIALIZE instance Num (Quaternion Float) #-}
@@ -78,21 +72,18 @@ instance RealFloat a => Num (Quaternion a) where
   (+) = liftA2 (+)
   (-) = liftA2 (-)
   negate = fmap negate
-  Quaternion a1 b1 c1 d1 * Quaternion a2 b2 c2 d2 = Quaternion
-    (a1*a2 - b1*b2 - c1*c2 - d1*d2)
-    (a1*b2 + b1*a2 + c1*d2 - d1*c2)
-    (a1*c2 - b1*d2 + c1*a2 + d1*b2)
-    (a1*d2 + b1*c2 - c1*b2 + d1*a2)
-  fromInteger x = Quaternion (fromInteger x) 0 0 0
-  abs z = Quaternion (norm z) 0 0 0
-  signum q@(Quaternion e i j k)
+  Quaternion s1 v1 * Quaternion s2 v2 = Quaternion (s1*s2 - (v1 `dot` v2)) $
+                                        (v1 `cross` v2) + s1*^v2 + s2*^v1
+  fromInteger x = Quaternion (fromInteger x) 0
+  abs z = Quaternion (norm z) 0
+  signum q@(Quaternion e (V3 i j k))
     | m == 0.0 = q
     | not (isInfinite m || isNaN m) = q ^/ sqrt m
     | any isNaN q = qNaN
-    | not (ii || ij || ik) = Quaternion 1 0 0 0
-    | not (ie || ij || ik) = Quaternion 0 1 0 0
-    | not (ie || ii || ik) = Quaternion 0 0 1 0
-    | not (ie || ii || ij) = Quaternion 0 0 0 1
+    | not (ii || ij || ik) = Quaternion 1 (V3 0 0 0)
+    | not (ie || ij || ik) = Quaternion 0 (V3 1 0 0)
+    | not (ie || ii || ik) = Quaternion 0 (V3 0 1 0)
+    | not (ie || ii || ij) = Quaternion 0 (V3 0 0 1)
     | otherwise = qNaN
     where
       m = quadrance q
@@ -105,9 +96,9 @@ instance RealFloat a => Num (Quaternion a) where
   -- signum = error "Quaternion.signum: use signorm"
 
 qNaN :: RealFloat a => Quaternion a
-qNaN = Quaternion fNaN fNaN fNaN fNaN where fNaN = 0/0
+qNaN = Quaternion fNaN (V3 fNaN fNaN fNaN) where fNaN = 0/0
 
--- {-# RULES "abs/norm" abs x = Quaternion (norm x) 0 0 0 #-}
+-- {-# RULES "abs/norm" abs x = Quaternion (norm x) 0 #-}
 -- {-# RULES "signum/signorm" signum = signorm #-}
 
 -- this will attempt to rewrite calls to abs to use norm intead when it is available.
@@ -115,16 +106,17 @@ qNaN = Quaternion fNaN fNaN fNaN fNaN where fNaN = 0/0
 instance RealFloat a => Fractional (Quaternion a) where
   {-# SPECIALIZE instance Fractional (Quaternion Float) #-}
   {-# SPECIALIZE instance Fractional (Quaternion Double) #-}
-  Quaternion q0 q1 q2 q3 / Quaternion r0 r1 r2 r3 = Quaternion (r0*q0+r1*q1+r2*q2+r3*q3)
-                                                               (r0*q1-r1*q0-r2*q3+r3*q2)
-                                                               (r0*q2+r1*q3-r2*q0-r3*q1)
-                                                               (r0*q3-r1*q2+r2*q1-r3*q0)
-                                                 ^/ (r0*r0 + r1*r1 + r2*r2 + r3*r3)
+  Quaternion q0 (V3 q1 q2 q3) / Quaternion r0 (V3 r1 r2 r3) = 
+    Quaternion (r0*q0+r1*q1+r2*q2+r3*q3)
+               (V3 (r0*q1-r1*q0-r2*q3+r3*q2)
+                   (r0*q2+r1*q3-r2*q0-r3*q1)
+                   (r0*q3-r1*q2+r2*q1-r3*q0))
+               ^/ (r0*r0 + r1*r1 + r2*r2 + r3*r3)
   recip q = q ^/ quadrance q
-  fromRational x = Quaternion (fromRational x) 0 0 0
+  fromRational x = Quaternion (fromRational x) 0
 
 instance Metric Quaternion where
-  Quaternion e i j k `dot` Quaternion e' i' j' k' = e*e' + i*i' + j*j' + k*k'
+  Quaternion e v `dot` Quaternion e' v' = e*e' + (v `dot` v')
 
 class Complicated t where
   _e :: Functor f => (a -> f a) -> t a -> f (t a)
@@ -135,8 +127,9 @@ instance Complicated Complex where
   _i f (a :+ b) = (a :+) <$> f b
 
 instance Complicated Quaternion where
-  _e f (Quaternion a b c d) = (\a' -> Quaternion a' b c d) <$> f a
-  _i f (Quaternion a b c d) = (\b' -> Quaternion a b' c d) <$> f b
+  _e f (Quaternion a v) = (\a' -> Quaternion a' v) <$> f a
+  _i f (Quaternion a v) = Quaternion a <$> traverseOf _x f v
+  --_i f (Quaternion a (V3 b c d)) = (\b' -> Quaternion a (V3 b' c d)) <$> f b
 
 class Complicated t => Hamiltonian t where
   _j :: Functor f => (a -> f a) -> t a -> f (t a)
@@ -144,28 +137,29 @@ class Complicated t => Hamiltonian t where
   _ijk :: Functor f => (V3 a -> f (V3 a)) -> t a -> f (t a)
 
 instance Hamiltonian Quaternion where
-  _j f (Quaternion a b c d) = (\c' -> Quaternion a b c' d) <$> f c
-  _k f (Quaternion a b c d) = Quaternion a b c <$> f d
+  _j f (Quaternion a v) = Quaternion a <$> traverseOf _y f v
+  _k f (Quaternion a v) = Quaternion a <$> traverseOf _z f v
+  -- _j f (Quaternion a (V3 b c d)) = (\c' -> Quaternion a (V3 b c' d)) <$> f c
+  -- _k f (Quaternion a (V3 b c d)) = Quaternion a . V3 b c <$> f d
 
-  _ijk f (Quaternion a b c d) = (\(V3 b' c' d') -> Quaternion a b' c' d') <$> f (V3 b c d)
+  _ijk f (Quaternion a v) = Quaternion a <$> f v
 
 instance Distributive Quaternion where
   distribute = distributeRep
 
 instance (Conjugate a, Num a) => Conjugate (Quaternion a) where
-  conjugate (Quaternion e i j k) = Quaternion (conjugate e) (-i) (-j) (-k)
+  conjugate (Quaternion e v) = Quaternion (conjugate e) (negate v)
 
 reimagine :: RealFloat a => a -> a -> Quaternion a -> Quaternion a
-reimagine r s (Quaternion _ i j k)
-  | isNaN s || isInfinite s = Quaternion r
-    (if i /= 0 then i * s else 0)
-    (if j /= 0 then j * s else 0)
-    (if k /= 0 then k * s else 0)
-  | otherwise = Quaternion r (i * s)  (j * s) (k * s)
+reimagine r s (Quaternion _ v)
+  | isNaN s || isInfinite s = let aux 0 = 0
+                                  aux x = s * x
+                              in Quaternion r (aux <$> v)
+  | otherwise = Quaternion r (v^*s)
 
 -- | quadrance of the imaginary component
 qi :: Num a => Quaternion a -> a
-qi (Quaternion _ i j k) = i*i + j*j + k*k
+qi (Quaternion _ v) = quadrance v
 
 absi :: Floating a => Quaternion a -> a
 absi = sqrt . qi
@@ -177,45 +171,49 @@ pow q t = exp (t *^ log q)
 instance RealFloat a => Floating (Quaternion a) where
   {-# SPECIALIZE instance Floating (Quaternion Float) #-}
   {-# SPECIALIZE instance Floating (Quaternion Double) #-}
-  pi = Quaternion pi 0 0 0
-  exp q@(Quaternion e i j k)
-    | qiq == 0 = Quaternion (exp e) i j k
+  pi = Quaternion pi 0
+  exp q@(Quaternion e v)
+    | qiq == 0 = Quaternion (exp e) v
     | ai <- sqrt qiq, ee <- exp e = reimagine (ee * cos ai) (ee * (sin ai / ai)) q
     where qiq = qi q
-  log q@(Quaternion e i j k)
-    | qiq == 0 = if e >= 0 then Quaternion (log e) i j k else Quaternion (log (negate e)) pi j k -- mmm, pi
+  log q@(Quaternion e v@(V3 i j k))
+    | qiq == 0 = if e >= 0 
+                 then Quaternion (log e) v 
+                 else Quaternion (log (negate e)) (V3 pi j k) -- mmm, pi
     | ai <- sqrt qiq, m <- sqrt (e*e + qiq) = reimagine (log m) (atan2 m e / ai) q
     where qiq = qi q
   x ** y = exp (y * log x)
-  sqrt q@(Quaternion e i j k)
+  sqrt q@(Quaternion e v)
     | m   == 0 = q
-    | qiq == 0 = if e > 0 then Quaternion (sqrt e) 0 0 0 else Quaternion 0 (sqrt (negate e)) 0 0
-    | im <- sqrt (0.5*(m-e)) / sqrt qiq = Quaternion (0.5*(m+e)) (i*im) (j*im) (k*im)
+    | qiq == 0 = if e > 0 
+                 then Quaternion (sqrt e) 0 
+                 else Quaternion 0 (V3 (sqrt (negate e)) 0 0)
+    | im <- sqrt (0.5*(m-e)) / sqrt qiq = Quaternion (0.5*(m+e)) (v^*im)
     where qiq = qi q
           m = sqrt (e*e + qiq)
-  cos q@(Quaternion e i j k)
-    | qiq == 0 = Quaternion (cos e) i j k
+  cos q@(Quaternion e v)
+    | qiq == 0 = Quaternion (cos e) v
     | ai <- sqrt qiq = reimagine (cos e * cosh ai) (- sin e * (sinh ai / ai)) q
     where qiq = qi q
-  sin q@(Quaternion e i j k)
-    | qiq == 0 = Quaternion (sin e) i j k
+  sin q@(Quaternion e v)
+    | qiq == 0 = Quaternion (sin e) v
     | ai <- sqrt qiq = reimagine (sin e * cosh ai) (cos e * (sinh ai / ai)) q
     where qiq = qi q
-  tan q@(Quaternion e i j k)
-    | qiq == 0 = Quaternion (tan e) i j k
+  tan q@(Quaternion e v)
+    | qiq == 0 = Quaternion (tan e) v
     | ai <- sqrt qiq, ce <- cos e, sai <- sinh ai, d <- ce*ce + sai*sai =
       reimagine (ce * sin e / d) (cosh ai * (sai / ai) / d) q
     where qiq = qi q
-  sinh q@(Quaternion e i j k)
-    | qiq == 0 = Quaternion (sinh e) i j k
+  sinh q@(Quaternion e v)
+    | qiq == 0 = Quaternion (sinh e) v
     | ai <- sqrt qiq = reimagine (sinh e * cos ai) (cosh e * (sin ai / ai)) q
     where qiq = qi q
-  cosh q@(Quaternion e i j k)
-    | qiq == 0 = Quaternion (cosh e) i j k
+  cosh q@(Quaternion e v)
+    | qiq == 0 = Quaternion (cosh e) v
     | ai <- sqrt qiq = reimagine (cosh e * cos ai) ((sinh e * sin ai) / ai) q
     where qiq = qi q
-  tanh q@(Quaternion e i j k)
-    | qiq == 0 = Quaternion (tanh e) i j k
+  tanh q@(Quaternion e v)
+    | qiq == 0 = Quaternion (tanh e) v
     | ai <- sqrt qiq, se <- sinh e, cai <- cos ai, d <- se*se + cai*cai =
       reimagine ((cosh e * se) / d) ((cai * (sin ai / ai)) / d) q
     where qiq = qi q
@@ -229,51 +227,51 @@ instance RealFloat a => Floating (Quaternion a) where
   atanh q = cut atanh q
 
 cut :: RealFloat a => (Complex a -> Complex a) -> Quaternion a -> Quaternion a
-cut f q@(Quaternion e _ j k)
-  | qiq == 0 = Quaternion a b j k
+cut f q@(Quaternion e v)
+  | qiq == 0 = Quaternion a (_x.~b$v)
   | otherwise = reimagine a (b / ai) q
   where qiq = qi q
         ai = sqrt qiq
         a :+ b = f (e :+ ai)
 
 cutWith :: RealFloat a => Complex a -> Quaternion a -> Quaternion a
-cutWith (r :+ im) q@(Quaternion e i j k)
+cutWith (r :+ im) q@(Quaternion e v)
   | e /= 0 || qiq == 0 || isNaN qiq || isInfinite qiq = error "bad cut"
-  | s <- im / sqrt qiq = Quaternion r (i*s) (j*s) (k*s)
+  | s <- im / sqrt qiq = Quaternion r (v^*s)
   where qiq = qi q
 
 asinq :: RealFloat a => Quaternion a -> Quaternion a -> Quaternion a
-asinq q@(Quaternion e _ _ _) u
+asinq q@(Quaternion e _) u
   | qiq /= 0.0 || e >= -1 && e <= 1 = asin q
   | otherwise = cutWith (asin (e :+ sqrt qiq)) u
   where qiq = qi q
 
 acosq :: RealFloat a => Quaternion a -> Quaternion a -> Quaternion a
-acosq q@(Quaternion e _ _ _) u
+acosq q@(Quaternion e _) u
   | qiq /= 0.0 || e >= -1 && e <= 1 = acos q
   | otherwise = cutWith (acos (e :+ sqrt qiq)) u
   where qiq = qi q
 
 atanq :: RealFloat a => Quaternion a -> Quaternion a -> Quaternion a
-atanq q@(Quaternion e _ _ _) u
+atanq q@(Quaternion e _) u
   | e /= 0.0 || qiq >= -1 && qiq <= 1 = atan q
   | otherwise = cutWith (atan (e :+ sqrt qiq)) u
   where qiq = qi q
 
 asinhq :: RealFloat a => Quaternion a -> Quaternion a -> Quaternion a
-asinhq q@(Quaternion e _ _ _) u
+asinhq q@(Quaternion e _) u
   | e /= 0.0 || qiq >= -1 && qiq <= 1 = asinh q
   | otherwise = cutWith (asinh (e :+ sqrt qiq)) u
   where qiq = qi q
 
 acoshq :: RealFloat a => Quaternion a -> Quaternion a -> Quaternion a
-acoshq q@(Quaternion e _ _ _) u
+acoshq q@(Quaternion e _) u
   | qiq /= 0.0 || e >= 1 = asinh q
   | otherwise = cutWith (acosh (e :+ sqrt qiq)) u
   where qiq = qi q
 
 atanhq :: RealFloat a => Quaternion a -> Quaternion a -> Quaternion a
-atanhq q@(Quaternion e _ _ _) u
+atanhq q@(Quaternion e _) u
   | qiq /= 0.0 || e > -1 && e < 1 = atanh q
   | otherwise = cutWith (atanh (e :+ sqrt qiq)) u
   where qiq = qi q
@@ -293,7 +291,7 @@ slerp q p t
 --slerp q0 q1 = let q10 = q1 / q0 in \t -> pow q10 t * q0
 
 rotate :: (Conjugate a, RealFloat a) => Quaternion a -> V3 a -> V3 a
-rotate q (V3 a b c) = (q * Quaternion 0 a b c * conjugate q)^._ijk
+rotate q v = (q * Quaternion 0 v * conjugate q)^._ijk
 
 {-
 rotate :: Num a => Quaternion a -> V3 a -> V3 a
