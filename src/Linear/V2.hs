@@ -1,5 +1,6 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 -- {-# OPTIONS_GHC -fno-warn-name-shadowing #-}
 module Linear.V2
   ( V2(..)
@@ -7,12 +8,14 @@ module Linear.V2
   , perp
   ) where
 
+import Control.Applicative
 import Control.Lens
 import Data.Data
 import Data.Distributive
 import Data.Foldable
 import Data.Monoid
-import Control.Applicative
+import Foreign.Ptr (castPtr)
+import Foreign.Storable (Storable(..))
 import Linear.Metric
 import Linear.Epsilon
 
@@ -77,3 +80,13 @@ perp (V2 a b) = V2 (negate b) a
 
 instance Epsilon a => Epsilon (V2 a) where
   nearZero = nearZero . quadrance
+
+instance forall a. Storable a => Storable (V2 a) where
+  sizeOf _ = 2 * sizeOf (undefined::a)
+  alignment _ = alignment (undefined::a)
+  poke ptr (V2 x y) = poke ptr' x >> pokeElemOff ptr' sz y
+    where ptr' = castPtr ptr
+          sz = sizeOf (undefined::a)
+  peek ptr = V2 <$> peek ptr' <*> peekElemOff ptr' sz
+    where ptr' = castPtr ptr
+          sz = sizeOf (undefined::a)

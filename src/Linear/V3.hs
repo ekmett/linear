@@ -1,4 +1,4 @@
-{-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE DeriveDataTypeable, ScopedTypeVariables #-}
 module Linear.V3
   ( V3(..)
   , cross, triple
@@ -12,6 +12,8 @@ import Data.Data
 import Data.Distributive
 import Data.Foldable
 import Data.Monoid
+import Foreign.Ptr (castPtr)
+import Foreign.Storable (Storable(..))
 import Linear.Epsilon
 import Linear.Metric
 import Linear.V2
@@ -50,6 +52,7 @@ instance Fractional a => Fractional (V3 a) where
 
 instance Metric V3 where
   dot (V3 a b c) (V3 d e f) = a * d + b * e + c * f
+  {-# INLINABLE dot #-}
 
 instance Distributive V3 where
   distribute f = V3 (fmap (^._x) f) (fmap (^._y) f) (fmap (^._z) f)
@@ -70,9 +73,22 @@ instance R3 V3 where
 instance Representable V3 where
   rep f = V3 (f _x) (f _y) (f _z)
 
+instance forall a. Storable a => Storable (V3 a) where
+  sizeOf _ = 3 * sizeOf (undefined::a)
+  alignment _ = alignment (undefined::a)
+  poke ptr (V3 x y z) = do poke ptr' x
+                           pokeElemOff ptr' sz y
+                           pokeElemOff ptr' (2*sz) z
+    where ptr' = castPtr ptr
+          sz = sizeOf (undefined::a)
+  peek ptr = V3 <$> peek ptr' <*> peekElemOff ptr' sz <*> peekElemOff ptr' (2*sz)
+    where ptr' = castPtr ptr
+          sz = sizeOf (undefined::a)
+
 -- | cross product
 cross :: Num a => V3 a -> V3 a -> V3 a
 cross (V3 a b c) (V3 d e f) = V3 (b*f-c*e) (c*d-a*f) (a*e-b*d)
+{-# INLINABLE cross #-}
 
 -- | scalar triple product
 triple :: Num a => V3 a -> V3 a -> V3 a -> a

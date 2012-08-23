@@ -1,4 +1,4 @@
-{-# LANGUAGE DeriveDataTypeable, PatternGuards #-}
+{-# LANGUAGE DeriveDataTypeable, PatternGuards, ScopedTypeVariables #-}
 module Linear.Quaternion
   ( Quaternion(..)
   , Complicated(..)
@@ -22,6 +22,8 @@ import Data.Data
 import Data.Distributive
 import Data.Foldable
 import Data.Monoid
+import Foreign.Ptr (castPtr)
+import Foreign.Storable (Storable(..))
 import Linear.Epsilon
 import Linear.Conjugate
 import Linear.Metric
@@ -52,6 +54,23 @@ instance Foldable Quaternion where
 
 instance Traversable Quaternion where
   traverse f (Quaternion e i j k) = Quaternion <$> f e <*> f i <*> f j <*> f k
+
+instance forall a. Storable a => Storable (Quaternion a) where
+  sizeOf _ = 4 * sizeOf (undefined::a)
+  alignment _ = alignment (undefined::a)
+  poke ptr (Quaternion e i j k) = do poke ptr' e
+                                     pokeElemOff ptr' sz i
+                                     pokeElemOff ptr' (2*sz) j
+                                     pokeElemOff ptr' (3*sz) k
+    where ptr' = castPtr ptr
+          sz = sizeOf (undefined::a)
+  peek ptr = Quaternion 
+          <$> peek ptr' 
+          <*> peekElemOff ptr' sz 
+          <*> peekElemOff ptr' (2*sz) 
+          <*> peekElemOff ptr' (3*sz)
+    where ptr' = castPtr ptr
+          sz = sizeOf (undefined::a)
 
 instance RealFloat a => Num (Quaternion a) where
   {-# SPECIALIZE instance Num (Quaternion Float) #-}
