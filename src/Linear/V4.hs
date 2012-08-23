@@ -1,4 +1,4 @@
-{-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE DeriveDataTypeable, ScopedTypeVariables #-}
 module Linear.V4
   ( V4(..)
   , vector, point
@@ -13,6 +13,8 @@ import Data.Data
 import Data.Distributive
 import Data.Foldable
 import Data.Monoid
+import Foreign.Ptr (castPtr)
+import Foreign.Storable (Storable(..))
 import Linear.Epsilon
 import Linear.Metric
 import Linear.V2
@@ -75,6 +77,20 @@ instance R4 V4 where
 
 instance Representable V4 where
   rep f = V4 (f _x) (f _y) (f _z) (f _w)
+
+instance forall a. Storable a => Storable (V4 a) where
+  sizeOf _ = 4 * sizeOf (undefined::a)
+  alignment _ = alignment (undefined::a)
+  poke ptr (V4 x y z w) = do poke ptr' x
+                             pokeElemOff ptr' sz y
+                             pokeElemOff ptr' (2*sz) z
+                             pokeElemOff ptr' (3*sz) w
+    where ptr' = castPtr ptr
+          sz = sizeOf (undefined::a)
+  peek ptr = V4 <$> peek ptr' <*> peekElemOff ptr' sz 
+                <*> peekElemOff ptr' (2*sz) <*> peekElemOff ptr' (2*sz)
+    where ptr' = castPtr ptr
+          sz = sizeOf (undefined::a)
 
 vector :: Num a => V3 a -> V4 a
 vector (V3 a b c) = V4 a b c 0
