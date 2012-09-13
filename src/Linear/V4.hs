@@ -82,15 +82,13 @@ instance forall a. Storable a => Storable (V4 a) where
   sizeOf _ = 4 * sizeOf (undefined::a)
   alignment _ = alignment (undefined::a)
   poke ptr (V4 x y z w) = do poke ptr' x
-                             pokeElemOff ptr' sz y
-                             pokeElemOff ptr' (2*sz) z
-                             pokeElemOff ptr' (3*sz) w
+                             pokeElemOff ptr' 1 y
+                             pokeElemOff ptr' 2 z
+                             pokeElemOff ptr' 3 w
     where ptr' = castPtr ptr
-          sz = sizeOf (undefined::a)
-  peek ptr = V4 <$> peek ptr' <*> peekElemOff ptr' sz 
-                <*> peekElemOff ptr' (2*sz) <*> peekElemOff ptr' (2*sz)
+  peek ptr = V4 <$> peek ptr' <*> peekElemOff ptr' 1
+                <*> peekElemOff ptr' 2 <*> peekElemOff ptr' 3
     where ptr' = castPtr ptr
-          sz = sizeOf (undefined::a)
 
 vector :: Num a => V3 a -> V4 a
 vector (V3 a b c) = V4 a b c 0
