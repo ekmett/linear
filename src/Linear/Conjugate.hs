@@ -4,7 +4,9 @@ module Linear.Conjugate
 
 import Data.Complex hiding (conjugate)
 
-class Conjugate a where
+-- | An involutive ring
+class Num a => Conjugate a where
+  -- | Conjugate a value. This defaults to the trivial involution.
   conjugate :: a -> a
   conjugate = id
 

@@ -148,7 +148,7 @@ instance Hamiltonian Quaternion where
 instance Distributive Quaternion where
   distribute = distributeRep
 
-instance (Conjugate a, Num a) => Conjugate (Quaternion a) where
+instance (Conjugate a, RealFloat a) => Conjugate (Quaternion a) where
   conjugate (Quaternion e v) = Quaternion (conjugate e) (negate v)
 
 reimagine :: RealFloat a => a -> a -> Quaternion a -> Quaternion a
