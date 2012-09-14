@@ -31,7 +31,7 @@ library
   build-depends:
     base == 4.*,
     distributive >= 0.2.2 && < 0.3,
-    lens == 2.4.*
+    lens == 2.9.*
 
   exposed-modules: 
     Linear.Conjugate
