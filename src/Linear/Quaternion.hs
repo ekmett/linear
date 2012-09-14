@@ -32,7 +32,7 @@ import Linear.V3
 import Linear.Vector
 import Prelude hiding (any)
 
-data Quaternion a = Quaternion a {-# UNPACK #-}!(V3 a) 
+data Quaternion a = Quaternion a {-# UNPACK #-}!(V3 a)
                     deriving (Eq,Ord,Read,Show,Data,Typeable)
 
 instance Functor Quaternion where
@@ -63,7 +63,7 @@ instance forall a. Storable a => Storable (Quaternion a) where
   poke ptr (Quaternion e v) = poke (castPtr ptr) e >>
                               poke (castPtr (ptr `plusPtr` sz)) v
     where sz = sizeOf (undefined::a)
-  peek ptr = Quaternion <$> peek (castPtr ptr) 
+  peek ptr = Quaternion <$> peek (castPtr ptr)
                         <*> peek (castPtr (ptr `plusPtr` sz))
     where sz = sizeOf (undefined::a)
 
@@ -107,7 +107,7 @@ qNaN = Quaternion fNaN (V3 fNaN fNaN fNaN) where fNaN = 0/0
 instance RealFloat a => Fractional (Quaternion a) where
   {-# SPECIALIZE instance Fractional (Quaternion Float) #-}
   {-# SPECIALIZE instance Fractional (Quaternion Double) #-}
-  Quaternion q0 (V3 q1 q2 q3) / Quaternion r0 (V3 r1 r2 r3) = 
+  Quaternion q0 (V3 q1 q2 q3) / Quaternion r0 (V3 r1 r2 r3) =
     Quaternion (r0*q0+r1*q1+r2*q2+r3*q3)
                (V3 (r0*q1-r1*q0-r2*q3+r3*q2)
                    (r0*q2+r1*q3-r2*q0-r3*q1)
@@ -178,16 +178,16 @@ instance RealFloat a => Floating (Quaternion a) where
     | ai <- sqrt qiq, ee <- exp e = reimagine (ee * cos ai) (ee * (sin ai / ai)) q
     where qiq = qi q
   log q@(Quaternion e v@(V3 _i j k))
-    | qiq == 0 = if e >= 0 
-                 then Quaternion (log e) v 
+    | qiq == 0 = if e >= 0
+                 then Quaternion (log e) v
                  else Quaternion (log (negate e)) (V3 pi j k) -- mmm, pi
     | ai <- sqrt qiq, m <- sqrt (e*e + qiq) = reimagine (log m) (atan2 m e / ai) q
     where qiq = qi q
   x ** y = exp (y * log x)
   sqrt q@(Quaternion e v)
     | m   == 0 = q
-    | qiq == 0 = if e > 0 
-                 then Quaternion (sqrt e) 0 
+    | qiq == 0 = if e > 0
+                 then Quaternion (sqrt e) 0
                  else Quaternion 0 (V3 (sqrt (negate e)) 0 0)
     | im <- sqrt (0.5*(m-e)) / sqrt qiq = Quaternion (0.5*(m+e)) (v^*im)
     where qiq = qi q
