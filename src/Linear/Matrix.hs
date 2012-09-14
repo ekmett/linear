@@ -40,6 +40,7 @@ adjoint :: (Functor m, Distributive n, Conjugate a) => m (n a) -> n (m a)
 adjoint = collect (fmap conjugate)
 {-# INLINE adjoint #-}
 
+-- | Compute the trace of a matrix
 trace :: (Monad f, Foldable f, Num a) => f (f a) -> a
 trace m = Foldable.sum (m >>= id)
 {-# INLINE trace #-}
@@ -57,8 +58,8 @@ fromQuaternion (Quaternion a (V3 b c d)) =
      (V3 (2*b*d-2*a*c) (2*c*d+2*a*b) (a*a-b*b-c*c+d*d))
 
 mkTransformationMat :: Num a => M33 a -> V3 a -> M44 a
-mkTransformationMat (V3 r1 r2 r3) (V3 tx ty tz) = 
-  V4 (snoc3 r1 tx) (snoc3 r2 ty) (snoc3 r3 tz) (_w.~1$0)
+mkTransformationMat (V3 r1 r2 r3) (V3 tx ty tz) =
+  V4 (snoc3 r1 tx) (snoc3 r2 ty) (snoc3 r3 tz) (set _w 1 0)
   where snoc3 (V3 x y z) w = V4 x y z w
 
 -- |Build a transformation matrix from a rotation expressed as a
@@ -82,11 +83,11 @@ m33_to_m44 (V3 r1 r2 r3) = V4 (vector r1) (vector r2) (vector r3) (point 0)
 
 -- |3x3 identity matrix.
 eye3 :: Num a => M33 a
-eye3 = V3 (_x.~1$0) (_y.~1$0) (_z.~1$0)
+eye3 = V3 (set _x 1 0) (set _y 1 0) (set _z 1 0)
 
 -- |4x4 identity matrix.
 eye4 :: Num a => M44 a
-eye4 = V4 (_x.~1$0) (_y.~1$0) (_z.~1$0) (_w.~1$0)
+eye4 = V4 (set _x 1 0) (set _y 1 0) (set _z 1 0) (set _w 1 0)
 
 -- |Extract the translation vector (first three entries of the last
 -- column) from a 3x4 or 4x4 matrix
