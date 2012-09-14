@@ -11,7 +11,7 @@ homepage:      http://github.com/ekmett/linear/
 bug-reports:   http://github.com/ekmett/linear/issues
 copyright:     Copyright (C) 2012 Edward A. Kmett
 synopsis:      Linear Algebra
-description:   Linear Algebra
+description:   Types and combinators for low-dimension-count linear algebra on free vectors spaces
 build-type:    Simple
 tested-with:   GHC == 7.4.1
 extra-source-files:
@@ -33,7 +33,7 @@ library
     distributive >= 0.2.2 && < 0.3,
     lens == 2.9.*
 
-  exposed-modules: 
+  exposed-modules:
     Linear.Conjugate
     Linear.Epsilon
     Linear.Matrix

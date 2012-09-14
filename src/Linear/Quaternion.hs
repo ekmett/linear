@@ -162,9 +162,11 @@ reimagine r s (Quaternion _ v)
 qi :: Num a => Quaternion a -> a
 qi (Quaternion _ v) = quadrance v
 
+-- | norm of the imaginary component
 absi :: Floating a => Quaternion a -> a
 absi = sqrt . qi
 
+-- | raise a 'Quaternion' to a scalar power
 pow :: RealFloat a => Quaternion a -> a -> Quaternion a
 pow q t = exp (t *^ log q)
 
@@ -227,6 +229,7 @@ instance RealFloat a => Floating (Quaternion a) where
   acosh q = cut acosh q
   atanh q = cut atanh q
 
+-- | Helper for calculating with specific branch cuts
 cut :: RealFloat a => (Complex a -> Complex a) -> Quaternion a -> Quaternion a
 cut f q@(Quaternion e v)
   | qiq == 0 = Quaternion a (_x.~b$v)
@@ -235,48 +238,56 @@ cut f q@(Quaternion e v)
         ai = sqrt qiq
         a :+ b = f (e :+ ai)
 
+-- | Helper for calculating with specific branch cuts
 cutWith :: RealFloat a => Complex a -> Quaternion a -> Quaternion a
 cutWith (r :+ im) q@(Quaternion e v)
   | e /= 0 || qiq == 0 || isNaN qiq || isInfinite qiq = error "bad cut"
   | s <- im / sqrt qiq = Quaternion r (v^*s)
   where qiq = qi q
 
+-- | 'asin' with a specified branch cut.
 asinq :: RealFloat a => Quaternion a -> Quaternion a -> Quaternion a
 asinq q@(Quaternion e _) u
   | qiq /= 0.0 || e >= -1 && e <= 1 = asin q
   | otherwise = cutWith (asin (e :+ sqrt qiq)) u
   where qiq = qi q
 
+-- | 'acos' with a specified branch cut.
 acosq :: RealFloat a => Quaternion a -> Quaternion a -> Quaternion a
 acosq q@(Quaternion e _) u
   | qiq /= 0.0 || e >= -1 && e <= 1 = acos q
   | otherwise = cutWith (acos (e :+ sqrt qiq)) u
   where qiq = qi q
 
+-- | 'atan' with a specified branch cut.
 atanq :: RealFloat a => Quaternion a -> Quaternion a -> Quaternion a
 atanq q@(Quaternion e _) u
   | e /= 0.0 || qiq >= -1 && qiq <= 1 = atan q
   | otherwise = cutWith (atan (e :+ sqrt qiq)) u
   where qiq = qi q
 
+-- | 'asinh' with a specified branch cut.
 asinhq :: RealFloat a => Quaternion a -> Quaternion a -> Quaternion a
 asinhq q@(Quaternion e _) u
   | e /= 0.0 || qiq >= -1 && qiq <= 1 = asinh q
   | otherwise = cutWith (asinh (e :+ sqrt qiq)) u
   where qiq = qi q
 
+-- | 'acosh' with a specified branch cut.
 acoshq :: RealFloat a => Quaternion a -> Quaternion a -> Quaternion a
 acoshq q@(Quaternion e _) u
   | qiq /= 0.0 || e >= 1 = asinh q
   | otherwise = cutWith (acosh (e :+ sqrt qiq)) u
   where qiq = qi q
 
+-- | 'atanh' with a specified branch cut.
 atanhq :: RealFloat a => Quaternion a -> Quaternion a -> Quaternion a
 atanhq q@(Quaternion e _) u
   | qiq /= 0.0 || e > -1 && e < 1 = atanh q
   | otherwise = cutWith (atanh (e :+ sqrt qiq)) u
   where qiq = qi q
 
+-- | Spherical linear interpolation between two quaternions.
 slerp :: RealFloat a => Quaternion a -> Quaternion a -> a -> Quaternion a
 slerp q p t
   | 1.0 - cosphi < 1e-8 = q
@@ -291,7 +302,7 @@ slerp q p t
 --slerp :: RealFloat a => Quaternion a -> Quaternion a -> a -> Quaternion a
 --slerp q0 q1 = let q10 = q1 / q0 in \t -> pow q10 t * q0
 
--- |Apply a rotation to a vector.
+-- | Apply a rotation to a vector.
 rotate :: (Conjugate a, RealFloat a) => Quaternion a -> V3 a -> V3 a
 rotate q v = (q * Quaternion 0 v * conjugate q)^._ijk
 
@@ -319,7 +330,7 @@ rotate (Quaternion a' b c d) (V3 x y z) = V3
 instance (RealFloat a, Epsilon a) => Epsilon (Quaternion a) where
   nearZero = nearZero . quadrance
 
--- |@axisAngle axis theta@ builds a 'Quaternion' representing a
+-- | @'axisAngle' axis theta@ builds a 'Quaternion' representing a
 -- rotation of @theta@ radians about @axis@.
 axisAngle :: (Epsilon a, Floating a) => V3 a -> a -> Quaternion a
 axisAngle axis theta = normalize $ Quaternion (cos half) $ (sin half) *^ axis
