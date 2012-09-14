@@ -77,13 +77,11 @@ instance forall a. Storable a => Storable (V3 a) where
   sizeOf _ = 3 * sizeOf (undefined::a)
   alignment _ = alignment (undefined::a)
   poke ptr (V3 x y z) = do poke ptr' x
-                           pokeElemOff ptr' sz y
-                           pokeElemOff ptr' (2*sz) z
+                           pokeElemOff ptr' 1 y
+                           pokeElemOff ptr' 2 z
     where ptr' = castPtr ptr
-          sz = sizeOf (undefined::a)
-  peek ptr = V3 <$> peek ptr' <*> peekElemOff ptr' sz <*> peekElemOff ptr' (2*sz)
+  peek ptr = V3 <$> peek ptr' <*> peekElemOff ptr' 1 <*> peekElemOff ptr' 2
     where ptr' = castPtr ptr
-          sz = sizeOf (undefined::a)
 
 -- | cross product
 cross :: Num a => V3 a -> V3 a -> V3 a
