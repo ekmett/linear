@@ -20,6 +20,7 @@ import Linear.Metric
 import Linear.V2
 import Linear.V3
 
+-- | A 4-dimensional vector.
 data V4 a = V4 a a a a deriving (Eq,Ord,Show,Read,Data,Typeable)
 
 instance Functor V4 where
@@ -58,6 +59,7 @@ instance Metric V4 where
 instance Distributive V4 where
   distribute f = V4 (fmap (^._x) f) (fmap (^._y) f) (fmap (^._z) f) (fmap (^._w) f)
 
+-- | A space that distinguishes orthogonal basis vectors '_x', '_y', '_z', '_w'. (It may have more.)
 class R3 t => R4 t where
   _w :: Functor f => (a -> f a) -> t a -> f (t a)
   _xyzw :: Functor f => (V4 a -> f (V4 a)) -> t a -> f (t a)
@@ -90,9 +92,11 @@ instance forall a. Storable a => Storable (V4 a) where
                 <*> peekElemOff ptr' 2 <*> peekElemOff ptr' 3
     where ptr' = castPtr ptr
 
+-- | Convert a 3-dimensional affine vector into a 4-dimensional homogeneous vector.
 vector :: Num a => V3 a -> V4 a
 vector (V3 a b c) = V4 a b c 0
 
+-- | Convert a 3-dimensional affine point into a 4-dimensional homogeneous vector.
 point :: Num a => V3 a -> V4 a
 point (V3 a b c) = V4 a b c 1
 

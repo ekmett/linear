@@ -17,7 +17,7 @@ import Linear.Metric
 import Control.Lens
 import Linear.V4
 
--- Plücker coordinates
+-- | Plücker coordinates for lines in a 3-dimensional space.
 data Plucker a = Plucker a a a a a a deriving (Eq,Ord,Show,Read)
 
 instance Functor Plucker where
@@ -59,6 +59,8 @@ instance Fractional a => Fractional (Plucker a) where
   (/) = liftA2 (/)
   fromRational = pure . fromRational
 
+-- | Given a pair of points represented by homogeneous coordinates generate Plücker coordinates
+-- for the line through them.
 plucker :: Num a => V4 a -> V4 a -> Plucker a
 plucker (V4 a b c d)
         (V4 e f g h) =
@@ -69,6 +71,7 @@ plucker (V4 a b c d)
           (d*f-b*h)
           (b*g-c*f)
 
+-- | These elements form a basis for the Plücker space, or the Grassmanian manifold @Gr(2,V4)@.
 p01, p02, p03, p23, p31, p12 :: Functor f => (a -> f a) -> Plucker a -> f (Plucker a)
 p01 g (Plucker a b c d e f) = (\a' -> Plucker a' b c d e f) <$> g a
 p02 g (Plucker a b c d e f) = (\b' -> Plucker a b' c d e f) <$> g b
@@ -83,19 +86,22 @@ p12 g (Plucker a b c d e f) = Plucker a b c d e <$> g f
 {-# INLINE p31 #-}
 {-# INLINE p12 #-}
 
--- | Valid Plücker coordinates @p@ will have @squaredError p == 0@
--- That said, floating point makes a mockery of this claim.
+-- | Valid Plücker coordinates @p@ will have @'squaredError' p '==' 0@
+--
+-- That said, floating point makes a mockery of this claim, so you may want to use 'nearZero'.
 squaredError :: (Eq a, Num a) => Plucker a -> a
 squaredError v = v >< v
 
--- | this isn't th actual metric because this bilinear form gives rise to an isotropic quadratic space
+-- | This isn't th actual metric because this bilinear form gives rise to an isotropic quadratic space
 infixl 5 ><
 (><) :: Num a => Plucker a -> Plucker a -> a
 Plucker a b c d e f >< Plucker g h i j k l = a*g+b*h+c*i-d*j-e*k-f*l
 
+-- | Checks if the line is near-isotropic (isotropic vectors in this quadratic space represent lines in real 3d space)
 isotropic :: Epsilon a => Plucker a -> Bool
 isotropic a = nearZero (a >< a)
 
+-- | Checks if the two vectors intersect (or nearly intersect)
 intersects :: Epsilon a => Plucker a -> Plucker a -> Bool
 intersects a b = nearZero (a >< b)
 
@@ -105,4 +111,4 @@ instance Metric Plucker where
 instance Epsilon a => Epsilon (Plucker a) where
   nearZero = nearZero . quadrance
 
--- TODO: drag some stuff out of my thesis
+-- TODO: drag some more stuff out of my thesis

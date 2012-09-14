@@ -9,9 +9,9 @@ module Linear.Matrix
   , mkTransformation
   ) where
 
+import Control.Applicative
 import Control.Lens
 import Data.Distributive
-import Data.Functor
 import Data.Foldable as Foldable
 import Linear.Quaternion
 import Linear.V3
@@ -21,8 +21,8 @@ import Linear.Conjugate
 
 infixl 7 !*!
 -- | matrix product
-(!*!) :: (Functor m, Metric r, Distributive n, Num a) => m (r a) -> r (n a) -> m (n a)
-f !*! g = (\r -> fmap (dot r) g') <$> f
+(!*!) :: (Functor m, Foldable r, Applicative r, Distributive n, Num a) => m (r a) -> r (n a) -> m (n a)
+f !*! g = fmap (\r -> Foldable.foldr (+) 0 . liftA2 (*) r <$> g') f
   where g' = distribute g
 
 -- | matrix * column vector
@@ -45,12 +45,12 @@ trace :: (Monad f, Foldable f, Num a) => f (f a) -> a
 trace m = Foldable.sum (m >>= id)
 {-# INLINE trace #-}
 
--- |Matrices use a row-major representation.
+-- | Matrices use a row-major representation.
 type M33 a = V3 (V3 a)
 type M44 a = V4 (V4 a)
 type M43 a = V4 (V3 a)
 
--- |Build a rotation matrix from a 'Quaternion'.
+-- | Build a rotation matrix from a 'Quaternion'.
 fromQuaternion :: Num a => Quaternion a -> M33 a
 fromQuaternion (Quaternion a (V3 b c d)) =
   V3 (V3 (a*a+b*b-c*c-d*d) (2*b*c-2*a*d) (2*b*d+2*a*c))

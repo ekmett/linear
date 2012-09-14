@@ -19,6 +19,7 @@ import Foreign.Storable (Storable(..))
 import Linear.Metric
 import Linear.Epsilon
 
+-- | A 2-dimensional vector
 data V2 a = V2 a a deriving (Eq,Ord,Show,Read,Data,Typeable)
 
 instance Functor V2 where
@@ -54,6 +55,7 @@ instance Fractional a => Fractional (V2 a) where
 instance Metric V2 where
   dot (V2 a b) (V2 c d) = a * c + b * d
 
+-- | A space that distinguishes 2 orthogonal basis vectors '_x' and '_y', but may have more.
 class R2 t where
   _x :: Functor f => (a -> f a) -> t a -> f (t a)
   _x = _xy._x
@@ -74,7 +76,7 @@ instance Representable V2 where
 instance Distributive V2 where
   distribute f = V2 (fmap (^._x) f) (fmap (^._y) f)
 
--- the counter-clockwise perpendicular vector
+-- | the counter-clockwise perpendicular vector
 perp :: Num a => V2 a -> V2 a
 perp (V2 a b) = V2 (negate b) a
 

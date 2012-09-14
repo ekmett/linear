@@ -18,6 +18,7 @@ import Linear.Epsilon
 import Linear.Metric
 import Linear.V2
 
+-- | A 3-dimensional vector
 data V3 a = V3 a a a deriving (Eq,Ord,Show,Read,Data,Typeable)
 
 instance Functor V3 where
@@ -57,6 +58,7 @@ instance Metric V3 where
 instance Distributive V3 where
   distribute f = V3 (fmap (^._x) f) (fmap (^._y) f) (fmap (^._z) f)
 
+-- | A space that distinguishes 3 orthogonal basis vectors: '_x', '_y', and '_z'. (It may have more)
 class R2 t => R3 t where
   _z :: Functor f => (a -> f a) -> t a -> f (t a)
   _xyz :: Functor f => (V3 a -> f (V3 a)) -> t a -> f (t a)
