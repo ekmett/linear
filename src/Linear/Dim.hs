@@ -12,11 +12,7 @@ module Linear.Dim where
 
 import Control.Lens
 import Data.Complex
-#if __GLASGOW_HASKELL__ >= 706
 import Language.Haskell.TH hiding (Arity)
-#else
-import Language.Haskell.TH
-#endif
 
 -- When the Nat type in GHC.TypeLits has a working solver, switch to that!
 data Nat = Z | S Nat

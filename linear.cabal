@@ -1,6 +1,6 @@
 name:          linear
 category:      Math, Algebra
-version:       0.2.0.2
+version:       0.3
 license:       BSD3
 cabal-version: >= 1.8
 license-file:  LICENSE
@@ -13,7 +13,7 @@ copyright:     Copyright (C) 2012 Edward A. Kmett
 synopsis:      Linear Algebra
 description:   Types and combinators for low-dimension-count linear algebra on free vector spaces
 build-type:    Simple
-tested-with:   GHC == 7.4.1, GHC == 7.6.1
+tested-with:   GHC == 7.6.1
 extra-source-files:
   .travis.yml
   .ghci
@@ -29,9 +29,9 @@ source-repository head
 
 library
   build-depends:
-    base == 4.*,
+    base == 4.6.*,
     distributive >= 0.2.2 && < 0.3,
-    lens >= 2.9 && < 3.1
+    lens >= 3.0.2 && < 3.1
 
   exposed-modules:
     Linear.Conjugate
