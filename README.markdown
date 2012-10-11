@@ -1,8 +1,6 @@
 linear
 ======
 
-[![Build Status](https://secure.travis-ci.org/ekmett/linear.png?branch=master)](http://travis-ci.org/ekmett/linear)
-
 Contact Information
 -------------------
 

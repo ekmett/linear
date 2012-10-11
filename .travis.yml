@@ -4,5 +4,3 @@ before_install:
   - mkdir -p ~/.cabal
   - cp config ~/.cabal/config
   - cabal update
-notifications:
-  irc: "irc.freenode.org#haskell-lens"
