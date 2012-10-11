@@ -36,8 +36,8 @@ class Arity (n :: Nat) where
   apply :: (forall m. t (S m) -> (a, t m)) -> t n -> Fn n a b -> b
 
 instance Arity Z where
-  accum f g t = g t
-  apply f t h = h
+  accum _ g t = g t
+  apply _ _ h = h
 
 instance Arity n => Arity (S n) where
   accum f g t = \a -> accum f g (f t a)
@@ -64,10 +64,10 @@ vpure :: Vector v a => a -> v a
 vpure x = construct % replicateF x
 {-# INLINE vpure #-}
 
-newtype Foldl b n = Foldl b
+newtype Foldl b (n :: Nat) = Foldl b
 
 foldlF :: forall n a b. Arity n => (b -> a -> b) -> b -> Fun n a b
-foldlF f b = Fun $ accum (\(Foldl b) a -> Foldl (f b a)) (\(Foldl b) -> b) (Foldl b :: Foldl b n)
+foldlF f b0 = Fun $ accum (\(Foldl b) a -> Foldl (f b a)) (\(Foldl b) -> b) (Foldl b0 :: Foldl b n)
 {-# INLINE foldlF #-}
 
 vfoldl :: Vector v a => (b -> a -> b) -> b -> v a -> b
@@ -77,9 +77,9 @@ vfoldl f z v = foldlF f z % inspect v
 newtype Map b c n = Map (Fn n b c)
 
 mapF :: forall n a b c. Arity n => (a -> b) -> Fun n b c -> Fun n a c
-mapF f (Fun h) = Fun $ accum (\(Map h) a -> Map (h (f a)))
-                             (\(Map h) -> h)
-                             (Map h :: Map b c n)
+mapF f (Fun h0) = Fun $ accum (\(Map h) a -> Map (h (f a)))
+                              (\(Map h) -> h)
+                              (Map h0 :: Map b c n)
 {-# INLINE mapF #-}
 
 vmap :: (Vector v a, Vector v b) => (a -> b) -> v a -> v b

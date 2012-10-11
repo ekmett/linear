@@ -31,10 +31,12 @@ library
   build-depends:
     base == 4.6.*,
     distributive >= 0.2.2 && < 0.3,
-    lens >= 3.0.2 && < 3.1
+    lens >= 3.0.2 && < 3.1,
+    template-haskell >= 2.8 && < 2.9
 
   exposed-modules:
     Linear.Conjugate
+    Linear.Dim
     Linear.Epsilon
     Linear.Matrix
     Linear.Metric
