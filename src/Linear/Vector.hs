@@ -17,9 +17,12 @@ module Linear.Vector
   , (*^)
   , (^/)
   , lerp
+  , basis
+  , basisFor
   ) where
 
 import Control.Applicative
+import Control.Lens
 
 infixl 6 ^+^, ^-^
 infixl 7 ^*, *^, ^/
@@ -58,3 +61,17 @@ f ^/ a = fmap (/a) f
 lerp :: (Applicative f, Num a) => a -> f a -> f a -> f a
 lerp alpha u v = alpha *^ u ^+^ (1 - alpha) *^ v
 {-# INLINE lerp #-}
+
+-- | Produce a default basis for a vector space. If the dimensionality
+-- of the vector space is not statically known, see 'basisFor'.
+basis :: (Applicative t, Traversable t, Num a) => [t a]
+basis = [ set (element k) 1 zero | k <- [0..lengthOf traverse zero - 1]]
+  where zero = pure 0
+
+-- | Produce a default basis for a vector space from which the
+-- argument is drawn.
+basisFor :: (Traversable t, Enum a, Num a) => t a -> [t a]
+basisFor v = map aux [0..n-1]
+  where z = 0 <$ v
+        n = lengthOf traverse z
+        aux i = z % element i .~ 1
