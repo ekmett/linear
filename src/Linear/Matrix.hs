@@ -50,12 +50,15 @@ type M33 a = V3 (V3 a)
 type M44 a = V4 (V4 a)
 type M43 a = V4 (V3 a)
 
--- | Build a rotation matrix from a 'Quaternion'.
+-- | Build a rotation matrix from a unit 'Quaternion'.
 fromQuaternion :: Num a => Quaternion a -> M33 a
-fromQuaternion (Quaternion a (V3 b c d)) =
-  V3 (V3 (a*a+b*b-c*c-d*d) (2*b*c-2*a*d) (2*b*d+2*a*c))
-     (V3 (2*b*c+2*a*d) (a*a-b*b+c*c-d*d) (2*c*d-2*a*b))
-     (V3 (2*b*d-2*a*c) (2*c*d+2*a*b) (a*a-b*b-c*c+d*d))
+fromQuaternion (Quaternion w (V3 x y z)) =
+  V3 (V3 (1-2*(y2+z2)) (2*(x*y-z*w)) (2*(x*z+y*w)))
+     (V3 (2*(x*y+z*w)) (1-2*(x2+z2)) (2*(y*z-x*w)))
+     (V3 (2*(x*z-y*w)) (2*(y*z+x*w)) (1-2*(x2+y2)))
+  where x2 = x * x
+        y2 = y * y
+        z2 = z * z
 
 mkTransformationMat :: Num a => M33 a -> V3 a -> M44 a
 mkTransformationMat (V3 r1 r2 r3) (V3 tx ty tz) =
