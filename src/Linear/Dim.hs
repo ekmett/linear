@@ -8,6 +8,8 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE BangPatterns #-}
 module Linear.Dim where
 
 import Control.Lens
@@ -67,7 +69,9 @@ vpure x = construct % replicateF x
 newtype Foldl b (n :: Nat) = Foldl b
 
 foldlF :: forall n a b. Arity n => (b -> a -> b) -> b -> Fun n a b
-foldlF f b0 = Fun $ accum (\(Foldl b) a -> Foldl (f b a)) (\(Foldl b) -> b) (Foldl b0 :: Foldl b n)
+foldlF f b0 = Fun $ accum (\(Foldl b) a -> Foldl (f b a))
+                          (\(Foldl b) -> b)
+                          (Foldl b0 :: Foldl b n)
 {-# INLINE foldlF #-}
 
 vfoldl :: Vector v a => (b -> a -> b) -> b -> v a -> b
@@ -86,13 +90,76 @@ vmap :: (Vector v a, Vector v b) => (a -> b) -> v a -> v b
 vmap f v = construct % mapF f % inspect v
 {-# INLINE vmap #-}
 
--- newtype ZipWith a b c n
+newtype Tagn a (n::Nat) = Tagn a
+data Tup a c d (n::Nat) = Tup !a (Fn n c d)
 
-{-
-zipWith :: (Vector v a, Vector v b, Vector v c)
-/bin/bash: :w: command not found
-zipWith f v w = inspect w
-              $ inspect v
-              $ zipWithF f
-              $ construct
--}
+type DList a = [a] -> [a]
+toList :: DList a -> [a]
+toList = ($ [])
+snoc :: DList a -> a -> DList a
+snoc xs x = xs . (x:)
+
+vzipWithF :: forall n a b c d. Arity n => 
+             (a -> b -> c) -> Fun n c d -> Fun n a (Fun n b d)
+vzipWithF f (Fun k) = Fun $ 
+                      accum (\(Tagn as) !a -> Tagn (as `snoc` a))
+                            (\(Tagn as) -> (Fun :: Fn n b d -> Fun n b d) $ 
+                                           accum (\(Tup (a:as') h) b -> 
+                                                    Tup as' (h (f a b)))
+                                                 (\(Tup _ h) -> h)
+                                                 (Tup (toList as) k
+                                                    :: Tup [a] c d n))
+                            (Tagn id :: Tagn (DList a) n)
+{-# INLINE vzipWithF #-}
+
+vzipWith :: (Vector v a, Vector v b, Vector v c)
+        => (a -> b -> c) -> v a -> v b -> v c
+vzipWith f v w = inspect w
+               $ inspect v
+               $ vzipWithF f
+               $ construct
+{-# INLINE vzipWith #-}
+
+infixl 6 ^+^, ^-^
+infixl 7 ^*, *^, ^/
+
+-- | Compute the sum of two vectors
+(^+^) :: (Num a, Vector v a) => v a -> v a -> v a
+(^+^) = vzipWith (+)
+{-# INLINE (^+^) #-}
+
+-- | Compute the difference between two vectors
+(^-^) :: (Num a, Vector v a) => v a -> v a -> v a
+(^-^) = vzipWith (-)
+{-# INLINE (^-^) #-}
+
+-- | Compute the negation of a vector
+gnegate :: (Num a, Vector v a) => v a -> v a
+gnegate = vmap negate
+{-# INLINE gnegate #-}
+
+-- | Compute the left scalar product
+(*^) :: (Num a, Vector v a) => a -> v a -> v a
+(*^) a = vmap (a*)
+{-# INLINE (*^) #-}
+
+-- | Compute the right scalar product
+(^*) :: (Vector v a, Num a) => v a -> a -> v a
+f ^* a = vmap (*a) f
+{-# INLINE (^*) #-}
+
+-- | Compute division by a scalar on the right.
+(^/) :: (Vector v a, Fractional a) => v a -> a -> v a
+f ^/ a = vmap (/a) f
+{-# INLINE (^/) #-}
+
+-- | Linearly interpolate between two vectors.
+lerp :: (Vector v a, Num a) => a -> v a -> v a -> v a
+lerp alpha u v = alpha *^ u ^+^ (1 - alpha) *^ v
+{-# INLINE lerp #-}
+
+-- | Compute the inner product of two vectors or (equivalently)
+-- convert a vector @f a@ into a covector @f a -> a@.
+dot :: (Num a, Vector v a) => v a -> v a -> a
+dot v w = vfoldl (+) 0 $ vzipWith (*) v w
+{-# INLINE dot #-}
