@@ -15,6 +15,9 @@ module Linear.Dim where
 import Control.Lens
 import Data.Complex
 import Language.Haskell.TH hiding (Arity)
+import Linear.V2 (V2(..))
+import Linear.V3 (V3(..))
+import Linear.V4 (V4(..))
 
 -- When the Nat type in GHC.TypeLits has a working solver, switch to that!
 data Nat = Z | S Nat
@@ -163,3 +166,20 @@ lerp alpha u v = alpha *^ u ^+^ (1 - alpha) *^ v
 dot :: (Num a, Vector v a) => v a -> v a -> a
 dot v w = vfoldl (+) 0 $ vzipWith (*) v w
 {-# INLINE dot #-}
+
+-- Instances for common low dimensional vectors
+type instance Dim V2 = S (S Z)
+type instance Dim V3 = S (S (S Z))
+type instance Dim V4 = S (S (S (S Z)))
+
+instance Vector V2 a where
+  construct = Fun V2
+  inspect (V2 x y) (Fun f) = f x y
+
+instance Vector V3 a where
+  construct = Fun V3
+  inspect (V3 x y z) (Fun f) = f x y z
+
+instance Vector V4 a where
+  construct = Fun V4
+  inspect (V4 x y z w) (Fun f) = f x y z w
