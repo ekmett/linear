@@ -65,7 +65,7 @@ lerp alpha u v = alpha *^ u ^+^ (1 - alpha) *^ v
 -- | Produce a default basis for a vector space. If the dimensionality
 -- of the vector space is not statically known, see 'basisFor'.
 basis :: (Applicative t, Traversable t, Num a) => [t a]
-basis = [ set (element k) 1 zero | k <- [0..lengthOf traverse zero - 1]]
+basis = [ set (element k) 1 zero | k <- [0..lengthOf folded zero - 1]]
   where zero = pure 0
 
 -- | Produce a default basis for a vector space from which the
@@ -73,5 +73,5 @@ basis = [ set (element k) 1 zero | k <- [0..lengthOf traverse zero - 1]]
 basisFor :: (Traversable t, Enum a, Num a) => t a -> [t a]
 basisFor v = map aux [0..n-1]
   where z = 0 <$ v
-        n = lengthOf traverse z
+        n = lengthOf folded z
         aux i = z % element i .~ 1
