@@ -1,6 +1,6 @@
 name:          linear
 category:      Math, Algebra
-version:       0.4
+version:       0.4.1
 license:       BSD3
 cabal-version: >= 1.8
 license-file:  LICENSE
@@ -31,10 +31,11 @@ library
   build-depends:
     base == 4.6.*,
     distributive >= 0.2.2 && < 0.3,
-    lens >= 3.2 && < 3.3,
+    lens >= 3.2 && < 4,
     template-haskell >= 2.8 && < 2.9
 
   exposed-modules:
+    Linear
     Linear.Conjugate
     Linear.Epsilon
     Linear.Matrix
