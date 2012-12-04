@@ -35,6 +35,7 @@ library
     template-haskell >= 2.7 && < 2.9
 
   exposed-modules:
+    Linear
     Linear.Conjugate
     Linear.Epsilon
     Linear.Matrix
