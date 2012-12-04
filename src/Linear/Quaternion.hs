@@ -129,7 +129,7 @@ instance Complicated Complex where
 
 instance Complicated Quaternion where
   _e f (Quaternion a v) = (\a' -> Quaternion a' v) <$> f a
-  _i f (Quaternion a v) = Quaternion a <$> traverseOf _x f v
+  _i f (Quaternion a v) = Quaternion a <$> _x f v
   --_i f (Quaternion a (V3 b c d)) = (\b' -> Quaternion a (V3 b' c d)) <$> f b
 
 class Complicated t => Hamiltonian t where
@@ -138,8 +138,8 @@ class Complicated t => Hamiltonian t where
   _ijk :: Functor f => (V3 a -> f (V3 a)) -> t a -> f (t a)
 
 instance Hamiltonian Quaternion where
-  _j f (Quaternion a v) = Quaternion a <$> traverseOf _y f v
-  _k f (Quaternion a v) = Quaternion a <$> traverseOf _z f v
+  _j f (Quaternion a v) = Quaternion a <$> _y f v
+  _k f (Quaternion a v) = Quaternion a <$> _z f v
   -- _j f (Quaternion a (V3 b c d)) = (\c' -> Quaternion a (V3 b c' d)) <$> f c
   -- _k f (Quaternion a (V3 b c d)) = Quaternion a . V3 b c <$> f d
 

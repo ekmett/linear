@@ -74,4 +74,4 @@ basisFor :: (Traversable t, Enum a, Num a) => t a -> [t a]
 basisFor v = map aux [0..n-1]
   where z = 0 <$ v
         n = lengthOf folded z
-        aux i = z % element i .~ 1
+        aux i = z & element i .~ 1
