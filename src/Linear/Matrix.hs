@@ -13,10 +13,13 @@ import Control.Applicative
 import Control.Lens
 import Data.Distributive
 import Data.Foldable as Foldable
+import Linear.Epsilon
+import Linear.Metric
 import Linear.Quaternion
+import Linear.V2
 import Linear.V3
 import Linear.V4
-import Linear.Metric
+import Linear.Vector ((*^))
 import Linear.Conjugate
 
 infixl 7 !*!
@@ -35,6 +38,19 @@ infixl 7 !*
 (*!) :: (Metric r, Distributive n, Num a) => r a -> r (n a) -> n a
 f *! g = dot f <$> distribute g
 
+infixl 7 *!!
+-- |Scalar-matrix product.
+(*!!) :: (Functor m, Functor r, Num a) => a -> m (r a) -> m (r a)
+s *!! m = fmap (s *^) m
+{-# INLINE (*!!) #-}
+
+infixl 7 !!*
+-- |Matrix-scalar product.
+(!!*) :: (Functor m, Functor r, Num a) => m (r a) -> a -> m (r a)
+(!!*) = flip (*!!)
+{-# INLINE (!!*) #-}
+
+
 -- | hermitian conjugate or conjugate transpose
 adjoint :: (Functor m, Distributive n, Conjugate a) => m (n a) -> n (m a)
 adjoint = collect (fmap conjugate)
@@ -46,6 +62,7 @@ trace m = Foldable.sum (m >>= id)
 {-# INLINE trace #-}
 
 -- | Matrices use a row-major representation.
+type M22 a = V2 (V2 a)
 type M33 a = V3 (V3 a)
 type M44 a = V4 (V4 a)
 type M43 a = V4 (V3 a)
@@ -96,3 +113,43 @@ eye4 = V4 (set _x 1 0) (set _y 1 0) (set _z 1 0) (set _w 1 0)
 -- column) from a 3x4 or 4x4 matrix
 translation :: (R3 t, R4 v, Functor f, Functor t) => (V3 a -> f (V3 a)) -> t (v a) -> f (t a)
 translation = (. fmap (^._w)) . _xyz
+
+-- |2x2 matrix determinant.
+det22 (V2 (V2 a b) (V2 c d)) = a * d - b * c
+{-# INLINE det22 #-}
+
+-- |3x3 matrix determinant.
+det33 (V3 (V3 a b c) 
+          (V3 d e f)
+          (V3 g h i)) = a * (e*i-f*h) - d * (b*i-c*h) + g * (b*f-c*e)
+{-# INLINE det33 #-}
+
+-- |2x2 matrix inverse.
+inv22 :: (Epsilon a, Floating a) => M22 a -> Maybe (M22 a)
+inv22 m@(V2 (V2 a b) (V2 c d)) 
+  | nearZero det = Nothing
+  | otherwise = Just $ (1 / det) *!! (V2 (V2 d (-b)) (V2 (-c) a))
+  where det = det22 m
+{-# INLINE inv22 #-}
+
+-- |3x3 matrix inverse.
+inv33 :: (Epsilon a, Floating a) => M33 a -> Maybe (M33 a)
+inv33 m@(V3 (V3 a b c)
+            (V3 d e f)
+            (V3 g h i)) 
+  | nearZero det = Nothing
+  | otherwise = Just $ (1 / det) *!! (V3 (V3 a' b' c')
+                                         (V3 d' e' f')
+                                         (V3 g' h' i'))
+  where a' = cofactor (e,f,h,i)
+        b' = cofactor (c,b,i,h)
+        c' = cofactor (b,c,e,f)
+        d' = cofactor (f,d,i,g)
+        e' = cofactor (a,c,g,i)
+        f' = cofactor (c,a,f,d)
+        g' = cofactor (d,e,g,h)
+        h' = cofactor (b,a,h,g)
+        i' = cofactor (a,b,d,e)
+        cofactor (q,r,s,t) = det22 (V2 (V2 q r) (V2 s t))
+        det = det33 m
+{-# INLINE inv33 #-}
