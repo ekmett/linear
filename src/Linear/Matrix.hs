@@ -1,7 +1,8 @@
 module Linear.Matrix
   ( (!*!), (!*) , (*!)
   , adjoint
-  , M33, M44, M43, m33_to_m44, m43_to_m44
+  , M22, M33, M44, M43, m33_to_m44, m43_to_m44
+  , det22, det33, inv22, inv33
   , eye3, eye4
   , trace
   , translation
