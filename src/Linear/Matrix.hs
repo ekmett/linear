@@ -1,5 +1,5 @@
 module Linear.Matrix
-  ( (!*!), (!*) , (*!)
+  ( (!*!), (!*) , (*!), (!!*)
   , adjoint
   , M22, M33, M44, M43, m33_to_m44, m43_to_m44
   , det22, det33, inv22, inv33
@@ -116,18 +116,20 @@ translation :: (R3 t, R4 v, Functor f, Functor t) => (V3 a -> f (V3 a)) -> t (v 
 translation = (. fmap (^._w)) . _xyz
 
 -- |2x2 matrix determinant.
+det22 :: Num a => V2 (V2 a) -> a
 det22 (V2 (V2 a b) (V2 c d)) = a * d - b * c
 {-# INLINE det22 #-}
 
 -- |3x3 matrix determinant.
-det33 (V3 (V3 a b c) 
+det33 :: Num a => V3 (V3 a) -> a
+det33 (V3 (V3 a b c)
           (V3 d e f)
           (V3 g h i)) = a * (e*i-f*h) - d * (b*i-c*h) + g * (b*f-c*e)
 {-# INLINE det33 #-}
 
 -- |2x2 matrix inverse.
 inv22 :: (Epsilon a, Floating a) => M22 a -> Maybe (M22 a)
-inv22 m@(V2 (V2 a b) (V2 c d)) 
+inv22 m@(V2 (V2 a b) (V2 c d))
   | nearZero det = Nothing
   | otherwise = Just $ (1 / det) *!! (V2 (V2 d (-b)) (V2 (-c) a))
   where det = det22 m
@@ -137,7 +139,7 @@ inv22 m@(V2 (V2 a b) (V2 c d))
 inv33 :: (Epsilon a, Floating a) => M33 a -> Maybe (M33 a)
 inv33 m@(V3 (V3 a b c)
             (V3 d e f)
-            (V3 g h i)) 
+            (V3 g h i))
   | nearZero det = Nothing
   | otherwise = Just $ (1 / det) *!! (V3 (V3 a' b' c')
                                          (V3 d' e' f')
