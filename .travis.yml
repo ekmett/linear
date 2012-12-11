@@ -1,6 +1,15 @@
 language: haskell
+
 # Uncomment the next 4 lines whenever hackage is down.
 before_install:
   - mkdir -p ~/.cabal
   - cp config ~/.cabal/config
   - cabal update
+
+notifications:
+  irc:
+    channels:
+      - "irc.freenode.org#edwardk"
+    skip_join: true
+    template:
+      - "\x0313linear\x03/\x0306%{branch}\x03 \x0314%{commit}\x03 %{build_url} %{message}"
