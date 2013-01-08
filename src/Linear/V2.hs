@@ -26,6 +26,8 @@ data V2 a = V2 a a deriving (Eq,Ord,Show,Read,Data,Typeable)
 instance Functor V2 where
   fmap f (V2 a b) = V2 (f a) (f b)
   {-# INLINE fmap #-}
+  a <$ _ = V2 a a
+  {-# INLINE (<$ #-}
 
 instance Foldable V2 where
   foldMap f (V2 a b) = f a `mappend` f b
@@ -50,6 +52,8 @@ instance Monad V2 where
 instance Num a => Num (V2 a) where
   (+) = liftA2 (+)
   {-# INLINE (+) #-}
+  (-) = liftA2 (-)
+  {-# INLINE (-) #-}
   (*) = liftA2 (*)
   {-# INLINE (*) #-}
   negate = fmap negate

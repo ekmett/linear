@@ -51,6 +51,8 @@ instance Monad V3 where
 instance Num a => Num (V3 a) where
   (+) = liftA2 (+)
   {-# INLINE (+) #-}
+  (-) = liftA2 (-)
+  {-# INLINE (-) #-}
   (*) = liftA2 (*)
   {-# INLINE (*) #-}
   negate = fmap negate
