@@ -12,7 +12,7 @@ bug-reports:   http://github.com/ekmett/linear/issues
 copyright:     Copyright (C) 2012 Edward A. Kmett
 synopsis:      Linear Algebra
 description:   Types and combinators for low-dimension-count linear algebra on free vector spaces
-build-type:    Simple
+build-type:    Custom
 tested-with:   GHC == 7.4.2, GHC == 7.6.1
 extra-source-files:
   .travis.yml
