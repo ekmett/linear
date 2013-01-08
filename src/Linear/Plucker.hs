@@ -40,7 +40,7 @@ instance Monad Plucker where
 
 instance Distributive Plucker where
   distribute = distributeRep
-  {- #INLINE distribute #-}
+  {-# INLINE distribute #-}
 
 instance Representable Plucker where
   rep f = Plucker (f p01) (f p02) (f p03) (f p23) (f p31) (f p12)

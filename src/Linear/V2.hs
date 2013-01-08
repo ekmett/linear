@@ -27,7 +27,7 @@ instance Functor V2 where
   fmap f (V2 a b) = V2 (f a) (f b)
   {-# INLINE fmap #-}
   a <$ _ = V2 a a
-  {-# INLINE (<$ #-}
+  {-# INLINE (<$) #-}
 
 instance Foldable V2 where
   foldMap f (V2 a b) = f a `mappend` f b
