@@ -27,6 +27,10 @@ source-repository head
   type: git
   location: git://github.com/ekmett/linear.git
 
+flag lib-Werror
+  manual: True
+  default: False
+
 library
   build-depends:
     base             >= 4.5 && < 5,
@@ -47,6 +51,8 @@ library
     Linear.V4
     Linear.Vector
 
+  if flag(lib-Werror)
+    ghc-options: -Werror
   ghc-options: -Wall -fwarn-tabs -O2 -fdicts-cheap -funbox-strict-fields
   hs-source-dirs: src
 
