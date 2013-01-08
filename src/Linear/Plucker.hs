@@ -13,6 +13,7 @@ import Data.Foldable as Foldable
 import Data.Monoid
 import Data.Traversable
 import Linear.Epsilon
+import GHC.Arr (Ix(..))
 import Linear.Metric
 import Control.Lens
 import Linear.V4
@@ -45,6 +46,29 @@ instance Foldable Plucker where
 instance Traversable Plucker where
   traverse g (Plucker a b c d e f) =
     Plucker <$> g a <*> g b <*> g c <*> g d <*> g e <*> g f
+
+instance Ix a => Ix (Plucker a) where
+    range (Plucker l1 l2 l3 l4 l5 l6,Plucker u1 u2 u3 u4 u5 u6) =
+      [Plucker i1 i2 i3 i4 i5 i6 | i1 <- range (l1,u1)
+                       , i2 <- range (l2,u2)
+                       , i3 <- range (l3,u3)
+                       , i4 <- range (l4,u4)
+                       , i5 <- range (l5,u5)
+                       , i6 <- range (l6,u6)
+                       ]
+
+    unsafeIndex (Plucker l1 l2 l3 l4 l5 l6,Plucker u1 u2 u3 u4 u5 u6) (Plucker i1 i2 i3 i4 i5 i6) =
+      unsafeIndex (l6,u6) i6 + unsafeRangeSize (l6,u6) * (
+      unsafeIndex (l5,u5) i5 + unsafeRangeSize (l5,u5) * (
+      unsafeIndex (l4,u4) i4 + unsafeRangeSize (l4,u4) * (
+      unsafeIndex (l3,u3) i3 + unsafeRangeSize (l3,u3) * (
+      unsafeIndex (l2,u2) i2 + unsafeRangeSize (l2,u2) * (
+      unsafeIndex (l1,u1) i1)))))
+
+    inRange (Plucker l1 l2 l3 l4 l5 l6,Plucker u1 u2 u3 u4 u5 u6) (Plucker i1 i2 i3 i4 i5 i6) =
+      inRange (l1,u1) i1 && inRange (l2,u2) i2 &&
+      inRange (l3,u3) i3 && inRange (l4,u4) i4 &&
+      inRange (l5,u5) i5 && inRange (l6,u6) i6
 
 instance Num a => Num (Plucker a) where
   (+) = liftA2 (+)
