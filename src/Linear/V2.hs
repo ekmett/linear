@@ -16,6 +16,7 @@ import Data.Foldable
 import Data.Monoid
 import Foreign.Ptr (castPtr)
 import Foreign.Storable (Storable(..))
+import GHC.Arr (Ix(..))
 import Linear.Metric
 import Linear.Epsilon
 
@@ -90,3 +91,18 @@ instance forall a. Storable a => Storable (V2 a) where
     where ptr' = castPtr ptr
   peek ptr = V2 <$> peek ptr' <*> peekElemOff ptr' 1
     where ptr' = castPtr ptr
+
+instance Ix a => Ix (V2 a) where
+    {-# SPECIALISE instance Ix (V2 Int) #-}
+
+    {-# INLINE range #-}
+    range (V2 l1 l2,V2 u1 u2) =
+      [ V2 i1 i2 | i1 <- range (l1,u1), i2 <- range (l2,u2) ]
+
+    {-# INLINE unsafeIndex #-}
+    unsafeIndex (V2 l1 l2,V2 u1 u2) (V2 i1 i2) =
+      unsafeIndex (l1,u1) i1 * unsafeRangeSize (l2,u2) + unsafeIndex (l2,u2) i2
+
+    {-# INLINE inRange #-}
+    inRange (V2 l1 l2,V2 u1 u2) (V2 i1 i2) =
+      inRange (l1,u1) i1 && inRange (l2,u2) i2

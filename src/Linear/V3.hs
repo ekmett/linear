@@ -14,6 +14,7 @@ import Data.Foldable
 import Data.Monoid
 import Foreign.Ptr (castPtr)
 import Foreign.Storable (Storable(..))
+import GHC.Arr (Ix(..))
 import Linear.Epsilon
 import Linear.Metric
 import Linear.V2
@@ -96,3 +97,21 @@ triple a b c = dot a (cross b c)
 
 instance Epsilon a => Epsilon (V3 a) where
   nearZero = nearZero . quadrance
+
+instance Ix a => Ix (V3 a) where
+    {-# SPECIALISE instance Ix (V3 Int) #-}
+
+    range (V3 l1 l2 l3,V3 u1 u2 u3) =
+        [V3 i1 i2 i3 | i1 <- range (l1,u1)
+                     , i2 <- range (l2,u2)
+                     , i3 <- range (l3,u3)
+                     ]
+
+    unsafeIndex (V3 l1 l2 l3,V3 u1 u2 u3) (V3 i1 i2 i3) =
+      unsafeIndex (l3,u3) i3 + unsafeRangeSize (l3,u3) * (
+      unsafeIndex (l2,u2) i2 + unsafeRangeSize (l2,u2) * (
+      unsafeIndex (l1,u1) i1))
+
+    inRange (V3 l1 l2 l3,V3 u1 u2 u3) (V3 i1 i2 i3) =
+      inRange (l1,u1) i1 && inRange (l2,u2) i2 &&
+      inRange (l3,u3) i3
