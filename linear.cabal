@@ -1,6 +1,6 @@
 name:          linear
 category:      Math, Algebra
-version:       0.4.2.1
+version:       0.4.2.2
 license:       BSD3
 cabal-version: >= 1.8
 license-file:  LICENSE
@@ -30,7 +30,7 @@ source-repository head
 library
   build-depends:
     base             >= 4.5 && < 5,
-    distributive     >= 0.2.2 && < 0.3,
+    distributive     >= 0.2.2,
     lens             >= 3.6 && < 3.8,
     template-haskell >= 2.7 && < 2.9
 
