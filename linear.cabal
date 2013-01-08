@@ -15,21 +15,18 @@ description:   Types and combinators for low-dimension-count linear algebra on f
 build-type:    Custom
 tested-with:   GHC == 7.4.1, GHC == 7.4.2, GHC == 7.6.1
 extra-source-files:
-  .travis.yml
   .ghci
   .gitignore
+  .travis.yml
   .vim.custom
-  config
-  README.markdown
+  travis/cabal-apt-install
+  travis/config
   CHANGELOG.markdown
+  README.markdown
 
 source-repository head
   type: git
   location: git://github.com/ekmett/linear.git
-
-flag lib-Werror
-  manual: True
-  default: False
 
 library
   build-depends:
@@ -51,8 +48,6 @@ library
     Linear.V4
     Linear.Vector
 
-  if flag(lib-Werror)
-    ghc-options: -Werror
   ghc-options: -Wall -fwarn-tabs -O2 -fdicts-cheap -funbox-strict-fields
   hs-source-dirs: src
 
