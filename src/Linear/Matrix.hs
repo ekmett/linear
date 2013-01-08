@@ -1,3 +1,15 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Linear.Matrix
+-- Copyright   :  (C) 2012-2013 Edward Kmett,
+-- License     :  BSD-style (see the file LICENSE)
+--
+-- Maintainer  :  Edward Kmett <ekmett@gmail.com>
+-- Stability   :  experimental
+-- Portability :  non-portable
+--
+-- Simple matrix operation for low-dimensional primitives.
+----------------------------------------------------------------------------
 module Linear.Matrix
   ( (!*!), (!*) , (*!), (!!*), (*!!)
   , adjoint

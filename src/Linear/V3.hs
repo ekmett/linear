@@ -1,4 +1,16 @@
 {-# LANGUAGE DeriveDataTypeable, ScopedTypeVariables #-}
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Linear.V3
+-- Copyright   :  (C) 2012-2013 Edward Kmett,
+-- License     :  BSD-style (see the file LICENSE)
+--
+-- Maintainer  :  Edward Kmett <ekmett@gmail.com>
+-- Stability   :  experimental
+-- Portability :  non-portable
+--
+-- 3-D Vectors
+----------------------------------------------------------------------------
 module Linear.V3
   ( V3(..)
   , cross, triple

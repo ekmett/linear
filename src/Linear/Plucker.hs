@@ -1,3 +1,15 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Linear.Plucker
+-- Copyright   :  (C) 2012-2013 Edward Kmett,
+-- License     :  BSD-style (see the file LICENSE)
+--
+-- Maintainer  :  Edward Kmett <ekmett@gmail.com>
+-- Stability   :  experimental
+-- Portability :  non-portable
+--
+-- Plücker coordinates for lines in 3d homogeneous space.
+----------------------------------------------------------------------------
 module Linear.Plucker
   ( Plucker(..)
   , squaredError

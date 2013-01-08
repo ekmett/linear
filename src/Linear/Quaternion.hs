@@ -1,4 +1,16 @@
 {-# LANGUAGE DeriveDataTypeable, PatternGuards, ScopedTypeVariables #-}
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Linear.Quaternion
+-- Copyright   :  (C) 2012-2013 Edward Kmett,
+-- License     :  BSD-style (see the file LICENSE)
+--
+-- Maintainer  :  Edward Kmett <ekmett@gmail.com>
+-- Stability   :  experimental
+-- Portability :  non-portable
+--
+-- Quaternions
+----------------------------------------------------------------------------
 module Linear.Quaternion
   ( Quaternion(..)
   , Complicated(..)

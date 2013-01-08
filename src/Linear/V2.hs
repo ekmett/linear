@@ -2,6 +2,18 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 -- {-# OPTIONS_GHC -fno-warn-name-shadowing #-}
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Linear.V2
+-- Copyright   :  (C) 2012-2013 Edward Kmett,
+-- License     :  BSD-style (see the file LICENSE)
+--
+-- Maintainer  :  Edward Kmett <ekmett@gmail.com>
+-- Stability   :  experimental
+-- Portability :  non-portable
+--
+-- 2-D Vectors
+----------------------------------------------------------------------------
 module Linear.V2
   ( V2(..)
   , R2(..)

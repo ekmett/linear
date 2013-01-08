@@ -7,6 +7,7 @@
 -- Stability   :  provisional
 -- Portability :  portable
 --
+-- Testing for values "near" zero
 -----------------------------------------------------------------------------
 module Linear.Epsilon
   ( Epsilon(..)
