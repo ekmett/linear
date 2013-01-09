@@ -35,6 +35,10 @@ import Linear.V4
 import Linear.Vector ((*^))
 import Linear.Conjugate
 
+-- $setup
+-- >>> import Data.Complex
+-- >>> import Debug.SimpleReflect.Vars
+
 infixl 7 !*!
 -- | matrix product
 --
@@ -78,11 +82,17 @@ infixl 7 !!*
 {-# INLINE (!!*) #-}
 
 -- | hermitian conjugate or conjugate transpose
+--
+-- >>> adjoint (V2 (V2 (1 :+ 2) (3 :+ 4)) (V2 (5 :+ 6) (7 :+ 8)))
+-- V2 (V2 (1.0 :+ (-2.0)) (5.0 :+ (-6.0))) (V2 (3.0 :+ (-4.0)) (7.0 :+ (-8.0)))
 adjoint :: (Functor m, Distributive n, Conjugate a) => m (n a) -> n (m a)
 adjoint = collect (fmap conjugate)
 {-# INLINE adjoint #-}
 
 -- | Compute the trace of a matrix
+--
+-- >>> trace (V2 (V2 a b) (V2 c d))
+-- a + d
 trace :: (Monad f, Foldable f, Num a) => f (f a) -> a
 trace m = Foldable.sum (join m)
 {-# INLINE trace #-}
@@ -130,12 +140,18 @@ m33_to_m44 (V3 r1 r2 r3) = V4 (vector r1) (vector r2) (vector r3) (point 0)
 {-# ANN m33_to_m44 "HLint: ignore Use camelCase" #-}
 
 -- |3x3 identity matrix.
+--
+-- >>> eye3
+-- V3 (V3 1 0 0) (V3 0 1 0) (V3 0 0 1)
 eye3 :: Num a => M33 a
 eye3 = V3 (V3 1 0 0)
           (V3 0 1 0)
           (V3 0 0 1)
 
 -- |4x4 identity matrix.
+--
+-- >>> eye4
+-- V4 (V4 1 0 0 0) (V4 0 1 0 0) (V4 0 0 1 0) (V4 0 0 0 1)
 eye4 :: Num a => M44 a
 eye4 = V4 (V4 1 0 0 0)
           (V4 0 1 0 0)
@@ -150,12 +166,13 @@ translation = (. fmap (^._w)) . _xyz where
   x ^. l = getConst (l Const x)
 
 -- |2x2 matrix determinant.
-det22 :: Num a => V2 (V2 a) -> a
+--
+det22 :: Num a => M22 a -> a
 det22 (V2 (V2 a b) (V2 c d)) = a * d - b * c
 {-# INLINE det22 #-}
 
 -- |3x3 matrix determinant.
-det33 :: Num a => V3 (V3 a) -> a
+det33 :: Num a => M33 a -> a
 det33 (V3 (V3 a b c)
           (V3 d e f)
           (V3 g h i)) = a * (e*i-f*h) - d * (b*i-c*h) + g * (b*f-c*e)
