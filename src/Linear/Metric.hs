@@ -17,10 +17,17 @@ module Linear.Metric
 import Control.Applicative
 import Linear.Epsilon
 
+-- $setup
+-- >>> import Linear
+
 -- | A free inner product/metric space
 class Applicative f => Metric f where
   -- | Compute the inner product of two vectors or (equivalently)
   -- convert a vector @f a@ into a covector @f a -> a@.
+  --
+  -- >>> V2 1 2 `dot` V2 3 4
+  -- 11
+
   dot :: Num a => f a -> f a -> a
 
   -- | Compute the squared norm. The name quadrance arises from
