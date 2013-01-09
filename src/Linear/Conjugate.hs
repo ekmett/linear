@@ -23,9 +23,10 @@ class Num a => Conjugate a where
   -- | Conjugate a value. This defaults to the trivial involution.
   --
   -- >>> conjugate (1 :+ 2)
-  -- 1 :+ (-2)
+  -- 1.0 :+ (-2.0)
   --
-  -- >>> conjugate
+  -- >>> conjugate 1
+  -- 1
   conjugate :: a -> a
   conjugate = id
 
