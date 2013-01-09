@@ -1,3 +1,4 @@
+{-# LANGUAGE ScopedTypeVariables #-}
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Linear.Plucker
@@ -24,9 +25,11 @@ import Data.Distributive
 import Data.Foldable as Foldable
 import Data.Monoid
 import Data.Traversable
-import Linear.Epsilon
+import Foreign.Ptr (castPtr)
+import Foreign.Storable (Storable(..))
 import GHC.Arr (Ix(..))
 import Linear.Core
+import Linear.Epsilon
 import Linear.Metric
 import Linear.V4
 
@@ -128,6 +131,29 @@ instance Fractional a => Fractional (Plucker a) where
   {-# INLINE (/) #-}
   fromRational = pure . fromRational
   {-# INLINE fromRational #-}
+
+instance Storable a => Storable (Plucker a) where
+  sizeOf _ = 6 * sizeOf (undefined::a)
+  {-# INLINE sizeOf #-}
+  alignment _ = alignment (undefined::a)
+  {-# INLINE alignment #-}
+  poke ptr (Plucker a b c d e f) = do
+    poke ptr' a
+    pokeElemOff ptr' 1 b
+    pokeElemOff ptr' 2 c
+    pokeElemOff ptr' 3 d
+    pokeElemOff ptr' 4 e
+    pokeElemOff ptr' 5 f
+    where ptr' = castPtr ptr
+  {-# INLINE poke #-}
+  peek ptr = Plucker <$> peek ptr'
+                     <*> peekElemOff ptr' 1
+                     <*> peekElemOff ptr' 2
+                     <*> peekElemOff ptr' 3
+                     <*> peekElemOff ptr' 4
+                     <*> peekElemOff ptr' 5
+    where ptr' = castPtr ptr
+  {-# INLINE peek #-}
 
 -- | Given a pair of points represented by homogeneous coordinates generate Plücker coordinates
 -- for the line through them.

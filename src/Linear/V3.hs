@@ -119,7 +119,7 @@ instance Core V3 where
   core f = V3 (f _x) (f _y) (f _z)
   {-# INLINE core #-}
 
-instance forall a. Storable a => Storable (V3 a) where
+instance Storable a => Storable (V3 a) where
   sizeOf _ = 3 * sizeOf (undefined::a)
   {-# INLINE sizeOf #-}
   alignment _ = alignment (undefined::a)

@@ -101,7 +101,7 @@ instance Traversable Quaternion where
   traverse f (Quaternion e v) = Quaternion <$> f e <*> traverse f v
   {-# INLINE traverse #-}
 
-instance forall a. Storable a => Storable (Quaternion a) where
+instance Storable a => Storable (Quaternion a) where
   sizeOf _ = 4 * sizeOf (undefined::a)
   {-# INLINE sizeOf #-}
   alignment _ = alignment (undefined::a)

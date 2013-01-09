@@ -131,7 +131,7 @@ instance Core V4 where
   core f = V4 (f _x) (f _y) (f _z) (f _w)
   {-# INLINE core #-}
 
-instance forall a. Storable a => Storable (V4 a) where
+instance Storable a => Storable (V4 a) where
   sizeOf _ = 4 * sizeOf (undefined::a)
   {-# INLINE sizeOf #-}
   alignment _ = alignment (undefined::a)

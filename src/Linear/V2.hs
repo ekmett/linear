@@ -161,7 +161,7 @@ instance Epsilon a => Epsilon (V2 a) where
   nearZero = nearZero . quadrance
   {-# INLINE nearZero #-}
 
-instance forall a. Storable a => Storable (V2 a) where
+instance Storable a => Storable (V2 a) where
   sizeOf _ = 2 * sizeOf (undefined::a)
   {-# INLINE sizeOf #-}
   alignment _ = alignment (undefined::a)
