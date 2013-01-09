@@ -32,8 +32,37 @@ import GHC.Arr (Ix(..))
 import Linear.Core
 import Linear.Metric
 import Linear.Epsilon
+import Prelude hiding (sum)
+
+-- $setup
+-- >>> import Control.Lens
 
 -- | A 2-dimensional vector
+--
+-- >>> pure 1 :: V2 Int
+-- V2 1 1
+--
+-- >>> V2 1 2 ^._x
+-- 1
+--
+-- >>> V2 1 2 ^._y
+-- 2
+--
+-- >>> V2 1 2 & _x .~ 3
+-- V2 3 2
+--
+-- >>> V2 1 2 + V2 3 4
+-- V2 4 6
+--
+-- >>> V2 1 2 * V2 3 4
+-- V2 3 8
+--
+-- >>> V2 1 2 `dot` V2 3 4
+-- 11
+--
+-- >>> sum (V2 1 2)
+-- 3
+
 data V2 a = V2 a a deriving (Eq,Ord,Show,Read,Data,Typeable)
 
 instance Functor V2 where
@@ -121,6 +150,9 @@ instance Distributive V2 where
   {-# INLINE distribute #-}
 
 -- | the counter-clockwise perpendicular vector
+--
+-- >>> perp $ V2 10 20
+-- V2 (-20) 10
 perp :: Num a => V2 a -> V2 a
 perp (V2 a b) = V2 (negate b) a
 {-# INLINE perp #-}
