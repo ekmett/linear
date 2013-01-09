@@ -40,7 +40,7 @@ import Linear.Conjugate
 -- >>> import Debug.SimpleReflect.Vars
 
 infixl 7 !*!
--- | matrix product
+-- | Matrix product
 --
 -- >>> V2 (V3 1 2 3) (V3 4 5 6) !*! V3 (V2 1 2) (V2 3 4) (V2 4 5)
 -- V2 (V2 19 25) (V2 43 58)
@@ -48,7 +48,7 @@ infixl 7 !*!
 f !*! g = fmap (\r -> Foldable.sum . liftA2 (*) r <$> g') f
   where g' = distribute g
 
--- | matrix * column vector
+-- | Matrix * column vector
 --
 -- >>> V2 (V3 1 2 3) (V3 4 5 6) !* V3 7 8 9
 -- V2 50 122
@@ -57,14 +57,16 @@ infixl 7 *!
 m !* v = dot v <$> m
 
 infixl 7 !*
--- | row vector * matrix
+
+-- | Row vector * matrix
+--
 -- >>> V2 1 2 *! V2 (V3 3 4 5) (V3 6 7 8)
 -- V3 15 18 21
 (*!) :: (Metric r, Distributive n, Num a) => r a -> r (n a) -> n a
 f *! g = dot f <$> distribute g
 
 infixl 7 *!!
--- |Scalar-matrix product.
+-- | Scalar-matrix product
 --
 -- >>> 5 *!! V2 (V2 1 2) (V2 3 4)
 -- V2 (V2 5 10) (V2 15 20)
@@ -73,7 +75,7 @@ s *!! m = fmap (s *^) m
 {-# INLINE (*!!) #-}
 
 infixl 7 !!*
--- |Matrix-scalar product.
+-- | Matrix-scalar product
 --
 -- >>> V2 (V2 1 2) (V2 3 4) !!* 5
 -- V2 (V2 5 10) (V2 15 20)
@@ -81,7 +83,7 @@ infixl 7 !!*
 (!!*) = flip (*!!)
 {-# INLINE (!!*) #-}
 
--- | hermitian conjugate or conjugate transpose
+-- | Hermitian conjugate or conjugate transpose
 --
 -- >>> adjoint (V2 (V2 (1 :+ 2) (3 :+ 4)) (V2 (5 :+ 6) (7 :+ 8)))
 -- V2 (V2 (1.0 :+ (-2.0)) (5.0 :+ (-6.0))) (V2 (3.0 :+ (-4.0)) (7.0 :+ (-8.0)))
@@ -97,7 +99,10 @@ trace :: (Monad f, Foldable f, Num a) => f (f a) -> a
 trace m = Foldable.sum (join m)
 {-# INLINE trace #-}
 
--- | Matrices use a row-major representation.
+-- * Matrices
+--
+-- Matrices use a row-major representation.
+
 type M22 a = V2 (V2 a)
 type M33 a = V3 (V3 a)
 type M44 a = V4 (V4 a)
