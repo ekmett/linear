@@ -187,6 +187,8 @@ p12 g (Plucker a b c d e f) = Plucker a b c d e <$> g f
 {-# INLINE p23 #-}
 {-# INLINE p31 #-}
 {-# INLINE p12 #-}
+
+-- | These elements form an alternate basis for the Plücker space, or the Grassmanian manifold @Gr(2,V4)@.
 p10, p20, p30, p32, p13, p21 :: (Functor f, Num a) => (a -> f a) -> Plucker a -> f (Plucker a)
 p10 = anti p01
 p20 = anti p02
