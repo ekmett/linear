@@ -38,7 +38,7 @@ import Linear.Conjugate
 infixl 7 !*!
 -- | matrix product
 (!*!) :: (Functor m, Foldable r, Applicative r, Distributive n, Num a) => m (r a) -> r (n a) -> m (n a)
-f !*! g = fmap (\r -> Foldable.foldr (+) 0 . liftA2 (*) r <$> g') f
+f !*! g = fmap (\r -> Foldable.sum . liftA2 (*) r <$> g') f
   where g' = distribute g
 
 -- | matrix * column vector
@@ -106,15 +106,15 @@ m43_to_m44
       (V3 d e f)
       (V3 g h i)
       (V3 j k l)) =
-  (V4 (V4 a b c 0)
-      (V4 d e f 0)
-      (V4 g h i 0)
-      (V4 j k l 1))
+  V4 (V4 a b c 0)
+     (V4 d e f 0)
+     (V4 g h i 0)
+     (V4 j k l 1)
 {-# ANN m43_to_m44 "HLint: ignore Use camelCase" #-}
 
 m33_to_m44 :: Num a => M33 a -> M44 a
 m33_to_m44 (V3 r1 r2 r3) = V4 (vector r1) (vector r2) (vector r3) (point 0)
-{-# ANN m43_to_m44 "HLint: ignore Use camelCase" #-}
+{-# ANN m33_to_m44 "HLint: ignore Use camelCase" #-}
 
 -- |3x3 identity matrix.
 eye3 :: Num a => M33 a

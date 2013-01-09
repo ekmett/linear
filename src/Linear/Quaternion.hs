@@ -187,7 +187,7 @@ instance Complicated Complex where
   {-# INLINE _i #-}
 
 instance Complicated Quaternion where
-  _e f (Quaternion a v) = (\a' -> Quaternion a' v) <$> f a
+  _e f (Quaternion a v) = (`Quaternion` v) <$> f a
   {-# INLINE _e #-}
   _i f (Quaternion a v) = Quaternion a <$> _x f v
   {-# INLINE _i #-}
@@ -301,18 +301,18 @@ instance RealFloat a => Floating (Quaternion a) where
     where qiq = qi q
   {-# INLINE tanh #-}
 
-  asin q = cut asin q
+  asin = cut asin
   {-# INLINE asin #-}
-  acos q = cut acos q
+  acos = cut acos
   {-# INLINE acos #-}
-  atan q = cut atan q
+  atan = cut atan
   {-# INLINE atan #-}
 
-  asinh q = cut asinh q
+  asinh = cut asinh
   {-# INLINE asinh #-}
-  acosh q = cut acosh q
+  acosh = cut acosh
   {-# INLINE acosh #-}
-  atanh q = cut atanh q
+  atanh = cut atanh
   {-# INLINE atanh #-}
 
 
@@ -408,6 +408,6 @@ instance (RealFloat a, Epsilon a) => Epsilon (Quaternion a) where
 -- | @'axisAngle' axis theta@ builds a 'Quaternion' representing a
 -- rotation of @theta@ radians about @axis@.
 axisAngle :: (Epsilon a, Floating a) => V3 a -> a -> Quaternion a
-axisAngle axis theta = normalize $ Quaternion (cos half) $ (sin half) *^ axis
+axisAngle axis theta = normalize $ Quaternion (cos half) $ sin half *^ axis
   where half = theta / 2
 {-# INLINE axisAngle #-}

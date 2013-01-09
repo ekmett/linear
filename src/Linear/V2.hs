@@ -136,7 +136,7 @@ class R2 t where
 instance R2 V2 where
   _x f (V2 a b) = (`V2` b) <$> f a
   {-# INLINE _x #-}
-  _y f (V2 a b) = (V2 a) <$> f b
+  _y f (V2 a b) = V2 a <$> f b
   {-# INLINE _y #-}
   _xy = id
   {-# INLINE _xy #-}

@@ -98,8 +98,8 @@ instance Ix a => Ix (Plucker a) where
     unsafeIndex (l5,u5) i5 + unsafeRangeSize (l5,u5) * (
     unsafeIndex (l4,u4) i4 + unsafeRangeSize (l4,u4) * (
     unsafeIndex (l3,u3) i3 + unsafeRangeSize (l3,u3) * (
-    unsafeIndex (l2,u2) i2 + unsafeRangeSize (l2,u2) * (
-    unsafeIndex (l1,u1) i1)))))
+    unsafeIndex (l2,u2) i2 + unsafeRangeSize (l2,u2) *
+    unsafeIndex (l1,u1) i1))))
   {-# INLINE unsafeIndex #-}
 
   inRange (Plucker l1 l2 l3 l4 l5 l6,Plucker u1 u2 u3 u4 u5 u6) (Plucker i1 i2 i3 i4 i5 i6) =

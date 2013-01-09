@@ -159,8 +159,8 @@ instance Ix a => Ix (V3 a) where
 
   unsafeIndex (V3 l1 l2 l3,V3 u1 u2 u3) (V3 i1 i2 i3) =
     unsafeIndex (l3,u3) i3 + unsafeRangeSize (l3,u3) * (
-    unsafeIndex (l2,u2) i2 + unsafeRangeSize (l2,u2) * (
-    unsafeIndex (l1,u1) i1))
+    unsafeIndex (l2,u2) i2 + unsafeRangeSize (l2,u2) *
+    unsafeIndex (l1,u1) i1)
   {-# INLINE unsafeIndex #-}
 
   inRange (V3 l1 l2 l3,V3 u1 u2 u3) (V3 i1 i2 i3) =
