@@ -15,13 +15,31 @@ module Linear.Conjugate
   ) where
 
 import Data.Complex hiding (conjugate)
+import Data.Int
+import Data.Word
 
 -- | An involutive ring
 class Num a => Conjugate a where
   -- | Conjugate a value. This defaults to the trivial involution.
+  --
+  -- >>> conjugate (1 :+ 2)
+  -- 1 :+ (-2)
+  --
+  -- >>> conjugate
   conjugate :: a -> a
   conjugate = id
 
+instance Conjugate Integer
+instance Conjugate Int
+instance Conjugate Int64
+instance Conjugate Int32
+instance Conjugate Int16
+instance Conjugate Int8
+instance Conjugate Word
+instance Conjugate Word64
+instance Conjugate Word32
+instance Conjugate Word16
+instance Conjugate Word8
 instance Conjugate Double
 instance Conjugate Float
 instance (Conjugate a, RealFloat a) => Conjugate (Complex a) where
