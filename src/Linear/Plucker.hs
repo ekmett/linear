@@ -18,6 +18,11 @@ module Linear.Plucker
   , (><)
   , plucker
   , intersects
+  -- * Basis elements
+  ,      p01, p02, p03
+  , p10,      p12, p13
+  , p20, p21,      p23
+  , p30, p31, p32
   ) where
 
 import Control.Applicative
@@ -182,6 +187,22 @@ p12 g (Plucker a b c d e f) = Plucker a b c d e <$> g f
 {-# INLINE p23 #-}
 {-# INLINE p31 #-}
 {-# INLINE p12 #-}
+p10, p20, p30, p32, p13, p21 :: (Functor f, Num a) => (a -> f a) -> Plucker a -> f (Plucker a)
+p10 = anti p01
+p20 = anti p02
+p30 = anti p03
+p32 = anti p23
+p13 = anti p31
+p21 = anti p21
+{-# INLINE p10 #-}
+{-# INLINE p20 #-}
+{-# INLINE p30 #-}
+{-# INLINE p32 #-}
+{-# INLINE p13 #-}
+{-# INLINE p21 #-}
+
+anti :: (Functor f, Num a) => ((a -> f a) -> r) -> (a -> f a) -> r
+anti k f = k (fmap negate . f . negate)
 
 -- | Valid Plücker coordinates @p@ will have @'squaredError' p '==' 0@
 --
