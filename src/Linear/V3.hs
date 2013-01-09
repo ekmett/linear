@@ -19,14 +19,15 @@ module Linear.V3
   ) where
 
 import Control.Applicative
-import Control.Lens
 import Data.Data
 import Data.Distributive
 import Data.Foldable
+import Data.Traversable
 import Data.Monoid
 import Foreign.Ptr (castPtr)
 import Foreign.Storable (Storable(..))
 import GHC.Arr (Ix(..))
+import Linear.Core
 import Linear.Epsilon
 import Linear.Metric
 import Linear.V2
@@ -57,7 +58,10 @@ instance Applicative V3 where
 instance Monad V3 where
   return a = V3 a a a
   {-# INLINE return #-}
-  (>>=) = bindRep
+  V3 a b c >>= f = V3 a' b' c' where
+    V3 a' _ _ = f a
+    V3 _ b' _ = f b
+    V3 _ _ c' = f c
   {-# INLINE (>>=) #-}
 
 instance Num a => Num (V3 a) where
@@ -89,7 +93,7 @@ instance Metric V3 where
   {-# INLINABLE dot #-}
 
 instance Distributive V3 where
-  distribute f = V3 (fmap (^._x) f) (fmap (^._y) f) (fmap (^._z) f)
+  distribute f = V3 (fmap (\(V3 x _ _) -> x) f) (fmap (\(V3 _ y _) -> y) f) (fmap (\(V3 _ _ z) -> z) f)
   {-# INLINE distribute #-}
 
 -- | A space that distinguishes 3 orthogonal basis vectors: '_x', '_y', and '_z'. (It may have more)
@@ -111,9 +115,9 @@ instance R3 V3 where
   _xyz = id
   {-# INLINE _xyz #-}
 
-instance Representable V3 where
-  rep f = V3 (f _x) (f _y) (f _z)
-  {-# INLINE rep #-}
+instance Core V3 where
+  core f = V3 (f _x) (f _y) (f _z)
+  {-# INLINE core #-}
 
 instance forall a. Storable a => Storable (V3 a) where
   sizeOf _ = 3 * sizeOf (undefined::a)

@@ -26,8 +26,8 @@ import Data.Monoid
 import Data.Traversable
 import Linear.Epsilon
 import GHC.Arr (Ix(..))
+import Linear.Core
 import Linear.Metric
-import Control.Lens
 import Linear.V4
 
 -- | Plücker coordinates for lines in a 3-dimensional space.
@@ -47,16 +47,27 @@ instance Applicative Plucker where
 instance Monad Plucker where
   return a = Plucker a a a a a a
   {-# INLINE return #-}
-  (>>=) = bindRep
+  Plucker a b c d e f >>= g = Plucker a' b' c' d' e' f' where
+    Plucker a' _ _ _ _ _ = g a
+    Plucker _ b' _ _ _ _ = g b
+    Plucker _ _ c' _ _ _ = g c
+    Plucker _ _ _ d' _ _ = g d
+    Plucker _ _ _ _ e' _ = g e
+    Plucker _ _ _ _ _ f' = g f
   {-# INLINE (>>=) #-}
 
 instance Distributive Plucker where
-  distribute = distributeRep
+  distribute f = Plucker (fmap (\(Plucker x _ _ _ _ _) -> x) f)
+                         (fmap (\(Plucker _ x _ _ _ _) -> x) f)
+                         (fmap (\(Plucker _ _ x _ _ _) -> x) f)
+                         (fmap (\(Plucker _ _ _ x _ _) -> x) f)
+                         (fmap (\(Plucker _ _ _ _ x _) -> x) f)
+                         (fmap (\(Plucker _ _ _ _ _ x) -> x) f)
   {-# INLINE distribute #-}
 
-instance Representable Plucker where
-  rep f = Plucker (f p01) (f p02) (f p03) (f p23) (f p31) (f p12)
-  {-# INLINE rep #-}
+instance Core Plucker where
+  core f = Plucker (f p01) (f p02) (f p03) (f p23) (f p31) (f p12)
+  {-# INLINE core #-}
 
 instance Foldable Plucker where
   foldMap g (Plucker a b c d e f) =

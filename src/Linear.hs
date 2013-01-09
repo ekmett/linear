@@ -13,6 +13,7 @@
 ----------------------------------------------------------------------------
 module Linear
   ( module Linear.Conjugate
+  , module Linear.Core
   , module Linear.Epsilon
   , module Linear.Matrix
   , module Linear.Metric
@@ -25,6 +26,7 @@ module Linear
   )  where
 
 import Linear.Conjugate
+import Linear.Core
 import Linear.Epsilon
 import Linear.Matrix
 import Linear.Metric
@@ -34,3 +36,5 @@ import Linear.V2
 import Linear.V3
 import Linear.V4
 import Linear.Vector
+
+{-# ANN module "Hlint: ignore Use import/export shortcut" #-}

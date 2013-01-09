@@ -20,14 +20,15 @@ module Linear.V4
   ) where
 
 import Control.Applicative
-import Control.Lens
 import Data.Data
 import Data.Distributive
 import Data.Foldable
 import Data.Monoid
+import Data.Traversable
 import Foreign.Ptr (castPtr)
 import Foreign.Storable (Storable(..))
 import GHC.Arr (Ix(..))
+import Linear.Core
 import Linear.Epsilon
 import Linear.Metric
 import Linear.V2
@@ -59,7 +60,11 @@ instance Applicative V4 where
 instance Monad V4 where
   return a = V4 a a a a
   {-# INLINE return #-}
-  (>>=) = bindRep
+  V4 a b c d >>= f = V4 a' b' c' d' where
+    V4 a' _ _ _ = f a
+    V4 _ b' _ _ = f b
+    V4 _ _ c' _ = f c
+    V4 _ _ _ d' = f d
   {-# INLINE (>>=) #-}
 
 instance Num a => Num (V4 a) where
@@ -91,7 +96,10 @@ instance Metric V4 where
   {-# INLINE dot #-}
 
 instance Distributive V4 where
-  distribute f = V4 (fmap (^._x) f) (fmap (^._y) f) (fmap (^._z) f) (fmap (^._w) f)
+  distribute f = V4 (fmap (\(V4 x _ _ _) -> x) f)
+                    (fmap (\(V4 _ y _ _) -> y) f)
+                    (fmap (\(V4 _ _ z _) -> z) f)
+                    (fmap (\(V4 _ _ _ w) -> w) f)
   {-# INLINE distribute #-}
 
 -- | A space that distinguishes orthogonal basis vectors '_x', '_y', '_z', '_w'. (It may have more.)
@@ -119,9 +127,9 @@ instance R4 V4 where
   _xyzw = id
   {-# INLINE _xyzw #-}
 
-instance Representable V4 where
-  rep f = V4 (f _x) (f _y) (f _z) (f _w)
-  {-# INLINE rep #-}
+instance Core V4 where
+  core f = V4 (f _x) (f _y) (f _z) (f _w)
+  {-# INLINE core #-}
 
 instance forall a. Storable a => Storable (V4 a) where
   sizeOf _ = 4 * sizeOf (undefined::a)

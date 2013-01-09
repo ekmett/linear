@@ -28,16 +28,17 @@ module Linear.Quaternion
   , axisAngle
   ) where
 import Control.Applicative
-import Control.Lens
 import Data.Complex (Complex((:+)))
 import Data.Data
 import Data.Distributive
+import Data.Traversable
 import Data.Foldable
 import GHC.Arr (Ix(..))
 import qualified Data.Foldable as F
 import Data.Monoid
 import Foreign.Ptr (castPtr, plusPtr)
 import Foreign.Storable (Storable(..))
+import Linear.Core
 import Linear.Epsilon
 import Linear.Conjugate
 import Linear.Metric
@@ -63,7 +64,12 @@ instance Applicative Quaternion where
 instance Monad Quaternion where
   return = pure
   {-# INLINE return #-}
-  (>>=) = bindRep -- the diagonal of a sedenion is super useful!
+  -- the diagonal of a sedenion is super useful!
+  Quaternion a (V3 b c d) >>= f = Quaternion a' (V3 b' c' d') where
+    Quaternion a' _          = f a
+    Quaternion _ (V3 b' _ _) = f b
+    Quaternion _ (V3 _ c' _) = f c
+    Quaternion _ (V3 _ _ d') = f d
   {-# INLINE (>>=) #-}
 
 instance Ix a => Ix (Quaternion a) where
@@ -81,9 +87,9 @@ instance Ix a => Ix (Quaternion a) where
       inRange (l1,u1) i1 && inRange (l2,u2) i2
     {-# INLINE inRange #-}
 
-instance Representable Quaternion where
-  rep f = Quaternion (f _e) (V3 (f _i) (f _j) (f _k))
-  {-# INLINE rep #-}
+instance Core Quaternion where
+  core f = Quaternion (f _e) (V3 (f _i) (f _j) (f _k))
+  {-# INLINE core #-}
 
 instance Foldable Quaternion where
   foldMap f (Quaternion e v) = f e `mappend` foldMap f v
@@ -200,7 +206,10 @@ instance Hamiltonian Quaternion where
   {-# INLINE _ijk #-}
 
 instance Distributive Quaternion where
-  distribute = distributeRep
+  distribute f = Quaternion (fmap (\(Quaternion x _) -> x) f) $ V3
+    (fmap (\(Quaternion _ (V3 y _ _)) -> y) f)
+    (fmap (\(Quaternion _ (V3 _ z _)) -> z) f)
+    (fmap (\(Quaternion _ (V3 _ _ w)) -> w) f)
   {-# INLINE distribute #-}
 
 instance (Conjugate a, RealFloat a) => Conjugate (Quaternion a) where
@@ -309,8 +318,8 @@ instance RealFloat a => Floating (Quaternion a) where
 
 -- | Helper for calculating with specific branch cuts
 cut :: RealFloat a => (Complex a -> Complex a) -> Quaternion a -> Quaternion a
-cut f q@(Quaternion e v)
-  | qiq == 0 = Quaternion a (_x.~b$v)
+cut f q@(Quaternion e (V3 _ y z))
+  | qiq == 0 = Quaternion a (V3 b y z)
   | otherwise = reimagine a (b / ai) q
   where qiq = qi q
         ai = sqrt qiq
@@ -387,7 +396,8 @@ slerp q p t
 
 -- | Apply a rotation to a vector.
 rotate :: (Conjugate a, RealFloat a) => Quaternion a -> V3 a -> V3 a
-rotate q v = (q * Quaternion 0 v * conjugate q)^._ijk
+rotate q v = ijk where
+  Quaternion _ ijk = q * Quaternion 0 v * conjugate q
 {-# SPECIALIZE rotate :: Quaternion Float -> V3 Float -> V3 Float #-}
 {-# SPECIALIZE rotate :: Quaternion Double -> V3 Double -> V3 Double #-}
 

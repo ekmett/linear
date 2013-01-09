@@ -21,14 +21,15 @@ module Linear.V2
   ) where
 
 import Control.Applicative
-import Control.Lens
 import Data.Data
 import Data.Distributive
 import Data.Foldable
+import Data.Traversable
 import Data.Monoid
 import Foreign.Ptr (castPtr)
 import Foreign.Storable (Storable(..))
 import GHC.Arr (Ix(..))
+import Linear.Core
 import Linear.Metric
 import Linear.Epsilon
 
@@ -58,7 +59,9 @@ instance Applicative V2 where
 instance Monad V2 where
   return a = V2 a a
   {-# INLINE return #-}
-  (>>=) = bindRep
+  V2 a b >>= f = V2 a' b' where
+    V2 a' _ = f a
+    V2 _ b' = f b
   {-# INLINE (>>=) #-}
 
 instance Num a => Num (V2 a) where
@@ -109,12 +112,12 @@ instance R2 V2 where
   _xy = id
   {-# INLINE _xy #-}
 
-instance Representable V2 where
-  rep f = V2 (f _x) (f _y)
-  {-# INLINE rep #-}
+instance Core V2 where
+  core f = V2 (f _x) (f _y)
+  {-# INLINE core #-}
 
 instance Distributive V2 where
-  distribute f = V2 (fmap (^._x) f) (fmap (^._y) f)
+  distribute f = V2 (fmap (\(V2 x _) -> x) f) (fmap (\(V2 _ y) -> y) f)
   {-# INLINE distribute #-}
 
 -- | the counter-clockwise perpendicular vector

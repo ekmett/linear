@@ -23,7 +23,7 @@ module Linear.Matrix
   ) where
 
 import Control.Applicative
-import Control.Lens
+import Control.Monad (join)
 import Data.Distributive
 import Data.Foldable as Foldable
 import Linear.Epsilon
@@ -71,7 +71,7 @@ adjoint = collect (fmap conjugate)
 
 -- | Compute the trace of a matrix
 trace :: (Monad f, Foldable f, Num a) => f (f a) -> a
-trace m = Foldable.sum (m >>= id)
+trace m = Foldable.sum (join m)
 {-# INLINE trace #-}
 
 -- | Matrices use a row-major representation.
@@ -92,8 +92,8 @@ fromQuaternion (Quaternion w (V3 x y z)) =
 
 mkTransformationMat :: Num a => M33 a -> V3 a -> M44 a
 mkTransformationMat (V3 r1 r2 r3) (V3 tx ty tz) =
-  V4 (snoc3 r1 tx) (snoc3 r2 ty) (snoc3 r3 tz) (set _w 1 0)
-  where snoc3 (V3 x y z) w = V4 x y z w
+  V4 (snoc3 r1 tx) (snoc3 r2 ty) (snoc3 r3 tz) (V4 0 0 0 1)
+  where snoc3 (V3 x y z) = V4 x y z
 
 -- |Build a transformation matrix from a rotation expressed as a
 -- 'Quaternion' and a translation vector.
@@ -110,22 +110,31 @@ m43_to_m44
       (V4 d e f 0)
       (V4 g h i 0)
       (V4 j k l 1))
+{-# ANN m43_to_m44 "HLint: ignore Use camelCase" #-}
 
 m33_to_m44 :: Num a => M33 a -> M44 a
 m33_to_m44 (V3 r1 r2 r3) = V4 (vector r1) (vector r2) (vector r3) (point 0)
+{-# ANN m43_to_m44 "HLint: ignore Use camelCase" #-}
 
 -- |3x3 identity matrix.
 eye3 :: Num a => M33 a
-eye3 = V3 (set _x 1 0) (set _y 1 0) (set _z 1 0)
+eye3 = V3 (V3 1 0 0)
+          (V3 0 1 0)
+          (V3 0 0 1)
 
 -- |4x4 identity matrix.
 eye4 :: Num a => M44 a
-eye4 = V4 (set _x 1 0) (set _y 1 0) (set _z 1 0) (set _w 1 0)
+eye4 = V4 (V4 1 0 0 0)
+          (V4 0 1 0 0)
+          (V4 0 0 1 0)
+          (V4 0 0 0 1)
+
 
 -- |Extract the translation vector (first three entries of the last
 -- column) from a 3x4 or 4x4 matrix
 translation :: (R3 t, R4 v, Functor f, Functor t) => (V3 a -> f (V3 a)) -> t (v a) -> f (t a)
-translation = (. fmap (^._w)) . _xyz
+translation = (. fmap (^._w)) . _xyz where
+  x ^. l = getConst (l Const x)
 
 -- |2x2 matrix determinant.
 det22 :: Num a => V2 (V2 a) -> a
@@ -143,7 +152,7 @@ det33 (V3 (V3 a b c)
 inv22 :: (Epsilon a, Floating a) => M22 a -> Maybe (M22 a)
 inv22 m@(V2 (V2 a b) (V2 c d))
   | nearZero det = Nothing
-  | otherwise = Just $ (1 / det) *!! (V2 (V2 d (-b)) (V2 (-c) a))
+  | otherwise = Just $ (1 / det) *!! V2 (V2 d (-b)) (V2 (-c) a)
   where det = det22 m
 {-# INLINE inv22 #-}
 
@@ -153,9 +162,9 @@ inv33 m@(V3 (V3 a b c)
             (V3 d e f)
             (V3 g h i))
   | nearZero det = Nothing
-  | otherwise = Just $ (1 / det) *!! (V3 (V3 a' b' c')
-                                         (V3 d' e' f')
-                                         (V3 g' h' i'))
+  | otherwise = Just $ (1 / det) *!! V3 (V3 a' b' c')
+                                        (V3 d' e' f')
+                                        (V3 g' h' i')
   where a' = cofactor (e,f,h,i)
         b' = cofactor (c,b,i,h)
         c' = cofactor (b,c,e,f)
