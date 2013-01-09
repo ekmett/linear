@@ -37,32 +37,45 @@ import Linear.Conjugate
 
 infixl 7 !*!
 -- | matrix product
+--
+-- >>> V2 (V3 1 2 3) (V3 4 5 6) !*! V3 (V2 1 2) (V2 3 4) (V2 4 5)
+-- V2 (V2 19 25) (V2 43 58)
 (!*!) :: (Functor m, Foldable r, Applicative r, Distributive n, Num a) => m (r a) -> r (n a) -> m (n a)
 f !*! g = fmap (\r -> Foldable.sum . liftA2 (*) r <$> g') f
   where g' = distribute g
 
 -- | matrix * column vector
+--
+-- >>> V2 (V3 1 2 3) (V3 4 5 6) !* V3 7 8 9
+-- V2 50 122
 infixl 7 *!
 (!*) :: (Functor m, Metric r, Num a) => m (r a) -> r a -> m a
 m !* v = dot v <$> m
 
 infixl 7 !*
 -- | row vector * matrix
+-- >>> V2 1 2 *! V2 (V3 3 4 5) (V3 6 7 8)
+-- V3 15 18 21
 (*!) :: (Metric r, Distributive n, Num a) => r a -> r (n a) -> n a
 f *! g = dot f <$> distribute g
 
 infixl 7 *!!
 -- |Scalar-matrix product.
+--
+-- >>> 5 *!! V2 (V2 1 2) (V2 3 4)
+-- V2 (V2 5 10) (V2 15 20)
 (*!!) :: (Functor m, Functor r, Num a) => a -> m (r a) -> m (r a)
 s *!! m = fmap (s *^) m
 {-# INLINE (*!!) #-}
 
 infixl 7 !!*
 -- |Matrix-scalar product.
+--
+-- >>> V2 (V2 1 2) (V2 3 4) !!* 5
+-- V2 (V2 5 10) (V2 15 20)
 (!!*) :: (Functor m, Functor r, Num a) => m (r a) -> a -> m (r a)
 (!!*) = flip (*!!)
 {-# INLINE (!!*) #-}
-
 
 -- | hermitian conjugate or conjugate transpose
 adjoint :: (Functor m, Distributive n, Conjugate a) => m (n a) -> n (m a)
