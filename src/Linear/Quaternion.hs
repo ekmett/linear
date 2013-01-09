@@ -27,6 +27,7 @@ module Linear.Quaternion
   , rotate
   , axisAngle
   ) where
+
 import Control.Applicative
 import Data.Complex (Complex((:+)))
 import Data.Data
@@ -46,6 +47,7 @@ import Linear.V3
 import Linear.Vector
 import Prelude hiding (any)
 
+-- | Quaternions
 data Quaternion a = Quaternion a {-# UNPACK #-}!(V3 a)
                     deriving (Eq,Ord,Read,Show,Data,Typeable)
 
@@ -176,6 +178,7 @@ instance Metric Quaternion where
   Quaternion e v `dot` Quaternion e' v' = e*e' + (v `dot` v')
   {-# INLINE dot #-}
 
+-- | A vector space that includes the basis elements '_e' and '_i'
 class Complicated t where
   _e :: Functor f => (a -> f a) -> t a -> f (t a)
   _i :: Functor f => (a -> f a) -> t a -> f (t a)
@@ -192,6 +195,7 @@ instance Complicated Quaternion where
   _i f (Quaternion a v) = Quaternion a <$> _x f v
   {-# INLINE _i #-}
 
+-- | A vector space that includes the basis elements '_e', '_i', '_j' and '_k'
 class Complicated t => Hamiltonian t where
   _j :: Functor f => (a -> f a) -> t a -> f (t a)
   _k :: Functor f => (a -> f a) -> t a -> f (t a)
