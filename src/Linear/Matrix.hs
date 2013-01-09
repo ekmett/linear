@@ -167,6 +167,8 @@ translation = (. fmap (^._w)) . _xyz where
 
 -- |2x2 matrix determinant.
 --
+-- >>> det22 (V2 (V2 a b) (V2 c d))
+-- a * d - b * c
 det22 :: Num a => M22 a -> a
 det22 (V2 (V2 a b) (V2 c d)) = a * d - b * c
 {-# INLINE det22 #-}
@@ -179,6 +181,9 @@ det33 (V3 (V3 a b c)
 {-# INLINE det33 #-}
 
 -- |2x2 matrix inverse.
+--
+-- >>> inv22 $ V2 (V2 1 2) (V2 3 4)
+-- Just (V2 (V2 (-2.0) 1.0) (V2 1.5 (-0.5)))
 inv22 :: (Epsilon a, Floating a) => M22 a -> Maybe (M22 a)
 inv22 m@(V2 (V2 a b) (V2 c d))
   | nearZero det = Nothing
@@ -187,6 +192,9 @@ inv22 m@(V2 (V2 a b) (V2 c d))
 {-# INLINE inv22 #-}
 
 -- |3x3 matrix inverse.
+--
+-- >>> inv33 $ V3 (V3 1 2 4) (V3 4 2 2) (V3 1 1 1)
+-- Just (V3 (V3 0.0 0.5 (-1.0)) (V3 (-0.5) (-0.75) 3.5) (V3 0.5 0.25 (-1.5)))
 inv33 :: (Epsilon a, Floating a) => M33 a -> Maybe (M33 a)
 inv33 m@(V3 (V3 a b c)
             (V3 d e f)
