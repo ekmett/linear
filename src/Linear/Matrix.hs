@@ -103,9 +103,13 @@ trace m = Foldable.sum (join m)
 --
 -- Matrices use a row-major representation.
 
+-- | A 2x2 matrix with row-major representation
 type M22 a = V2 (V2 a)
+-- | A 3x3 matrix with row-major representation
 type M33 a = V3 (V3 a)
+-- | A 4x4 matrix with row-major representation
 type M44 a = V4 (V4 a)
+-- | A 4x3 matrix with row-major representation
 type M43 a = V4 (V3 a)
 
 -- | Build a rotation matrix from a unit 'Quaternion'.
@@ -128,6 +132,7 @@ mkTransformationMat (V3 r1 r2 r3) (V3 tx ty tz) =
 mkTransformation :: Num a => Quaternion a -> V3 a -> M44 a
 mkTransformation = mkTransformationMat . fromQuaternion
 
+-- | Convert from a 4x3 matrix to a 4x4 matrix, extending it with the @[ 0 0 0 1 ]@ column vector
 m43_to_m44 :: Num a => M43 a -> M44 a
 m43_to_m44
   (V4 (V3 a b c)
@@ -140,6 +145,7 @@ m43_to_m44
      (V4 j k l 1)
 {-# ANN m43_to_m44 "HLint: ignore Use camelCase" #-}
 
+-- | Convert a 3x3 matrix to a 4x4 matrix extending it with 0's in the new row and column.
 m33_to_m44 :: Num a => M33 a -> M44 a
 m33_to_m44 (V3 r1 r2 r3) = V4 (vector r1) (vector r2) (vector r3) (point 0)
 {-# ANN m33_to_m44 "HLint: ignore Use camelCase" #-}
@@ -179,6 +185,9 @@ det22 (V2 (V2 a b) (V2 c d)) = a * d - b * c
 {-# INLINE det22 #-}
 
 -- |3x3 matrix determinant.
+--
+-- >>> det33 (V3 (V3 a b c) (V3 d e f) (V3 g h i))
+-- a * (e * i - f * h) - d * (b * i - c * h) + g * (b * f - c * e)
 det33 :: Num a => M33 a -> a
 det33 (V3 (V3 a b c)
           (V3 d e f)

@@ -39,7 +39,7 @@ import Prelude hiding (sum)
 
 -- | A 2-dimensional vector
 --
--- >>> pure 1
+-- >>> pure 1 :: V2 Int
 -- V2 1 1
 --
 -- >>> V2 1 2 + V2 3 4
