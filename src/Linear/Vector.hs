@@ -25,6 +25,7 @@ import Control.Applicative
 import Data.Complex
 import Data.Foldable (foldMap)
 import Data.Functor.Bind
+import Data.Functor.Identity
 import Data.HashMap.Lazy as HashMap
 import Data.Hashable
 import Data.IntMap as IntMap
@@ -94,6 +95,8 @@ instance (Eq k, Hashable k) => Additive (HashMap k) where
 instance Additive ((->) b)
 
 instance Additive Complex
+
+instance Additive Identity
 
 -- | Compute the negation of a vector
 --
