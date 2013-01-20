@@ -40,7 +40,7 @@ import Linear.Instances ()
 infixl 6 ^+^, ^-^
 infixl 7 ^*, *^, ^/
 
--- | An additive group "bundle".
+-- | A vector is an additive group with additional structure.
 class Bind f => Additive f where
   -- | The zero vector
   zero :: Num a => f a
