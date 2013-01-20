@@ -34,6 +34,8 @@ import Linear.Metric
 import Linear.V2
 import Linear.Vector
 
+{-# ANN module "HLint: ignore Reduce duplication #-}
+
 -- | A 3-dimensional vector
 data V3 a = V3 a a a deriving (Eq,Ord,Show,Read,Data,Typeable)
 
