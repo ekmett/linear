@@ -39,6 +39,7 @@ import Linear.Instances ()
 infixl 6 ^+^, ^-^
 infixl 7 ^*, *^, ^/
 
+-- | An additive group "bundle".
 class Bind f => Additive f where
   -- | Compute the sum of two vectors
   --
