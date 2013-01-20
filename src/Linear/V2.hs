@@ -141,6 +141,10 @@ class R2 t where
   --
   -- >>> V2 1 2 & _x .~ 3
   -- V2 3 2
+  --
+  -- @
+  -- '_x' :: Lens' (t a) a
+  -- @
   _x :: Functor f => (a -> f a) -> t a -> f (t a)
   _x = _xy._x
   {-# INLINE _x #-}
@@ -151,11 +155,18 @@ class R2 t where
   --
   -- >>> V2 1 2 & _y .~ 3
   -- V2 1 3
-
+  --
+  -- @
+  -- '_y' :: Lens' (t a) a
+  -- @
   _y :: Functor f => (a -> f a) -> t a -> f (t a)
   _y = _xy._y
   {-# INLINE _y #-}
 
+  -- |
+  -- @
+  -- '_xy' :: Lens' (t a) ('V2' a)
+  -- @
   _xy :: Functor f => (V2 a -> f (V2 a)) -> t a -> f (t a)
 
 instance R2 V2 where

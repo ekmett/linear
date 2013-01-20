@@ -207,6 +207,15 @@ plucker (V4 a b c d)
 {-# INLINE plucker #-}
 
 -- | These elements form a basis for the Plücker space, or the Grassmanian manifold @Gr(2,V4)@.
+--
+-- @
+-- 'p01' :: Lens' ('Plucker' a) a
+-- 'p02' :: Lens' ('Plucker' a) a
+-- 'p03' :: Lens' ('Plucker' a) a
+-- 'p23' :: Lens' ('Plucker' a) a
+-- 'p31' :: Lens' ('Plucker' a) a
+-- 'p12' :: Lens' ('Plucker' a) a
+-- @
 p01, p02, p03, p23, p31, p12 :: Functor f => (a -> f a) -> Plucker a -> f (Plucker a)
 p01 g (Plucker a b c d e f) = (\a' -> Plucker a' b c d e f) <$> g a
 p02 g (Plucker a b c d e f) = (\b' -> Plucker a b' c d e f) <$> g b
@@ -222,6 +231,15 @@ p12 g (Plucker a b c d e f) = Plucker a b c d e <$> g f
 {-# INLINE p12 #-}
 
 -- | These elements form an alternate basis for the Plücker space, or the Grassmanian manifold @Gr(2,V4)@.
+--
+-- @
+-- 'p10' :: 'Num' a => Lens' ('Plucker' a) a
+-- 'p20' :: 'Num' a => Lens' ('Plucker' a) a
+-- 'p30' :: 'Num' a => Lens' ('Plucker' a) a
+-- 'p32' :: 'Num' a => Lens' ('Plucker' a) a
+-- 'p13' :: 'Num' a => Lens' ('Plucker' a) a
+-- 'p21' :: 'Num' a => Lens' ('Plucker' a) a
+-- @
 p10, p20, p30, p32, p13, p21 :: (Functor f, Num a) => (a -> f a) -> Plucker a -> f (Plucker a)
 p10 = anti p01
 p20 = anti p02

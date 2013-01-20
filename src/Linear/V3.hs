@@ -125,7 +125,15 @@ instance Distributive V3 where
 
 -- | A space that distinguishes 3 orthogonal basis vectors: '_x', '_y', and '_z'. (It may have more)
 class R2 t => R3 t where
+  -- |
+  -- @
+  -- '_z' :: Lens' (t a) a
+  -- @
   _z :: Functor f => (a -> f a) -> t a -> f (t a)
+  -- |
+  -- @
+  -- '_xyz' :: Lens' (t a) ('V3' a)
+  -- @
   _xyz :: Functor f => (V3 a -> f (V3 a)) -> t a -> f (t a)
 
 instance R2 V3 where
