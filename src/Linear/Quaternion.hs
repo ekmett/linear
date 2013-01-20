@@ -48,6 +48,8 @@ import Linear.V3
 import Linear.Vector
 import Prelude hiding (any)
 
+{-# ANN module "HLint: ignore Reduce duplication #-}
+
 -- | Quaternions
 data Quaternion a = Quaternion a {-# UNPACK #-}!(V3 a)
                     deriving (Eq,Ord,Read,Show,Data,Typeable)

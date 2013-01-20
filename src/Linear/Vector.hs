@@ -44,18 +44,22 @@ class Bind f => Additive f where
   -- >>> V2 1 2 ^+^ V2 3 4
   -- V2 4 6
   (^+^) :: Num a => f a -> f a -> f a
+#ifndef HLINT
   default (^+^) :: (Applicative f, Num a) => f a -> f a -> f a
   (^+^) = liftA2 (+)
   {-# INLINE (^+^) #-}
+#endif
 
   -- | Compute the difference between two vectors
   --
   -- >>> V2 4 5 - V2 3 1
   -- V2 1 4
   (^-^) :: Num a => f a -> f a -> f a
+#ifndef HLINT
   default (^-^) :: (Applicative f, Num a) => f a -> f a -> f a
   (^-^) = liftA2 (-)
   {-# INLINE (^-^) #-}
+#endif
 
   -- | Linearly interpolate between two vectors.
   lerp :: Num a => a -> f a -> f a -> f a
