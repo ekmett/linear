@@ -38,6 +38,7 @@ import Linear.Conjugate
 
 -- $setup
 -- >>> import Data.Complex
+-- >>> import Data.IntMap
 -- >>> import Debug.SimpleReflect.Vars
 
 infixl 7 !*!
