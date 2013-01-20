@@ -11,7 +11,7 @@
 -- Stability   :  experimental
 -- Portability :  non-portable
 --
--- 2-D Vectors
+-- 0-D Vectors
 ----------------------------------------------------------------------------
 module Linear.V0
   ( V0(..)
