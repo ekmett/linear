@@ -40,7 +40,7 @@ import Linear.Metric
 import Linear.V4
 import Linear.Vector
 
-{-# ANN module "HLint: ignore Reduce duplication #-}
+{-# ANN module "HLint: ignore Reduce duplication" #-}
 
 -- | Plücker coordinates for lines in a 3-dimensional space.
 data Plucker a = Plucker a a a a a a deriving (Eq,Ord,Show,Read)

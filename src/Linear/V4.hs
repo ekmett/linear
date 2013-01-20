@@ -36,7 +36,7 @@ import Linear.V2
 import Linear.V3
 import Linear.Vector
 
-{-# ANN module "HLint: ignore Reduce duplication #-}
+{-# ANN module "HLint: ignore Reduce duplication" #-}
 
 -- | A 4-dimensional vector.
 data V4 a = V4 a a a a deriving (Eq,Ord,Show,Read,Data,Typeable)
