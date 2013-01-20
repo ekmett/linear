@@ -22,6 +22,7 @@ module Linear.Vector
   ) where
 
 import Control.Applicative
+import Data.Complex
 import Data.Foldable (foldMap)
 import Data.Functor.Bind
 import Data.HashMap.Lazy as HashMap
@@ -43,8 +44,10 @@ infixl 7 ^*, *^, ^/
 class Bind f => Additive f where
   -- | The zero vector
   zero :: Num a => f a
+#ifndef HLINT
   default zero :: (Applicative f, Num a) => f a
   zero = pure 0
+#endif
 
   -- | Compute the sum of two vectors
   --
@@ -89,6 +92,8 @@ instance (Eq k, Hashable k) => Additive (HashMap k) where
   xs ^-^ ys = HashMap.unionWith (+) xs (negated ys)
 
 instance Additive ((->) b)
+
+instance Additive Complex
 
 -- | Compute the negation of a vector
 --
