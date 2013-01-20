@@ -197,7 +197,15 @@ instance Metric Quaternion where
 
 -- | A vector space that includes the basis elements '_e' and '_i'
 class Complicated t where
+  -- |
+  -- @
+  -- '_e' :: Lens' (t a) a
+  -- @
   _e :: Functor f => (a -> f a) -> t a -> f (t a)
+  -- |
+  -- @
+  -- '_i' :: Lens' (t a) a
+  -- @
   _i :: Functor f => (a -> f a) -> t a -> f (t a)
 
 instance Complicated Complex where
@@ -214,8 +222,20 @@ instance Complicated Quaternion where
 
 -- | A vector space that includes the basis elements '_e', '_i', '_j' and '_k'
 class Complicated t => Hamiltonian t where
+  -- |
+  -- @
+  -- '_j' :: Lens' (t a) a
+  -- @
   _j :: Functor f => (a -> f a) -> t a -> f (t a)
+  -- |
+  -- @
+  -- '_k' :: Lens' (t a) a
+  -- @
   _k :: Functor f => (a -> f a) -> t a -> f (t a)
+  -- |
+  -- @
+  -- '_ijk' :: Lens' (t a) (V3 a)
+  -- @
   _ijk :: Functor f => (V3 a -> f (V3 a)) -> t a -> f (t a)
 
 instance Hamiltonian Quaternion where
