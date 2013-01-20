@@ -41,6 +41,11 @@ infixl 7 ^*, *^, ^/
 
 -- | An additive group "bundle".
 class Bind f => Additive f where
+  -- | The zero vector
+  zero :: Num a => f a
+  default zero :: (Applicative f, Num a) => f a
+  zero = pure 0
+
   -- | Compute the sum of two vectors
   --
   -- >>> V2 1 2 ^+^ V2 3 4
@@ -69,14 +74,17 @@ class Bind f => Additive f where
   {-# INLINE lerp #-}
 
 instance Additive IntMap where
+  zero = IntMap.empty
   (^+^) = IntMap.unionWith (+)
   xs ^-^ ys = IntMap.unionWith (+) xs (negated ys)
 
 instance Ord k => Additive (Map k) where
+  zero = Map.empty
   (^+^) = Map.unionWith (+)
   xs ^-^ ys = Map.unionWith (+) xs (negated ys)
 
 instance (Eq k, Hashable k) => Additive (HashMap k) where
+  zero = HashMap.empty
   (^+^) = HashMap.unionWith (+)
   xs ^-^ ys = HashMap.unionWith (+) xs (negated ys)
 
@@ -119,9 +127,9 @@ setElement i x = snd . mapAccumL aux 0
 -- | Produce a default basis for a vector space. If the dimensionality
 -- of the vector space is not statically known, see 'basisFor'.
 basis :: (Applicative t, Traversable t, Num a) => [t a]
-basis = [ setElement k 1 zero | k <- [0..n - 1] ]
-  where zero = pure 0
-        n = getSum $ foldMap (const (Sum 1)) zero
+basis = [ setElement k 1 z | k <- [0..n - 1] ]
+  where z = pure 0
+        n = getSum $ foldMap (const (Sum 1)) z
 
 -- | Produce a default basis for a vector space from which the
 -- argument is drawn.
