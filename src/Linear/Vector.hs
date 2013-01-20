@@ -16,15 +16,18 @@ module Linear.Vector
   , (^*)
   , (*^)
   , (^/)
-  -- , basis
-  -- , basisFor
+  , basis
+  , basisFor
   ) where
 
 import Control.Applicative
-import Data.IntMap as IntMap
-import Data.Map as Map
+import Data.Foldable (foldMap)
 import Data.HashMap.Lazy as HashMap
 import Data.Hashable
+import Data.IntMap as IntMap
+import Data.Map as Map
+import Data.Monoid (Sum(..))
+import Data.Traversable (Traversable, mapAccumL)
 
 -- $setup
 -- >>> import Control.Lens
@@ -98,20 +101,23 @@ f ^* a = fmap (*a) f
 f ^/ a = fmap (/a) f
 {-# INLINE (^/) #-}
 
-{-
+-- @setElement i x v@ sets the @i@'th element of @v@ to @x@.
+setElement :: Traversable t => Int -> a -> t a -> t a
+setElement i x = snd . mapAccumL aux 0
+  where aux j y = let j' = j + 1
+                      y' = if i == j then x else y
+                  in j' `seq` (j', y')
 
 -- | Produce a default basis for a vector space. If the dimensionality
 -- of the vector space is not statically known, see 'basisFor'.
 basis :: (Applicative t, Traversable t, Num a) => [t a]
-basis = [ set (element k) 1 zero | k <- [0..lengthOf folded zero - 1]]
+basis = [ setElement k 1 zero | k <- [0..n - 1] ]
   where zero = pure 0
+        n = getSum $ foldMap (const (Sum 1)) zero
 
 -- | Produce a default basis for a vector space from which the
 -- argument is drawn.
 basisFor :: (Traversable t, Enum a, Num a) => t a -> [t a]
-basisFor v = map aux [0..n-1]
+basisFor v = [ setElement k 1 z | k <- [0..n-1] ]
   where z = 0 <$ v
-        n = lengthOf folded z
-        aux i = z & element i .~ 1
-
--}
+        n = getSum $ foldMap (const (Sum 1)) v
