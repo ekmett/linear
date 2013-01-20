@@ -41,10 +41,13 @@ import Linear.Conjugate
 -- >>> import Debug.SimpleReflect.Vars
 
 infixl 7 !*!
--- | Matrix product
+-- | Matrix product. This can compute mixed dense-dense, sparse-dense and sparse-sparse matrix products.
 --
 -- >>> V2 (V3 1 2 3) (V3 4 5 6) !*! V3 (V2 1 2) (V2 3 4) (V2 4 5)
 -- V2 (V2 19 25) (V2 43 58)
+--
+-- >>> V2 (fromList [(1,2)]) (fromList [(2,3)]) !*! fromList [(1,V3 0 0 1), (2, V3 0 0 5)]
+-- V2 (V3 0 0 2) (V3 0 0 15)
 (!*!) :: (Functor m, Foldable r, Apply r, Distributive n, Num a) => m (r a) -> r (n a) -> m (n a)
 f !*! g = fmap (\r -> Foldable.sum . liftF2 (*) r <$> g') f
   where g' = distribute g
