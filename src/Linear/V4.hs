@@ -24,7 +24,9 @@ import Data.Data
 import Data.Distributive
 import Data.Foldable
 import Data.Functor.Bind
-import Data.Monoid
+import Data.Semigroup
+import Data.Semigroup.Foldable
+import Data.Semigroup.Traversable
 import Data.Traversable
 import Foreign.Ptr (castPtr)
 import Foreign.Storable (Storable(..))
@@ -54,6 +56,14 @@ instance Foldable V4 where
 instance Traversable V4 where
   traverse f (V4 a b c d) = V4 <$> f a <*> f b <*> f c <*> f d
   {-# INLINE traverse #-}
+
+instance Foldable1 V4 where
+  foldMap1 f (V4 a b c d) = f a <> f b <> f c <> f d
+  {-# INLINE foldMap1 #-}
+
+instance Traversable1 V4 where
+  traverse1 f (V4 a b c d) = V4 <$> f a <.> f b <.> f c <.> f d
+  {-# INLINE traverse1 #-}
 
 instance Applicative V4 where
   pure a = V4 a a a a

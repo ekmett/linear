@@ -29,7 +29,9 @@ import Control.Applicative
 import Data.Distributive
 import Data.Foldable as Foldable
 import Data.Functor.Bind
-import Data.Monoid
+import Data.Semigroup
+import Data.Semigroup.Foldable
+import Data.Semigroup.Traversable
 import Data.Traversable
 import Foreign.Ptr (castPtr)
 import Foreign.Storable (Storable(..))
@@ -107,6 +109,16 @@ instance Traversable Plucker where
   traverse g (Plucker a b c d e f) =
     Plucker <$> g a <*> g b <*> g c <*> g d <*> g e <*> g f
   {-# INLINE traverse #-}
+
+instance Foldable1 Plucker where
+  foldMap1 g (Plucker a b c d e f) =
+    g a <> g b <> g c <> g d <> g e <> g f
+  {-# INLINE foldMap1 #-}
+
+instance Traversable1 Plucker where
+  traverse1 g (Plucker a b c d e f) =
+    Plucker <$> g a <.> g b <.> g c <.> g d <.> g e <.> g f
+  {-# INLINE traverse1 #-}
 
 instance Ix a => Ix (Plucker a) where
   range (Plucker l1 l2 l3 l4 l5 l6,Plucker u1 u2 u3 u4 u5 u6) =

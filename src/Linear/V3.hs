@@ -24,7 +24,9 @@ import Data.Distributive
 import Data.Foldable
 import Data.Functor.Bind
 import Data.Traversable
-import Data.Monoid
+import Data.Semigroup
+import Data.Semigroup.Foldable
+import Data.Semigroup.Traversable
 import Foreign.Ptr (castPtr)
 import Foreign.Storable (Storable(..))
 import GHC.Arr (Ix(..))
@@ -34,7 +36,7 @@ import Linear.Metric
 import Linear.V2
 import Linear.Vector
 
-{-# ANN module "HLint: ignore Reduce duplication #-}
+{-# ANN module "HLint: ignore Reduce duplication" #-}
 
 -- | A 3-dimensional vector
 data V3 a = V3 a a a deriving (Eq,Ord,Show,Read,Data,Typeable)
@@ -52,6 +54,14 @@ instance Foldable V3 where
 instance Traversable V3 where
   traverse f (V3 a b c) = V3 <$> f a <*> f b <*> f c
   {-# INLINE traverse #-}
+
+instance Foldable1 V3 where
+  foldMap1 f (V3 a b c) = f a <> f b <> f c
+  {-# INLINE foldMap1 #-}
+
+instance Traversable1 V3 where
+  traverse1 f (V3 a b c) = V3 <$> f a <.> f b <.> f c
+  {-# INLINE traverse1 #-}
 
 instance Apply V3 where
   V3 a b c <.> V3 d e f = V3 (a d) (b e) (c f)
