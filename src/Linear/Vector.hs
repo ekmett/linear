@@ -88,6 +88,8 @@ instance (Eq k, Hashable k) => Additive (HashMap k) where
   (^+^) = HashMap.unionWith (+)
   xs ^-^ ys = HashMap.unionWith (+) xs (negated ys)
 
+instance Additive ((->) b)
+
 -- | Compute the negation of a vector
 --
 -- >>> negated (V2 2 4)
