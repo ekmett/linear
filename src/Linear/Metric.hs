@@ -1,3 +1,4 @@
+{-# LANGUAGE DefaultSignatures #-}
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Linear.Metric
@@ -14,21 +15,24 @@ module Linear.Metric
   ( Metric(..), normalize
   ) where
 
-import Control.Applicative
+import Data.Foldable as Foldable
+import Data.Functor.Apply
 import Linear.Epsilon
+import Linear.Vector
 
 -- $setup
 -- >>> import Linear
 
 -- | A free inner product/metric space
-class Applicative f => Metric f where
+class Additive f => Metric f where
   -- | Compute the inner product of two vectors or (equivalently)
   -- convert a vector @f a@ into a covector @f a -> a@.
   --
   -- >>> V2 1 2 `dot` V2 3 4
   -- 11
-
   dot :: Num a => f a -> f a -> a
+  default dot :: (Foldable f, Num a) => f a -> f a -> a
+  dot x y = Foldable.sum $ liftF2 (*) x y
 
   -- | Compute the squared norm. The name quadrance arises from
   -- Norman J. Wildberger's rational trigonometry.
@@ -37,15 +41,15 @@ class Applicative f => Metric f where
 
   -- | Compute the quadrance of the difference
   qd :: Num a => f a -> f a -> a
-  qd f g = quadrance (liftA2 (-) f g)
+  qd f g = quadrance (f ^-^ g)
 
   -- | Compute the distance between two vectors in a metric space
   distance :: Floating a => f a -> f a -> a
-  distance f g = norm (liftA2 (-) f g)
+  distance f g = norm (f ^-^ g)
 
   -- | Compute the norm of a vector in a metric space
   norm :: Floating a => f a -> a
-  norm v = sqrt (dot v v)
+  norm v = sqrt (quadrance v)
 
   -- | Convert a non-zero vector to unit vector.
   signorm :: Floating a => f a -> f a
