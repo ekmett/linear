@@ -37,6 +37,7 @@ import Linear.Core
 import Linear.Epsilon
 import Linear.Metric
 import Linear.V4
+import Linear.Vector
 
 -- | Plücker coordinates for lines in a 3-dimensional space.
 data Plucker a = Plucker a a a a a a deriving (Eq,Ord,Show,Read)
@@ -51,6 +52,8 @@ instance Applicative Plucker where
   Plucker a b c d e f <*> Plucker g h i j k l =
     Plucker (a g) (b h) (c i) (d j) (e k) (f l)
   {-# INLINE (<*>) #-}
+
+instance Additive Plucker
 
 instance Monad Plucker where
   return a = Plucker a a a a a a

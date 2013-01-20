@@ -63,6 +63,8 @@ instance Applicative Quaternion where
   Quaternion f fv <*> Quaternion a v = Quaternion (f a) (fv <*> v)
   {-# INLINE (<*>) #-}
 
+instance Additive Quaternion
+
 instance Monad Quaternion where
   return = pure
   {-# INLINE return #-}

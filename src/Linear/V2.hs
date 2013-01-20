@@ -32,6 +32,7 @@ import GHC.Arr (Ix(..))
 import Linear.Core
 import Linear.Metric
 import Linear.Epsilon
+import Linear.Vector
 import Prelude hiding (sum)
 
 -- $setup
@@ -72,6 +73,8 @@ instance Applicative V2 where
   {-# INLINE pure #-}
   V2 a b <*> V2 d e = V2 (a d) (b e)
   {-@ INLINE (<*>) #-}
+
+instance Additive V2
 
 instance Monad V2 where
   return a = V2 a a

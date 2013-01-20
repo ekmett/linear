@@ -31,6 +31,7 @@ import Linear.Core
 import Linear.Epsilon
 import Linear.Metric
 import Linear.V2
+import Linear.Vector
 
 -- | A 3-dimensional vector
 data V3 a = V3 a a a deriving (Eq,Ord,Show,Read,Data,Typeable)
@@ -54,6 +55,8 @@ instance Applicative V3 where
   {-# INLINE pure #-}
   V3 a b c <*> V3 d e f = V3 (a d) (b e) (c f)
   {-# INLINE (<*>) #-}
+
+instance Additive V3
 
 instance Monad V3 where
   return a = V3 a a a

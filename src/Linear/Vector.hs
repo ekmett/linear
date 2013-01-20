@@ -1,3 +1,4 @@
+{-# LANGUAGE DefaultSignatures #-}
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Linear.Vector
@@ -10,18 +11,20 @@
 -- Operations on free vector spaces.
 -----------------------------------------------------------------------------
 module Linear.Vector
-  ( (^+^)
-  , gnegate
-  , (^-^)
+  ( Additive(..)
+  , negated
   , (^*)
   , (*^)
   , (^/)
-  , lerp
   -- , basis
   -- , basisFor
   ) where
 
 import Control.Applicative
+import Data.IntMap as IntMap
+import Data.Map as Map
+import Data.HashMap.Lazy as HashMap
+import Data.Hashable
 
 -- $setup
 -- >>> import Control.Lens
@@ -30,29 +33,49 @@ import Control.Applicative
 infixl 6 ^+^, ^-^
 infixl 7 ^*, *^, ^/
 
--- | Compute the sum of two vectors
---
--- >>> V2 1 2 ^+^ V2 3 4
--- V2 4 6
-(^+^) :: (Applicative f, Num a) => f a -> f a -> f a
-(^+^) = liftA2 (+)
-{-# INLINE (^+^) #-}
+class Functor f => Additive f where
+  -- | Compute the sum of two vectors
+  --
+  -- >>> V2 1 2 ^+^ V2 3 4
+  -- V2 4 6
+  (^+^) :: Num a => f a -> f a -> f a
+  default (^+^) :: (Applicative f, Num a) => f a -> f a -> f a
+  (^+^) = liftA2 (+)
+  {-# INLINE (^+^) #-}
+
+  -- | Compute the difference between two vectors
+  --
+  -- >>> V2 4 5 - V2 3 1
+  -- V2 1 4
+  (^-^) :: Num a => f a -> f a -> f a
+  default (^-^) :: (Applicative f, Num a) => f a -> f a -> f a
+  (^-^) = liftA2 (-)
+  {-# INLINE (^-^) #-}
+
+  -- | Linearly interpolate between two vectors.
+  lerp :: Num a => a -> f a -> f a -> f a
+  lerp alpha u v = alpha *^ u ^+^ (1 - alpha) *^ v
+  {-# INLINE lerp #-}
+
+instance Additive IntMap where
+  (^+^) = IntMap.unionWith (+)
+  xs ^-^ ys = IntMap.unionWith (+) xs (negated ys)
+
+instance Ord k => Additive (Map k) where
+  (^+^) = Map.unionWith (+)
+  xs ^-^ ys = Map.unionWith (+) xs (negated ys)
+
+instance (Eq k, Hashable k) => Additive (HashMap k) where
+  (^+^) = HashMap.unionWith (+)
+  xs ^-^ ys = HashMap.unionWith (+) xs (negated ys)
 
 -- | Compute the negation of a vector
 --
--- >>> gnegate (V2 2 4)
+-- >>> negated (V2 2 4)
 -- V2 (-2) (-4)
-gnegate :: (Functor f, Num a) => f a -> f a
-gnegate = fmap negate
-{-# INLINE gnegate #-}
-
--- | Compute the difference between two vectors
---
--- >>> V2 4 5 - V2 3 1
--- V2 1 4
-(^-^) :: (Applicative f, Num a) => f a -> f a -> f a
-(^-^) = liftA2 (-)
-{-# INLINE (^-^) #-}
+negated :: (Functor f, Num a) => f a -> f a
+negated = fmap negate
+{-# INLINE negated #-}
 
 -- | Compute the left scalar product
 --
@@ -74,11 +97,6 @@ f ^* a = fmap (*a) f
 (^/) :: (Functor f, Fractional a) => f a -> a -> f a
 f ^/ a = fmap (/a) f
 {-# INLINE (^/) #-}
-
--- | Linearly interpolate between two vectors.
-lerp :: (Applicative f, Num a) => a -> f a -> f a -> f a
-lerp alpha u v = alpha *^ u ^+^ (1 - alpha) *^ v
-{-# INLINE lerp #-}
 
 {-
 

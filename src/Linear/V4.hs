@@ -33,6 +33,7 @@ import Linear.Epsilon
 import Linear.Metric
 import Linear.V2
 import Linear.V3
+import Linear.Vector
 
 -- | A 4-dimensional vector.
 data V4 a = V4 a a a a deriving (Eq,Ord,Show,Read,Data,Typeable)
@@ -56,6 +57,8 @@ instance Applicative V4 where
   {-# INLINE pure #-}
   V4 a b c d <*> V4 e f g h = V4 (a e) (b f) (c g) (d h)
   {-# INLINE (<*>) #-}
+
+instance Additive V4
 
 instance Monad V4 where
   return a = V4 a a a a
