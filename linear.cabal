@@ -49,6 +49,7 @@ library
     Linear.V3
     Linear.V4
     Linear.Vector
+    Linear.Sparse
 
   ghc-options: -Wall -fwarn-tabs -O2 -fdicts-cheap -funbox-strict-fields
   hs-source-dirs: src

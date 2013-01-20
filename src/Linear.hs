@@ -23,6 +23,7 @@ module Linear
   , module Linear.V3
   , module Linear.V4
   , module Linear.Vector
+  , module Linear.Sparse
   )  where
 
 import Linear.Conjugate
@@ -36,5 +37,6 @@ import Linear.V2
 import Linear.V3
 import Linear.V4
 import Linear.Vector
+import Linear.Sparse
 
 {-# ANN module "Hlint: ignore Use import/export shortcut" #-}
