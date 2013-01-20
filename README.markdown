@@ -1,6 +1,8 @@
 linear
 ======
 
+Highly polymorphic vector space operations on sparse and free vector spaces.
+
 Contact Information
 -------------------
 
