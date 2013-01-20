@@ -23,6 +23,7 @@ import Control.Applicative
 import Data.Data
 import Data.Distributive
 import Data.Foldable
+import Data.Functor.Bind
 import Data.Monoid
 import Data.Traversable
 import Foreign.Ptr (castPtr)
@@ -58,7 +59,19 @@ instance Applicative V4 where
   V4 a b c d <*> V4 e f g h = V4 (a e) (b f) (c g) (d h)
   {-# INLINE (<*>) #-}
 
+instance Apply V4 where
+  V4 a b c d <.> V4 e f g h = V4 (a e) (b f) (c g) (d h)
+  {-# INLINE (<.>) #-}
+
 instance Additive V4
+
+instance Bind V4 where
+  V4 a b c d >>- f = V4 a' b' c' d' where
+    V4 a' _ _ _ = f a
+    V4 _ b' _ _ = f b
+    V4 _ _ c' _ = f c
+    V4 _ _ _ d' = f d
+  {-# INLINE (>>-) #-}
 
 instance Monad V4 where
   return a = V4 a a a a

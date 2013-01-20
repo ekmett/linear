@@ -28,6 +28,7 @@ module Linear.Plucker
 import Control.Applicative
 import Data.Distributive
 import Data.Foldable as Foldable
+import Data.Functor.Bind
 import Data.Monoid
 import Data.Traversable
 import Foreign.Ptr (castPtr)
@@ -46,6 +47,11 @@ instance Functor Plucker where
   fmap g (Plucker a b c d e f) = Plucker (g a) (g b) (g c) (g d) (g e) (g f)
   {-# INLINE fmap #-}
 
+instance Apply Plucker where
+  Plucker a b c d e f <.> Plucker g h i j k l =
+    Plucker (a g) (b h) (c i) (d j) (e k) (f l)
+  {-# INLINE (<.>) #-}
+
 instance Applicative Plucker where
   pure a = Plucker a a a a a a
   {-# INLINE pure #-}
@@ -54,6 +60,16 @@ instance Applicative Plucker where
   {-# INLINE (<*>) #-}
 
 instance Additive Plucker
+
+instance Bind Plucker where
+  Plucker a b c d e f >>- g = Plucker a' b' c' d' e' f' where
+    Plucker a' _ _ _ _ _ = g a
+    Plucker _ b' _ _ _ _ = g b
+    Plucker _ _ c' _ _ _ = g c
+    Plucker _ _ _ d' _ _ = g d
+    Plucker _ _ _ _ e' _ = g e
+    Plucker _ _ _ _ _ f' = g f
+  {-# INLINE (>>-) #-}
 
 instance Monad Plucker where
   return a = Plucker a a a a a a

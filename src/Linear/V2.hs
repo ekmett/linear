@@ -26,6 +26,7 @@ import Data.Distributive
 import Data.Foldable
 import Data.Traversable
 import Data.Monoid
+import Data.Functor.Bind
 import Foreign.Ptr (castPtr)
 import Foreign.Storable (Storable(..))
 import GHC.Arr (Ix(..))
@@ -68,6 +69,10 @@ instance Traversable V2 where
   traverse f (V2 a b) = V2 <$> f a <*> f b
   {-# INLINE traverse #-}
 
+instance Apply V2 where
+  V2 a b <.> V2 d e = V2 (a d) (b e)
+  {-@ INLINE (<.>) #-}
+
 instance Applicative V2 where
   pure a = V2 a a
   {-# INLINE pure #-}
@@ -75,6 +80,12 @@ instance Applicative V2 where
   {-@ INLINE (<*>) #-}
 
 instance Additive V2
+
+instance Bind V2 where
+  V2 a b >>- f = V2 a' b' where
+    V2 a' _ = f a
+    V2 _ b' = f b
+  {-# INLINE (>>-) #-}
 
 instance Monad V2 where
   return a = V2 a a

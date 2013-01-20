@@ -22,12 +22,14 @@ module Linear.Vector
 
 import Control.Applicative
 import Data.Foldable (foldMap)
+import Data.Functor.Bind
 import Data.HashMap.Lazy as HashMap
 import Data.Hashable
 import Data.IntMap as IntMap
 import Data.Map as Map
 import Data.Monoid (Sum(..))
 import Data.Traversable (Traversable, mapAccumL)
+import Linear.Instances ()
 
 -- $setup
 -- >>> import Control.Lens
@@ -36,7 +38,7 @@ import Data.Traversable (Traversable, mapAccumL)
 infixl 6 ^+^, ^-^
 infixl 7 ^*, *^, ^/
 
-class Functor f => Additive f where
+class Bind f => Additive f where
   -- | Compute the sum of two vectors
   --
   -- >>> V2 1 2 ^+^ V2 3 4

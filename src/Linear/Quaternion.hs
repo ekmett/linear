@@ -34,6 +34,7 @@ import Data.Data
 import Data.Distributive
 import Data.Traversable
 import Data.Foldable
+import Data.Functor.Bind
 import GHC.Arr (Ix(..))
 import qualified Data.Foldable as F
 import Data.Monoid
@@ -57,6 +58,10 @@ instance Functor Quaternion where
   a <$ _ = Quaternion a (V3 a a a)
   {-# INLINE (<$) #-}
 
+instance Apply Quaternion where
+  Quaternion f fv <.> Quaternion a v = Quaternion (f a) (fv <.> v)
+  {-# INLINE (<.>) #-}
+
 instance Applicative Quaternion where
   pure a = Quaternion a (pure a)
   {-# INLINE pure #-}
@@ -64,6 +69,14 @@ instance Applicative Quaternion where
   {-# INLINE (<*>) #-}
 
 instance Additive Quaternion
+
+instance Bind Quaternion where
+  Quaternion a (V3 b c d) >>- f = Quaternion a' (V3 b' c' d') where
+    Quaternion a' _          = f a
+    Quaternion _ (V3 b' _ _) = f b
+    Quaternion _ (V3 _ c' _) = f c
+    Quaternion _ (V3 _ _ d') = f d
+  {-# INLINE (>>-) #-}
 
 instance Monad Quaternion where
   return = pure

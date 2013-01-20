@@ -26,6 +26,7 @@ import Control.Applicative
 import Control.Monad (join)
 import Data.Distributive
 import Data.Foldable as Foldable
+import Data.Functor.Apply
 import Linear.Epsilon
 import Linear.Metric
 import Linear.Quaternion
@@ -44,8 +45,8 @@ infixl 7 !*!
 --
 -- >>> V2 (V3 1 2 3) (V3 4 5 6) !*! V3 (V2 1 2) (V2 3 4) (V2 4 5)
 -- V2 (V2 19 25) (V2 43 58)
-(!*!) :: (Functor m, Foldable r, Applicative r, Distributive n, Num a) => m (r a) -> r (n a) -> m (n a)
-f !*! g = fmap (\r -> Foldable.sum . liftA2 (*) r <$> g') f
+(!*!) :: (Functor m, Foldable r, Apply r, Distributive n, Num a) => m (r a) -> r (n a) -> m (n a)
+f !*! g = fmap (\r -> Foldable.sum . liftF2 (*) r <$> g') f
   where g' = distribute g
 
 -- | Matrix * column vector

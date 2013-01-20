@@ -34,6 +34,7 @@ library
     containers       >= 0.4 && < 0.5,
     distributive     >= 0.2.2,
     hashable         >= 1.1 && < 1.3,
+    semigroupoids    >= 3,
     unordered-containers >= 0.2.3
 
   exposed-modules:
@@ -41,6 +42,7 @@ library
     Linear.Conjugate
     Linear.Core
     Linear.Epsilon
+    Linear.Instances
     Linear.Matrix
     Linear.Metric
     Linear.Plucker
@@ -49,7 +51,6 @@ library
     Linear.V3
     Linear.V4
     Linear.Vector
-    Linear.Sparse
 
   ghc-options: -Wall -fwarn-tabs -O2 -fdicts-cheap -funbox-strict-fields
   hs-source-dirs: src

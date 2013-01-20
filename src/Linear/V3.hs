@@ -22,6 +22,7 @@ import Control.Applicative
 import Data.Data
 import Data.Distributive
 import Data.Foldable
+import Data.Functor.Bind
 import Data.Traversable
 import Data.Monoid
 import Foreign.Ptr (castPtr)
@@ -50,6 +51,10 @@ instance Traversable V3 where
   traverse f (V3 a b c) = V3 <$> f a <*> f b <*> f c
   {-# INLINE traverse #-}
 
+instance Apply V3 where
+  V3 a b c <.> V3 d e f = V3 (a d) (b e) (c f)
+  {-# INLINE (<.>) #-}
+
 instance Applicative V3 where
   pure a = V3 a a a
   {-# INLINE pure #-}
@@ -57,6 +62,13 @@ instance Applicative V3 where
   {-# INLINE (<*>) #-}
 
 instance Additive V3
+
+instance Bind V3 where
+  V3 a b c >>- f = V3 a' b' c' where
+    V3 a' _ _ = f a
+    V3 _ b' _ = f b
+    V3 _ _ c' = f c
+  {-# INLINE (>>-) #-}
 
 instance Monad V3 where
   return a = V3 a a a
