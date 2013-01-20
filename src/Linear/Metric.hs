@@ -23,7 +23,7 @@ import Linear.Vector
 -- $setup
 -- >>> import Linear
 
--- | A free inner product/metric space
+-- | Free and sparse inner product/metric spaces.
 class Additive f => Metric f where
   -- | Compute the inner product of two vectors or (equivalently)
   -- convert a vector @f a@ into a covector @f a -> a@.
