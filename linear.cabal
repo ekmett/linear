@@ -1,6 +1,6 @@
 name:          linear
 category:      Math, Algebra
-version:       0.9
+version:       0.9.1
 license:       BSD3
 cabal-version: >= 1.8
 license-file:  LICENSE
@@ -49,6 +49,7 @@ library
     Linear.Metric
     Linear.Plucker
     Linear.Quaternion
+    Linear.V0
     Linear.V2
     Linear.V3
     Linear.V4
