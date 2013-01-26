@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE DefaultSignatures #-}
 -----------------------------------------------------------------------------
 -- |
@@ -31,8 +32,10 @@ class Additive f => Metric f where
   -- >>> V2 1 2 `dot` V2 3 4
   -- 11
   dot :: Num a => f a -> f a -> a
+#ifndef HLINT
   default dot :: (Foldable f, Num a) => f a -> f a -> a
   dot x y = Foldable.sum $ liftF2 (*) x y
+#endif
 
   -- | Compute the squared norm. The name quadrance arises from
   -- Norman J. Wildberger's rational trigonometry.
