@@ -20,6 +20,7 @@ module Linear.Matrix
   , translation
   , fromQuaternion
   , mkTransformation
+  , mkTransformationMat
   ) where
 
 import Control.Applicative
@@ -127,6 +128,8 @@ fromQuaternion (Quaternion w (V3 x y z)) =
         y2 = y * y
         z2 = z * z
 
+-- | Build a transformation matrix from a rotation matrix and a
+-- translation vector.
 mkTransformationMat :: Num a => M33 a -> V3 a -> M44 a
 mkTransformationMat (V3 r1 r2 r3) (V3 tx ty tz) =
   V4 (snoc3 r1 tx) (snoc3 r2 ty) (snoc3 r3 tz) (V4 0 0 0 1)
