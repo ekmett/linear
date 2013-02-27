@@ -41,7 +41,7 @@ import Linear.Vector
 {-# ANN module "HLint: ignore Reduce duplication" #-}
 
 -- | A 4-dimensional vector.
-data V4 a = V4 a a a a deriving (Eq,Ord,Show,Read,Data,Typeable)
+data V4 a = V4 !a !a !a !a deriving (Eq,Ord,Show,Read,Data,Typeable)
 
 instance Functor V4 where
   fmap f (V4 a b c d) = V4 (f a) (f b) (f c) (f d)

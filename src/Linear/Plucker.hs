@@ -45,7 +45,7 @@ import Linear.Vector
 {-# ANN module "HLint: ignore Reduce duplication" #-}
 
 -- | Plücker coordinates for lines in a 3-dimensional space.
-data Plucker a = Plucker a a a a a a deriving (Eq,Ord,Show,Read)
+data Plucker a = Plucker !a !a !a !a !a !a deriving (Eq,Ord,Show,Read)
 
 instance Functor Plucker where
   fmap g (Plucker a b c d e f) = Plucker (g a) (g b) (g c) (g d) (g e) (g f)

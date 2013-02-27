@@ -55,7 +55,7 @@ import Prelude hiding (sum)
 -- >>> sum (V2 1 2)
 -- 3
 
-data V2 a = V2 a a deriving (Eq,Ord,Show,Read,Data,Typeable)
+data V2 a = V2 !a !a deriving (Eq,Ord,Show,Read,Data,Typeable)
 
 instance Functor V2 where
   fmap f (V2 a b) = V2 (f a) (f b)
