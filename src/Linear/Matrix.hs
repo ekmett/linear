@@ -54,16 +54,15 @@ infixl 7 !*!
 f !*! g = fmap (\r -> Foldable.sum . liftF2 (*) r <$> g') f
   where g' = distribute g
 
+infixl 7 !*
 -- | Matrix * column vector
 --
 -- >>> V2 (V3 1 2 3) (V3 4 5 6) !* V3 7 8 9
 -- V2 50 122
-infixl 7 *!
 (!*) :: (Functor m, Metric r, Num a) => m (r a) -> r a -> m a
 m !* v = dot v <$> m
 
-infixl 7 !*
-
+infixl 7 *!
 -- | Row vector * matrix
 --
 -- >>> V2 1 2 *! V2 (V3 3 4 5) (V3 6 7 8)
