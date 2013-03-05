@@ -87,20 +87,14 @@ class Bind f => Additive f where
 
 instance Additive IntMap where
   zero = IntMap.empty
-  (^+^) = IntMap.unionWith (+)
-  xs ^-^ ys = IntMap.unionWith (+) xs (negated ys)
   liftU2 = IntMap.unionWith
 
 instance Ord k => Additive (Map k) where
   zero = Map.empty
-  (^+^) = Map.unionWith (+)
-  xs ^-^ ys = Map.unionWith (+) xs (negated ys)
   liftU2 = Map.unionWith
 
 instance (Eq k, Hashable k) => Additive (HashMap k) where
   zero = HashMap.empty
-  (^+^) = HashMap.unionWith (+)
-  xs ^-^ ys = HashMap.unionWith (+) xs (negated ys)
   liftU2 = HashMap.unionWith
 
 instance Additive ((->) b)
