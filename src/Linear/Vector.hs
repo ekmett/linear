@@ -56,8 +56,8 @@ class Bind f => Additive f where
   -- V2 4 6
   (^+^) :: Num a => f a -> f a -> f a
 #ifndef HLINT
-  default (^+^) :: (Applicative f, Num a) => f a -> f a -> f a
-  (^+^) = liftA2 (+)
+  default (^+^) :: (Num a) => f a -> f a -> f a
+  (^+^) = liftU2 (+)
   {-# INLINE (^+^) #-}
 #endif
 
@@ -67,8 +67,8 @@ class Bind f => Additive f where
   -- V2 1 4
   (^-^) :: Num a => f a -> f a -> f a
 #ifndef HLINT
-  default (^-^) :: (Applicative f, Num a) => f a -> f a -> f a
-  (^-^) = liftA2 (-)
+  default (^-^) :: (Num a) => f a -> f a -> f a
+  x ^-^ y = x ^+^ negated y
   {-# INLINE (^-^) #-}
 #endif
 
@@ -77,20 +77,31 @@ class Bind f => Additive f where
   lerp alpha u v = alpha *^ u ^+^ (1 - alpha) *^ v
   {-# INLINE lerp #-}
 
+  -- | Apply a function to form the union of two vectors.
+  liftU2 :: (a -> a -> a) -> f a -> f a -> f a
+#ifndef HLINT
+  default liftU2 :: (Applicative f) => (a -> a -> a) -> f a -> f a -> f a
+  liftU2 = liftA2
+  {-# INLINE liftU2 #-}
+#endif
+
 instance Additive IntMap where
   zero = IntMap.empty
   (^+^) = IntMap.unionWith (+)
   xs ^-^ ys = IntMap.unionWith (+) xs (negated ys)
+  liftU2 = IntMap.unionWith
 
 instance Ord k => Additive (Map k) where
   zero = Map.empty
   (^+^) = Map.unionWith (+)
   xs ^-^ ys = Map.unionWith (+) xs (negated ys)
+  liftU2 = Map.unionWith
 
 instance (Eq k, Hashable k) => Additive (HashMap k) where
   zero = HashMap.empty
   (^+^) = HashMap.unionWith (+)
   xs ^-^ ys = HashMap.unionWith (+) xs (negated ys)
+  liftU2 = HashMap.unionWith
 
 instance Additive ((->) b)
 
