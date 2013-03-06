@@ -11,7 +11,7 @@
 -- Simple matrix operation for low-dimensional primitives.
 ----------------------------------------------------------------------------
 module Linear.Matrix
-  ( (!*!), (!*) , (*!), (!!*), (*!!)
+  ( (!*!), (!+!), (!-!), (!*) , (*!), (!!*), (*!!)
   , adjoint
   , M22, M33, M44, M43, m33_to_m44, m43_to_m44
   , det22, det33, inv22, inv33
@@ -34,7 +34,7 @@ import Linear.Quaternion
 import Linear.V2
 import Linear.V3
 import Linear.V4
-import Linear.Vector ((*^))
+import Linear.Vector ((*^), Additive, liftU2, (^+^), (^-^))
 import Linear.Conjugate
 
 -- $setup
@@ -54,16 +54,31 @@ infixl 7 !*!
 f !*! g = fmap (\r -> Foldable.sum . liftF2 (*) r <$> g') f
   where g' = distribute g
 
+infixl 6 !+!
+-- | Entry-wise matrix addition.
+--
+-- >>> V2 (V3 1 2 3) (V3 4 5 6) !+! V2 (V3 7 8 9) (V3 1 2 3)
+-- V2 (V3 8 10 12) (V3 5 7 9)
+(!+!) :: (Additive m, Additive n, Num a) => m (n a) -> m (n a) -> m (n a)
+as !+! bs = liftU2 (^+^) as bs
+
+infixl 6 !-!
+-- | Entry-wise matrix subtraction.
+--
+-- >>> V2 (V3 1 2 3) (V3 4 5 6) !-! V2 (V3 7 8 9) (V3 1 2 3)
+-- V2 (V3 (-6) (-6) (-6)) (V3 3 3 3)
+(!-!) :: (Additive m, Additive n, Num a) => m (n a) -> m (n a) -> m (n a)
+as !-! bs = liftU2 (^-^) as bs
+
+infixl 7 !*
 -- | Matrix * column vector
 --
 -- >>> V2 (V3 1 2 3) (V3 4 5 6) !* V3 7 8 9
 -- V2 50 122
-infixl 7 *!
 (!*) :: (Functor m, Metric r, Num a) => m (r a) -> r a -> m a
 m !* v = dot v <$> m
 
-infixl 7 !*
-
+infixl 7 *!
 -- | Row vector * matrix
 --
 -- >>> V2 1 2 *! V2 (V3 3 4 5) (V3 6 7 8)
