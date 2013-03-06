@@ -77,7 +77,11 @@ class Bind f => Additive f where
   lerp alpha u v = alpha *^ u ^+^ (1 - alpha) *^ v
   {-# INLINE lerp #-}
 
-  -- | Apply a function to form the union of two vectors.
+  -- | Apply a function to merge the 'non-zero' components of two vectors.
+  --
+  -- * For a dense vector this is equivalent to 'liftA2'.
+  --
+  -- * For a sparse vector this is equivalent to 'unionWith'.
   liftU2 :: (a -> a -> a) -> f a -> f a -> f a
 #ifndef HLINT
   default liftU2 :: (Applicative f) => (a -> a -> a) -> f a -> f a -> f a
