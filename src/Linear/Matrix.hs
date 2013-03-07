@@ -15,7 +15,7 @@ module Linear.Matrix
   , adjoint
   , M22, M33, M44, M43, m33_to_m44, m43_to_m44
   , det22, det33, inv22, inv33
-  , eye3, eye4
+  , eye2, eye3, eye4
   , trace
   , translation
   , fromQuaternion
@@ -172,6 +172,14 @@ m43_to_m44
 m33_to_m44 :: Num a => M33 a -> M44 a
 m33_to_m44 (V3 r1 r2 r3) = V4 (vector r1) (vector r2) (vector r3) (point 0)
 {-# ANN m33_to_m44 "HLint: ignore Use camelCase" #-}
+
+-- |2x2 identity matrix.
+--
+-- >>> eye2
+-- V2 (V2 1 0) (V2 0 1)
+eye2 :: Num a => M22 a
+eye2 = V2 (V2 1 0)
+          (V2 0 1)
 
 -- |3x3 identity matrix.
 --
