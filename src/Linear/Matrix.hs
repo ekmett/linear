@@ -200,7 +200,6 @@ eye4 = V4 (V4 1 0 0 0)
           (V4 0 0 1 0)
           (V4 0 0 0 1)
 
-
 -- |Extract the translation vector (first three entries of the last
 -- column) from a 3x4 or 4x4 matrix
 translation :: (R3 t, R4 v, Functor f, Functor t) => (V3 a -> f (V3 a)) -> t (v a) -> f (t a)

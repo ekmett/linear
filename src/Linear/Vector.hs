@@ -156,3 +156,10 @@ basisFor :: (Traversable t, Enum a, Num a) => t a -> [t a]
 basisFor v = [ setElement k 1 z | k <- [0..n-1] ]
   where z = 0 <$ v
         n = getSum $ foldMap (const (Sum 1)) v
+
+-- | Produce a diagonal matrix from a vector.
+diag :: (Applicative t, Num a, Traversable t) => t a -> t (t a)
+diag v = snd $ mapAccumL aux 0 v
+  where aux i e = let i' = i + 1
+                  in i' `seq` (i', setElement i e z)
+        z = pure 0
