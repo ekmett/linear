@@ -1,5 +1,6 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE DefaultSignatures #-}
+{-# LANGUAGE TypeOperators #-}
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Linear.Vector
@@ -32,6 +33,7 @@ import Data.IntMap as IntMap
 import Data.Map as Map
 import Data.Monoid (Sum(..))
 import Data.Traversable (Traversable, mapAccumL)
+import GHC.Generics
 import Linear.Instances ()
 
 -- $setup
@@ -40,6 +42,43 @@ import Linear.Instances ()
 
 infixl 6 ^+^, ^-^
 infixl 7 ^*, *^, ^/
+
+class GAdditive f where
+  gzero :: Num a => f a
+  gliftU2 :: (a -> a -> a) -> f a -> f a -> f a
+  gliftI2 :: (a -> b -> c) -> f a -> f b -> f c
+
+instance GAdditive U1 where
+  gzero = U1
+  {-# INLINE gzero #-}
+  gliftU2 _ U1 U1 = U1
+  {-# INLINE gliftU2 #-}
+  gliftI2 _ U1 U1 = U1
+  {-# INLINE gliftI2 #-}
+
+instance (GAdditive f, GAdditive g) => GAdditive (f :*: g) where
+  gzero = gzero :*: gzero
+  {-# INLINE gzero #-}
+  gliftU2 f (a :*: b) (c :*: d) = gliftU2 f a c :*: gliftU2 f b d
+  {-# INLINE gliftU2 #-}
+  gliftI2 f (a :*: b) (c :*: d) = gliftI2 f a c :*: gliftI2 f b d
+  {-# INLINE gliftI2 #-}
+
+instance Additive f => GAdditive (Rec1 f) where
+  gzero = Rec1 zero
+  {-# INLINE gzero #-}
+  gliftU2 f (Rec1 g) (Rec1 h) = Rec1 (liftU2 f g h)
+  {-# INLINE gliftU2 #-}
+  gliftI2 f (Rec1 g) (Rec1 h) = Rec1 (liftI2 f g h)
+  {-# INLINE gliftI2 #-}
+
+instance GAdditive f => GAdditive (M1 i c f) where
+  gzero = M1 gzero
+  {-# INLINE gzero #-}
+  gliftU2 f (M1 g) (M1 h) = M1 (gliftU2 f g h)
+  {-# INLINE gliftU2 #-}
+  gliftI2 f (M1 g) (M1 h) = M1 (gliftI2 f g h)
+  {-# INLINE gliftI2 #-}
 
 -- | A vector is an additive group with additional structure.
 class Functor f => Additive f where
