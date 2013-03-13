@@ -1,6 +1,6 @@
 1.1
 ---
-* `[]` is now `Additive`.
+* `[]` and `Maybe` are now `Additive`.
 
 1.0
 ---
