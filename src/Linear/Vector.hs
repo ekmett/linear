@@ -101,7 +101,6 @@ class Functor f => Additive f where
   {-# INLINE liftI2 #-}
 #endif
 
-
 instance Additive ZipList where
   zero = ZipList []
   {-# INLINE zero #-}
@@ -120,14 +119,6 @@ instance Additive [] where
   {-# INLINE liftU2 #-}
   liftI2 = zipWith
   {-# INLINE liftI2 #-}
-
-instance Bind ZipList
-
-instance Additive ZipList where
-  zero = ZipList []
-  {-# INLINE zero #-}
-  liftU2 = liftA2
-  {-# INLINE liftU2 #-}
 
 instance Additive IntMap where
   zero = IntMap.empty
