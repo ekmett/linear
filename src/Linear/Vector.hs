@@ -80,6 +80,13 @@ instance GAdditive f => GAdditive (M1 i c f) where
   gliftI2 f (M1 g) (M1 h) = M1 (gliftI2 f g h)
   {-# INLINE gliftI2 #-}
 
+instance GAdditive Par1 where
+  gzero = Par1 0
+  gliftU2 f (Par1 a) (Par1 b) = Par1 (f a b)
+  {-# INLINE gliftU2 #-}
+  gliftI2 f (Par1 a) (Par1 b) = Par1 (f a b)
+  {-# INLINE gliftI2 #-}
+
 -- | A vector is an additive group with additional structure.
 class Functor f => Additive f where
   -- | The zero vector
