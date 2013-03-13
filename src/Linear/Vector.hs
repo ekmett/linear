@@ -109,7 +109,15 @@ instance Additive ZipList where
   liftI2 = liftA2
   {-# INLINE liftI2 #-}
 
-instance Additive Maybe
+instance Additive Maybe where
+  zero = Nothing
+  {-# INLINE zero #-}
+  liftU2 f (Just a) (Just b) = Just (f a b)
+  liftU2 _ Nothing ys = ys
+  liftU2 _ xs Nothing = xs
+  {-# INLINE liftU2 #-}
+  liftI2 = liftA2
+  {-# INLINE liftI2 #-}
 
 instance Additive [] where
   zero = []
