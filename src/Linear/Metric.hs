@@ -17,7 +17,6 @@ module Linear.Metric
   ) where
 
 import Data.Foldable as Foldable
-import Data.Functor.Apply
 import Linear.Epsilon
 import Linear.Vector
 
@@ -34,7 +33,7 @@ class Additive f => Metric f where
   dot :: Num a => f a -> f a -> a
 #ifndef HLINT
   default dot :: (Foldable f, Num a) => f a -> f a -> a
-  dot x y = Foldable.sum $ liftF2 (*) x y
+  dot x y = Foldable.sum $ liftI2 (*) x y
 #endif
 
   -- | Compute the squared norm. The name quadrance arises from

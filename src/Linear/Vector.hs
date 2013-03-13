@@ -25,7 +25,6 @@ module Linear.Vector
 import Control.Applicative
 import Data.Complex
 import Data.Foldable (foldMap)
-import Data.Functor.Bind
 import Data.Functor.Identity
 import Data.HashMap.Lazy as HashMap
 import Data.Hashable
@@ -43,7 +42,7 @@ infixl 6 ^+^, ^-^
 infixl 7 ^*, *^, ^/
 
 -- | A vector is an additive group with additional structure.
-class Bind f => Additive f where
+class Functor f => Additive f where
   -- | The zero vector
   zero :: Num a => f a
 #ifndef HLINT
@@ -57,7 +56,7 @@ class Bind f => Additive f where
   -- V2 4 6
   (^+^) :: Num a => f a -> f a -> f a
 #ifndef HLINT
-  default (^+^) :: (Num a) => f a -> f a -> f a
+  default (^+^) :: Num a => f a -> f a -> f a
   (^+^) = liftU2 (+)
   {-# INLINE (^+^) #-}
 #endif
@@ -68,7 +67,7 @@ class Bind f => Additive f where
   -- V2 1 4
   (^-^) :: Num a => f a -> f a -> f a
 #ifndef HLINT
-  default (^-^) :: (Num a) => f a -> f a -> f a
+  default (^-^) :: Num a => f a -> f a -> f a
   x ^-^ y = x ^+^ negated y
   {-# INLINE (^-^) #-}
 #endif
@@ -78,47 +77,83 @@ class Bind f => Additive f where
   lerp alpha u v = alpha *^ u ^+^ (1 - alpha) *^ v
   {-# INLINE lerp #-}
 
-  -- | Apply a function to merge the 'non-zero' components of two vectors.
+  -- | Apply a function to merge the 'non-zero' components of two vectors, unioning the rest of the values.
   --
   -- * For a dense vector this is equivalent to 'liftA2'.
   --
   -- * For a sparse vector this is equivalent to 'unionWith'.
   liftU2 :: (a -> a -> a) -> f a -> f a -> f a
 #ifndef HLINT
-  default liftU2 :: (Applicative f) => (a -> a -> a) -> f a -> f a -> f a
+  default liftU2 :: Applicative f => (a -> a -> a) -> f a -> f a -> f a
   liftU2 = liftA2
   {-# INLINE liftU2 #-}
 #endif
 
+  -- | Apply a function to the components of two vectors.
+  --
+  -- * For a dense vector this is equivalent to 'liftA2'.
+  --
+  -- * For a sparse vector this is equivalent to 'intersectionWith'.
+  liftI2 :: (a -> b -> c) -> f a -> f b -> f c
+#ifndef HLINT
+  default liftI2 :: Applicative f => (a -> b -> c) -> f a -> f b -> f c
+  liftI2 = liftI2
+  {-# INLINE liftI2 #-}
+#endif
+
+
+instance Additive ZipList where
+  zero = ZipList []
+  {-# INLINE zero #-}
+  liftU2 f (ZipList xs) (ZipList ys) = ZipList (liftU2 f xs ys)
+  {-# INLINE liftU2 #-}
+  liftI2 = liftA2
+  {-# INLINE liftI2 #-}
+
 instance Additive [] where
   zero = []
   {-# INLINE zero #-}
-  liftU2 f (x:xs) (y:ys) = f x y : liftU2 f xs ys
-  liftU2 _ xs [] = xs
-  liftU2 _ [] ys = ys
+  liftU2 f = go where
+    go (x:xs) (y:ys) = f x y : go xs ys
+    go [] ys = ys
+    go xs [] = xs
   {-# INLINE liftU2 #-}
+  liftI2 = zipWith
+  {-# INLINE liftI2 #-}
 
 instance Additive IntMap where
   zero = IntMap.empty
   {-# INLINE zero #-}
   liftU2 = IntMap.unionWith
   {-# INLINE liftU2 #-}
+  liftI2 = IntMap.intersectionWith
+  {-# INLINE liftI2 #-}
 
 instance Ord k => Additive (Map k) where
   zero = Map.empty
   {-# INLINE zero #-}
   liftU2 = Map.unionWith
   {-# INLINE liftU2 #-}
+  liftI2 = Map.intersectionWith
+  {-# INLINE liftI2 #-}
 
 instance (Eq k, Hashable k) => Additive (HashMap k) where
   zero = HashMap.empty
   {-# INLINE zero #-}
   liftU2 = HashMap.unionWith
   {-# INLINE liftU2 #-}
+  liftI2 = HashMap.intersectionWith
+  {-# INLINE liftI2 #-}
 
 instance Additive ((->) b)
 
-instance Additive Complex
+instance Additive Complex where
+  zero = 0 :+ 0
+  {-# INLINE zero #-}
+  liftU2 f (a :+ b) (c :+ d) = f a c :+ f b d
+  {-# INLINE liftU2 #-}
+  liftI2 f (a :+ b) (c :+ d) = f a c :+ f b d
+  {-# INLINE liftI2 #-}
 
 instance Additive Identity
 

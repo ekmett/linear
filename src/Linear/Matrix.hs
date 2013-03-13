@@ -27,14 +27,13 @@ import Control.Applicative
 import Control.Monad (join)
 import Data.Distributive
 import Data.Foldable as Foldable
-import Data.Functor.Apply
 import Linear.Epsilon
 import Linear.Metric
 import Linear.Quaternion
 import Linear.V2
 import Linear.V3
 import Linear.V4
-import Linear.Vector ((*^), Additive, liftU2, (^+^), (^-^))
+import Linear.Vector
 import Linear.Conjugate
 
 -- $setup
@@ -50,9 +49,8 @@ infixl 7 !*!
 --
 -- >>> V2 (fromList [(1,2)]) (fromList [(2,3)]) !*! fromList [(1,V3 0 0 1), (2, V3 0 0 5)]
 -- V2 (V3 0 0 2) (V3 0 0 15)
-(!*!) :: (Functor m, Foldable r, Apply r, Distributive n, Num a) => m (r a) -> r (n a) -> m (n a)
-f !*! g = fmap (\r -> Foldable.sum . liftF2 (*) r <$> g') f
-  where g' = distribute g
+(!*!) :: (Functor m, Foldable r, Additive r, Distributive n, Num a) => m (r a) -> r (n a) -> m (n a)
+f !*! g = fmap (\r -> Foldable.sum . liftI2 (*) r <$> g') f where g' = distribute g
 
 infixl 6 !+!
 -- | Entry-wise matrix addition.
