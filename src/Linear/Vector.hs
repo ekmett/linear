@@ -90,17 +90,31 @@ class Bind f => Additive f where
   {-# INLINE liftU2 #-}
 #endif
 
+instance Additive [] where
+  zero = []
+  {-# INLINE zero #-}
+  liftU2 f (x:xs) (y:ys) = f x y : liftU2 f xs ys
+  liftU2 _ xs [] = xs
+  liftU2 _ [] ys = ys
+  {-# INLINE liftU2 #-}
+
 instance Additive IntMap where
   zero = IntMap.empty
+  {-# INLINE zero #-}
   liftU2 = IntMap.unionWith
+  {-# INLINE liftU2 #-}
 
 instance Ord k => Additive (Map k) where
   zero = Map.empty
+  {-# INLINE zero #-}
   liftU2 = Map.unionWith
+  {-# INLINE liftU2 #-}
 
 instance (Eq k, Hashable k) => Additive (HashMap k) where
   zero = HashMap.empty
+  {-# INLINE zero #-}
   liftU2 = HashMap.unionWith
+  {-# INLINE liftU2 #-}
 
 instance Additive ((->) b)
 

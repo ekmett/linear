@@ -1,8 +1,12 @@
+1.1
+---
+* `[]` is now `Additive`.
+
 1.0
 ---
 * Strict vectors
 * Exported `mkTransformationMat`
-* Bumped dependency bounds.
+* Bumped dependency bounds
 
 0.9.1 [bug fix]
 -----
