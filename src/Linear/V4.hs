@@ -75,7 +75,13 @@ instance Apply V4 where
   V4 a b c d <.> V4 e f g h = V4 (a e) (b f) (c g) (d h)
   {-# INLINE (<.>) #-}
 
-instance Additive V4
+instance Additive V4 where
+  zero = pure 0
+  {-# INLINE zero #-}
+  liftU2 = liftA2
+  {-# INLINE liftU2 #-}
+  liftI2 = liftA2
+  {-# INLINE liftI2 #-}
 
 instance Bind V4 where
   V4 a b c d >>- f = V4 a' b' c' d' where

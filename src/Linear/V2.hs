@@ -89,7 +89,13 @@ instance Applicative V2 where
   V2 a b <*> V2 d e = V2 (a d) (b e)
   {-@ INLINE (<*>) #-}
 
-instance Additive V2
+instance Additive V2 where
+  zero = pure 0
+  {-# INLINE zero #-}
+  liftU2 = liftA2
+  {-# INLINE liftU2 #-}
+  liftI2 = liftA2
+  {-# INLINE liftI2 #-}
 
 instance Bind V2 where
   V2 a b >>- f = V2 a' b' where

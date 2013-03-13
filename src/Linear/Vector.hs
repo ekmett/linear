@@ -1,6 +1,8 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE TypeFamilies #-}
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Linear.Vector
@@ -92,8 +94,8 @@ class Functor f => Additive f where
   -- | The zero vector
   zero :: Num a => f a
 #ifndef HLINT
-  default zero :: (Applicative f, Num a) => f a
-  zero = pure 0
+  default zero :: (GAdditive (Rep1 f), Generic1 f, Num a) => f a
+  zero = to1 gzero
 #endif
 
   -- | Compute the sum of two vectors
@@ -200,7 +202,13 @@ instance (Eq k, Hashable k) => Additive (HashMap k) where
   liftI2 = HashMap.intersectionWith
   {-# INLINE liftI2 #-}
 
-instance Additive ((->) b)
+instance Additive ((->) b) where
+  zero   = const 0
+  {-# INLINE zero #-}
+  liftU2 = liftA2
+  {-# INLINE liftU2 #-}
+  liftI2 = liftA2
+  {-# INLINE liftI2 #-}
 
 instance Additive Complex where
   zero = 0 :+ 0
@@ -210,7 +218,13 @@ instance Additive Complex where
   liftI2 f (a :+ b) (c :+ d) = f a c :+ f b d
   {-# INLINE liftI2 #-}
 
-instance Additive Identity
+instance Additive Identity where
+  zero = Identity 0
+  {-# INLINE zero #-}
+  liftU2 = liftA2
+  {-# INLINE liftU2 #-}
+  liftI2 = liftA2
+  {-# INLINE liftI2 #-}
 
 -- | Compute the negation of a vector
 --

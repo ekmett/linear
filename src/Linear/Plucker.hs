@@ -63,7 +63,13 @@ instance Applicative Plucker where
     Plucker (a g) (b h) (c i) (d j) (e k) (f l)
   {-# INLINE (<*>) #-}
 
-instance Additive Plucker
+instance Additive Plucker where
+  zero = pure 0
+  {-# INLINE zero #-}
+  liftU2 = liftA2
+  {-# INLINE liftU2 #-}
+  liftI2 = liftA2
+  {-# INLINE liftI2 #-}
 
 instance Bind Plucker where
   Plucker a b c d e f >>- g = Plucker a' b' c' d' e' f' where

@@ -1,6 +1,7 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE DeriveGeneric #-}
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Linear.V0
@@ -25,6 +26,7 @@ import Data.Ix
 import Data.Traversable
 import Data.Semigroup
 import Data.Functor.Bind
+import GHC.Generics
 import Foreign.Storable (Storable(..))
 import Linear.Core
 import Linear.Metric
@@ -43,7 +45,7 @@ import Prelude hiding (sum)
 -- >>> V0 + V0
 -- V0
 --
-data V0 a = V0 deriving (Eq,Ord,Show,Read,Ix,Enum,Data,Typeable)
+data V0 a = V0 deriving (Eq,Ord,Show,Read,Ix,Enum,Data,Typeable,Generic)
 
 instance Functor V0 where
   fmap _ V0 = V0
@@ -67,9 +69,15 @@ instance Applicative V0 where
   pure _ = V0
   {-# INLINE pure #-}
   V0 <*> V0 = V0
-  {-@ INLINE (<*>) #-}
+  {-# INLINE (<*>) #-}
 
-instance Additive V0
+instance Additive V0 where
+  zero = V0
+  {-# INLINE zero #-}
+  liftU2 _ V0 V0 = V0
+  {-# INLINE liftU2 #-}
+  liftI2 _ V0 V0 = V0
+  {-# INLINE liftI2 #-}
 
 instance Bind V0 where
   V0 >>- _ = V0

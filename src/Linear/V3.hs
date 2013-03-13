@@ -73,7 +73,13 @@ instance Applicative V3 where
   V3 a b c <*> V3 d e f = V3 (a d) (b e) (c f)
   {-# INLINE (<*>) #-}
 
-instance Additive V3
+instance Additive V3 where
+  zero = pure 0
+  {-# INLINE zero #-}
+  liftU2 = liftA2
+  {-# INLINE liftU2 #-}
+  liftI2 = liftA2
+  {-# INLINE liftI2 #-}
 
 instance Bind V3 where
   V3 a b c >>- f = V3 a' b' c' where

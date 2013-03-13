@@ -70,7 +70,13 @@ instance Applicative Quaternion where
   Quaternion f fv <*> Quaternion a v = Quaternion (f a) (fv <*> v)
   {-# INLINE (<*>) #-}
 
-instance Additive Quaternion
+instance Additive Quaternion where
+  zero = pure 0
+  {-# INLINE zero #-}
+  liftU2 = liftA2
+  {-# INLINE liftU2 #-}
+  liftI2 = liftA2
+  {-# INLINE liftI2 #-}
 
 instance Bind Quaternion where
   Quaternion a (V3 b c d) >>- f = Quaternion a' (V3 b' c' d') where
