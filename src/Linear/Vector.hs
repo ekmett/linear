@@ -121,6 +121,14 @@ instance Additive [] where
   liftI2 = zipWith
   {-# INLINE liftI2 #-}
 
+instance Bind ZipList
+
+instance Additive ZipList where
+  zero = ZipList []
+  {-# INLINE zero #-}
+  liftU2 = liftA2
+  {-# INLINE liftU2 #-}
+
 instance Additive IntMap where
   zero = IntMap.empty
   {-# INLINE zero #-}
