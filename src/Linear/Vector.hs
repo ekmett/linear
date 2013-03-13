@@ -109,6 +109,8 @@ instance Additive ZipList where
   liftI2 = liftA2
   {-# INLINE liftI2 #-}
 
+instance Additive Maybe
+
 instance Additive [] where
   zero = []
   {-# INLINE zero #-}
