@@ -1,6 +1,6 @@
 1.1
 ---
-* `[]` and `Maybe` are now `Additive`.
+* Added `Additive` instances for `[]`, `Maybe` and `Vector`.
 
 1.0
 ---
