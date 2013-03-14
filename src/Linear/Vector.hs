@@ -27,13 +27,15 @@ module Linear.Vector
 
 import Control.Applicative
 import Data.Complex
-import Data.Foldable (foldMap)
+import Data.Foldable as Foldable (foldMap, forM_)
 import Data.Functor.Identity
 import Data.HashMap.Lazy as HashMap
 import Data.Hashable
 import Data.IntMap as IntMap
 import Data.Map as Map
-import Data.Monoid (Sum(..))
+import Data.Monoid (Sum(..), mempty)
+import Data.Vector as Vector
+import Data.Vector.Mutable as Mutable
 import Data.Traversable (Traversable, mapAccumL)
 import GHC.Generics
 import Linear.Instances ()
@@ -88,6 +90,7 @@ instance GAdditive Par1 where
   {-# INLINE gliftU2 #-}
   gliftI2 f (Par1 a) (Par1 b) = Par1 (f a b)
   {-# INLINE gliftI2 #-}
+
 
 -- | A vector is an additive group with additional structure.
 class Functor f => Additive f where
@@ -157,6 +160,22 @@ instance Additive ZipList where
   liftI2 = liftA2
   {-# INLINE liftI2 #-}
 
+instance Additive Vector where
+  zero = mempty
+  {-# INLINE zero #-}
+  liftU2 f u v = case compare lu lv of
+    LT | lu == 0   -> v
+       | otherwise -> modify (\ w -> Foldable.forM_ [0..lu-1] $ \i -> unsafeWrite w i $ f (unsafeIndex u i) (unsafeIndex v i)) v
+    EQ -> Vector.zipWith f u v
+    GT | lv == 0   -> u
+       | otherwise -> modify (\ w -> Foldable.forM_ [0..lv-1] $ \i -> unsafeWrite w i $ f (unsafeIndex u i) (unsafeIndex v i)) u
+    where
+      lu = Vector.length u
+      lv = Vector.length v
+  {-# INLINE liftU2 #-}
+  liftI2 = Vector.zipWith
+  {-# INLINE liftI2 #-}
+
 instance Additive Maybe where
   zero = Nothing
   {-# INLINE zero #-}
@@ -175,7 +194,7 @@ instance Additive [] where
     go [] ys = ys
     go xs [] = xs
   {-# INLINE liftU2 #-}
-  liftI2 = zipWith
+  liftI2 = Prelude.zipWith
   {-# INLINE liftI2 #-}
 
 instance Additive IntMap where
