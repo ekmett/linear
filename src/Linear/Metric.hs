@@ -17,6 +17,7 @@ module Linear.Metric
   ) where
 
 import Data.Foldable as Foldable
+import Data.Functor.Identity
 import Linear.Epsilon
 import Linear.Vector
 
