@@ -59,7 +59,8 @@ class Additive f => Metric f where
   signorm v = fmap (/m) v where
     m = norm v
 
-instance Metric Identity
+instance Metric Identity where
+  dot (Identity x) (Identity y) = x * y
 
 -- | Normalize a 'Metric' functor to have unit 'norm'. This function
 -- does not change the functor if its 'norm' is 0 or 1.
