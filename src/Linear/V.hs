@@ -16,6 +16,7 @@ module Linear.V
   , dim
   , Dim(..)
   , reifyDim
+  , reifyVector
   , fromVector
   ) where
 
@@ -63,11 +64,15 @@ instance Reifies s Int => Dim (ReifiedDim s) where
   reflectDim = retagDim reflect
   {-# INLINE reflectDim #-}
 
-reifyDim :: Int -> (forall (o :: *). Dim o => Proxy o -> r) -> r
+reifyDim :: Int -> (forall (n :: *). Dim n => Proxy n -> r) -> r
 reifyDim i f = R.reify i (go f) where
-  go :: Reifies o Int => (Proxy (ReifiedDim o) -> a) -> proxy o -> a
+  go :: Reifies n Int => (Proxy (ReifiedDim n) -> a) -> proxy n -> a
   go g _ = g Proxy
 {-# INLINE reifyDim #-}
+
+reifyVector :: forall a r. Vector a -> (forall (n :: *). Dim n => V n a -> r) -> r
+reifyVector v f = reifyDim (V.length v) $ \(Proxy :: Proxy n) -> f (V v :: V n a)
+{-# INLINE reifyVector #-}
 
 instance Dim n => Dim (V n a) where
   reflectDim _ = reflectDim (Proxy :: Proxy n)
