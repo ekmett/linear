@@ -11,11 +11,12 @@
 #endif
 
 module Linear.V
-  ( V(..)
+  ( V(toVector)
   , int
   , dim
   , Dim(..)
   , reifyDim
+  , fromVector
   ) where
 
 import Control.Applicative
@@ -40,7 +41,7 @@ import Linear.Vector
 class Dim n where
   reflectDim :: p n -> Int
 
-newtype V n a = V { runV :: V.Vector a } deriving (Eq,Ord,Show,Read)
+newtype V n a = V { toVector :: V.Vector a } deriving (Eq,Ord,Show,Read)
 
 dim :: forall n a. Dim n => V n a -> Int
 dim _ = reflectDim (Proxy :: Proxy n)
@@ -97,14 +98,14 @@ instance Dim n => Applicative (V n) where
 
 instance Bind (V n) where
   V as >>- f = V $ generate (V.length as) $ \i ->
-    runV (f (as `unsafeIndex` i)) `unsafeIndex` i
+    toVector (f (as `unsafeIndex` i)) `unsafeIndex` i
   {-# INLINE (>>-) #-}
 
 instance Dim n => Monad (V n) where
   return = V . V.replicate (reflectDim (Proxy :: Proxy n))
   {-# INLINE return #-}
   V as >>= f = V $ generate (reflectDim (Proxy :: Proxy n)) $ \i ->
-    runV (f (as `unsafeIndex` i)) `unsafeIndex` i
+    toVector (f (as `unsafeIndex` i)) `unsafeIndex` i
   {-# INLINE (>>=) #-}
 
 instance Dim n => Additive (V n) where
@@ -171,18 +172,10 @@ instance Dim n => Metric (V n) where
 
 -- TODO: instance (Dim n, Ix a) => Ix (V n a)
 
-{-
-asV :: V k a -> V.Vector b -> Maybe (V k b)
-asV v v'
-    | V.length v' == reflectDimension v  = Just $ V v'
-    | otherwise                   = Nothing
-
-withDimension :: SingI n => Sing (n :: Nat) -> V.Vector b -> Maybe (V k b)
-withDimension k v
-    | k' == V.length v  = Just (V v)
-    | otherwise         = Nothing
-  where k' = fromIntegral $ fromSing k
--}
+fromVector :: forall n a. Dim n => Vector a -> Maybe (V n a)
+fromVector v
+  | V.length v == reflectDim (Proxy :: Proxy n) = Just (V v)
+  | otherwise                                   = Nothing
 
 data Z  -- 0
 data D  (n :: *) -- 2n
