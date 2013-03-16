@@ -58,6 +58,8 @@ class Additive f => Metric f where
   signorm v = fmap (/m) v where
     m = norm v
 
+instance Metric Identity
+
 -- | Normalize a 'Metric' functor to have unit 'norm'. This function
 -- does not change the functor if its 'norm' is 0 or 1.
 normalize :: (Floating a, Metric f, Epsilon a) => f a -> f a
