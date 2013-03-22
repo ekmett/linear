@@ -148,7 +148,7 @@ class Functor f => Additive f where
   liftI2 :: (a -> b -> c) -> f a -> f b -> f c
 #ifndef HLINT
   default liftI2 :: Applicative f => (a -> b -> c) -> f a -> f b -> f c
-  liftI2 = liftI2
+  liftI2 = liftA2
   {-# INLINE liftI2 #-}
 #endif
 
