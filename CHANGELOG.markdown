@@ -1,3 +1,7 @@
+1.1.1
+-----
+* Fixed an infinite loop in the default definition of `liftI2`.
+
 1.1
 ---
 * Added `Additive` instances for `[]`, `Maybe` and `Vector`.
