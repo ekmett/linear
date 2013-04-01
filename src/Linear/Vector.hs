@@ -23,6 +23,7 @@ module Linear.Vector
   , basis
   , basisFor
   , kronecker
+  , outer
   ) where
 
 import Control.Applicative
@@ -301,3 +302,7 @@ kronecker v = snd $ mapAccumL aux 0 v
   where aux i e = let i' = i + 1
                   in i' `seq` (i', setElement i e z)
         z = pure 0
+
+-- | Outer (tensor) product of two vectors
+outer :: (Functor f, Functor g, Num a) => f a -> g a -> f (g a)
+outer a b = fmap (\x->fmap (*x) b) a
