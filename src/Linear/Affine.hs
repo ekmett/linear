@@ -15,15 +15,21 @@
 module Linear.Affine where
 
 import Control.Applicative
-import Control.Monad
 import Data.Complex (Complex)
 import Data.Foldable as Foldable
+import Data.Functor.Bind
 import Data.Functor.Identity (Identity)
 import Data.HashMap.Lazy (HashMap)
 import Data.Hashable
 import Data.IntMap (IntMap)
+import Data.Ix
 import Data.Map (Map)
+import Data.Traversable as Traversable
 import Data.Vector (Vector)
+import Foreign.Storable
+import Linear.Core
+import Linear.Epsilon
+import Linear.Metric
 import Linear.Plucker
 import Linear.Quaternion
 import Linear.V
@@ -78,3 +84,21 @@ ADDITIVE((->) b)
 ADDITIVEC(Ord k, Map k)
 ADDITIVEC((Eq k, Hashable k), HashMap k)
 ADDITIVEC(Dim n, V n)
+
+-- | A handy wrapper to help distinguish points from vectors at the
+-- type level
+newtype Point f a = P (f a)
+  deriving ( Eq, Ord, Show, Read, Monad, Functor, Applicative, Foldable
+           , Traversable, Apply, Bind, Additive, Metric, Core, R2, R3, R4
+           , Fractional , Num, Ix, Storable, Epsilon
+           )
+
+instance Additive f => Affine (Point f) where
+  type Diff (Point f) = f
+  P x .-. P y = x ^-^ y
+  P x .+^ v = P (x ^+^ v)
+  P x .-^ v = P (x ^-^ v)
+
+-- | Vector spaces have origins.
+origin :: (Additive f, Num a) => Point f a
+origin = P zero
