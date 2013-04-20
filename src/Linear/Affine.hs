@@ -54,13 +54,13 @@ class Additive (Diff p) => Affine p where
   p .-^ v = p .+^ negated v
   {-# INLINE (.-^) #-}
 
--- | Squared distance between two points
-distanceSq :: (Affine p, Foldable (Diff p), Num a) => p a -> p a -> a
-distanceSq a b = Foldable.sum (fmap (join (*)) (a .-. b))
+-- | Compute the quadrance of the difference (the square of the distance)
+qdA :: (Affine p, Foldable (Diff p), Num a) => p a -> p a -> a
+qdA a b = Foldable.sum (fmap (join (*)) (a .-. b))
 
--- | Distance between two points
-distance :: (Floating a, Foldable (Diff p), Affine p) => p a -> p a -> a
-distance a b = sqrt (distanceSq a b)
+-- | Distance between two points in an affine space
+distanceA :: (Floating a, Foldable (Diff p), Affine p) => p a -> p a -> a
+distanceA a b = sqrt (qdA a b)
 
 #define ADDITIVEC(CTX,T) instance (CTX) => Affine (T) where type Diff (T) = T ; \
   (.-.) = (^-^) ; {-# INLINE (.-.) #-} ; (.+^) = (^+^) ; {-# INLINE (.+^) #-} ; \
