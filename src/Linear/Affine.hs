@@ -47,9 +47,17 @@ import Linear.Vector
 -- > (a .-. b) ^+^ v  =  (a .+^ v) .-. q@
 class Additive (Diff p) => Affine p where
   type Diff p
+  
+  infixl 6 .-.
+  -- | Get the difference between two points as a vector offset.
   (.-.) :: Num a => p a -> p a -> Diff p a
+  
+  infixl 6 .+^
+  -- | Add a vector offset to a point.
   (.+^) :: Num a => p a -> Diff p a -> p a
 
+  infixl 6 .-^
+  -- | Subtract a vector offset from a point.
   (.-^) :: Num a => p a -> Diff p a -> p a
   p .-^ v = p .+^ negated v
   {-# INLINE (.-^) #-}
