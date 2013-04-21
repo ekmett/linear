@@ -46,6 +46,7 @@ library
 
   exposed-modules:
     Linear
+    Linear.Affine
     Linear.Conjugate
     Linear.Core
     Linear.Epsilon
