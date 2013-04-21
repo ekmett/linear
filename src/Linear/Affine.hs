@@ -62,10 +62,10 @@ qdA a b = Foldable.sum (fmap (join (*)) (a .-. b))
 distanceA :: (Floating a, Foldable (Diff p), Affine p) => p a -> p a -> a
 distanceA a b = sqrt (qdA a b)
 
-#define ADDITIVEC(CTX,T) instance (CTX) => Affine (T) where type Diff (T) = T ; \
+#define ADDITIVEC(CTX,T) instance CTX => Affine T where type Diff T = T ; \
   (.-.) = (^-^) ; {-# INLINE (.-.) #-} ; (.+^) = (^+^) ; {-# INLINE (.+^) #-} ; \
   (.-^) = (^-^) ; {-# INLINE (.-^) #-}
-#define ADDITIVE(T) ADDITIVEC(, T)
+#define ADDITIVE(T) ADDITIVEC((), T)
 
 ADDITIVE([])
 ADDITIVE(Complex)
@@ -80,10 +80,10 @@ ADDITIVE(V3)
 ADDITIVE(V4)
 ADDITIVE(Plucker)
 ADDITIVE(Quaternion)
-ADDITIVE((->) b)
-ADDITIVEC(Ord k, Map k)
-ADDITIVEC((Eq k, Hashable k), HashMap k)
-ADDITIVEC(Dim n, V n)
+ADDITIVE(((->) b))
+ADDITIVEC(Ord k, (Map k))
+ADDITIVEC((Eq k, Hashable k), (HashMap k))
+ADDITIVEC(Dim n, (V n))
 
 -- | A handy wrapper to help distinguish points from vectors at the
 -- type level
