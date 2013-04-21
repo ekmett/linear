@@ -46,7 +46,7 @@ import Linear.Vector
 -- > (a .+^ u) .+^ v  =  a .+^ (u ^+^ v)@
 -- > (a .-. b) ^+^ v  =  (a .+^ v) .-. q@
 class Additive (Diff p) => Affine p where
-  type Diff p
+  type Diff p :: * -> *
   (.-.) :: Num a => p a -> p a -> Diff p a
   (.+^) :: Num a => p a -> Diff p a -> p a
 
