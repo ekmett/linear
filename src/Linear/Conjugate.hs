@@ -17,6 +17,7 @@ module Linear.Conjugate
 import Data.Complex hiding (conjugate)
 import Data.Int
 import Data.Word
+import Foreign.C.Types (CFloat, CDouble)
 
 -- | An involutive ring
 class Num a => Conjugate a where
@@ -43,6 +44,8 @@ instance Conjugate Word16
 instance Conjugate Word8
 instance Conjugate Double
 instance Conjugate Float
+instance Conjugate CFloat
+instance Conjugate CDouble
 instance (Conjugate a, RealFloat a) => Conjugate (Complex a) where
   {-# SPECIALIZE instance Conjugate (Complex Float) #-}
   {-# SPECIALIZE instance Conjugate (Complex Double) #-}
