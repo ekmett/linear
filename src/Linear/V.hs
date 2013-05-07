@@ -182,6 +182,7 @@ fromVector v
   | V.length v == reflectDim (Proxy :: Proxy n) = Just (V v)
   | otherwise                                   = Nothing
 
+#if !MIN_VERSION_reflection(1,3,0)
 data Z  -- 0
 data D  (n :: *) -- 2n
 data SD (n :: *) -- 2n+1
@@ -226,5 +227,5 @@ int n = case quotRem n 2 of
   (q, 0) -> conT ''D  `appT` int q
   (q, 1) -> conT ''SD `appT` int q
   _     -> error "ghc is bad at math"
-
+#endif
 
