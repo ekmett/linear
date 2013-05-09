@@ -12,6 +12,7 @@
 module Linear.Epsilon
   ( Epsilon(..)
   ) where
+import Foreign.C.Types (CFloat, CDouble)
 
 -- | Provides a fairly subjective test to see if a quantity is near zero.
 --
@@ -36,4 +37,12 @@ instance Epsilon Float where
 
 -- | @'abs' a '<=' 1e-12@
 instance Epsilon Double where
+  nearZero a = abs a <= 1e-12
+
+-- | @'abs' a '<=' 1e-6@
+instance Epsilon CFloat where
+  nearZero a = abs a <= 1e-6
+
+-- | @'abs' a '<=' 1e-12@
+instance Epsilon CDouble where
   nearZero a = abs a <= 1e-12
