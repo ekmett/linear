@@ -1,3 +1,7 @@
+1.1.2
+-----
+* Dependency bump for `reflection` compatibility
+
 1.1.1
 -----
 * Fixed an infinite loop in the default definition of `liftI2`.
