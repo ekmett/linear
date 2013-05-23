@@ -16,7 +16,7 @@
 ----------------------------------------------------------------------------
 module Linear.V4
   ( V4(..)
-  , vector, point
+  , vector, point, normalizePoint
   , R1(..)
   , R2(..)
   , R3(..)
@@ -204,6 +204,14 @@ vector (V3 a b c) = V4 a b c 0
 point :: Num a => V3 a -> V4 a
 point (V3 a b c) = V4 a b c 1
 {-# INLINE point #-}
+
+-- | Convert 4-dimensional projective coordinates to a 3-dimensional
+-- point. This operation may be denoted, @euclidean [x:y:z:w] = (x/w,
+-- y/w, z/w)@ where the projective, homogenous, coordinate @[x:y:z:w]@
+-- is one of many associated with a single point @(x/w, y/w, z/w)@.
+normalizePoint :: Fractional a => V4 a -> V3 a
+normalizePoint (V4 a b c w) = (1/w) *^ V3 a b c
+{-# INLINE normalizePoint #-}
 
 instance Epsilon a => Epsilon (V4 a) where
   nearZero = nearZero . quadrance

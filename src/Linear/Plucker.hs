@@ -1,5 +1,6 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE GADTs #-}
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
 #endif
@@ -20,7 +21,16 @@ module Linear.Plucker
   , isotropic
   , (><)
   , plucker
+  , plucker3D
+  -- * Operations on lines
+  , parallel
   , intersects
+  , LinePass(..)
+  , passes
+  , quadranceToOrigin
+  , closestToOrigin
+  , isLine
+  , Coincides(..)
   -- * Basis elements
   ,      p01, p02, p03
   , p10,      p12, p13
@@ -42,6 +52,8 @@ import GHC.Arr (Ix(..))
 import Linear.Core
 import Linear.Epsilon
 import Linear.Metric
+import Linear.V2
+import Linear.V3
 import Linear.V4
 import Linear.Vector
 
@@ -202,8 +214,17 @@ instance Storable a => Storable (Plucker a) where
     where ptr' = castPtr ptr
   {-# INLINE peek #-}
 
--- | Given a pair of points represented by homogeneous coordinates generate Plücker coordinates
--- for the line through them.
+instance Metric Plucker where
+  dot (Plucker a b c d e f) (Plucker g h i j k l) = a*g+b*h+c*i+d*j+e*k+f*l
+  {-# INLINE dot #-}
+
+instance Epsilon a => Epsilon (Plucker a) where
+  nearZero = nearZero . quadrance
+  {-# INLINE nearZero #-}
+
+-- | Given a pair of points represented by homogeneous coordinates
+-- generate Plücker coordinates for the line through them, directed
+-- from the second towards the first.
 plucker :: Num a => V4 a -> V4 a -> Plucker a
 plucker (V4 a b c d)
         (V4 e f g h) =
@@ -214,6 +235,13 @@ plucker (V4 a b c d)
           (b*h-d*f)
           (c*h-d*g)
 {-# INLINE plucker #-}
+
+-- | Given a pair of 3D points, generate Plücker coordinates for the
+-- line through them, directed from the second towards the first.
+plucker3D :: Num a => V3 a -> V3 a -> Plucker a
+plucker3D p q = Plucker a b c d e f
+  where V3 a b c = p - q
+        V3 d e f = p `cross` q
 
 -- | These elements form a basis for the Plücker space, or the Grassmanian manifold @Gr(2,V4)@.
 --
@@ -279,22 +307,110 @@ infixl 5 ><
 Plucker a b c d e f >< Plucker g h i j k l = a*l-b*k+c*j+d*i-e*h+f*g
 {-# INLINE (><) #-}
 
--- | Checks if the line is near-isotropic (isotropic vectors in this quadratic space represent lines in real 3d space)
+-- | Checks if the line is near-isotropic (isotropic vectors in this
+-- quadratic space represent lines in real 3d space).
 isotropic :: Epsilon a => Plucker a -> Bool
 isotropic a = nearZero (a >< a)
 {-# INLINE isotropic #-}
 
--- | Checks if the two vectors intersect (or nearly intersect)
-intersects :: Epsilon a => Plucker a -> Plucker a -> Bool
-intersects a b = nearZero (a >< b)
+-- | Checks if two lines intersect (or nearly intersect).
+intersects :: (Epsilon a, Ord a) => Plucker a -> Plucker a -> Bool
+intersects a b = not (a `parallel` b) && passes a b == Coplanar
+-- intersects :: Epsilon a => Plucker a -> Plucker a -> Bool
+-- intersects a b = nearZero (a >< b)
 {-# INLINE intersects #-}
 
-instance Metric Plucker where
-  dot (Plucker a b c d e f) (Plucker g h i j k l) = a*g+b*h+c*i+d*j+e*k+f*l
-  {-# INLINE dot #-}
+-- | Describe how two lines pass each other.
+data LinePass = Coplanar
+              -- ^ The lines are coplanar (parallel or intersecting).
+              | Clockwise
+              -- ^ The lines pass each other clockwise (right-handed
+              -- screw)
+              | Counterclockwise
+              -- ^ The lines pass each other counterclockwise
+              -- (left-handed screw).
+                deriving (Eq, Show)
 
-instance Epsilon a => Epsilon (Plucker a) where
-  nearZero = nearZero . quadrance
-  {-# INLINE nearZero #-}
+-- | Check how two lines pass each other. @passes l1 l2@ describes
+-- @l2@ when looking down @l1@.
+passes :: (Epsilon a, Num a, Ord a) => Plucker a -> Plucker a -> LinePass
+passes a b = case () of
+               _ | nearZero s -> Coplanar
+               _ | s > 0      -> Counterclockwise
+               _ | otherwise  -> Clockwise
+  where s = (u1 `dot` v2) + (u2 `dot` v1)
+        V2 u1 v1 = toUV a
+        V2 u2 v2 = toUV b
+{-# INLINE passes #-}
+
+-- | Checks if two lines are parallel.
+parallel :: Epsilon a => Plucker a -> Plucker a -> Bool
+parallel a b = nearZero $ u1 `cross` u2
+  where V2 u1 _ = toUV a
+        V2 u2 _ = toUV b
+{-# INLINE parallel #-}
+
+-- | Represent a Plücker coordinate as a pair of 3-tuples, typically
+-- denoted U and V.
+toUV :: Plucker a -> V2 (V3 a)
+toUV (Plucker a b c d e f) = V2 (V3 a b c) (V3 d e f)
+
+-- | Checks if two lines coincide in space. In other words, undirected equality.
+coincides :: (Epsilon a, Fractional a) => Plucker a -> Plucker a -> Bool
+coincides p1 p2 = Foldable.all nearZero $ (s *^ p2) - p1
+  where s = maybe 1 getFirst . getOption . fold $ saveDiv <$> p1 <*> p2
+        saveDiv x y | nearZero y = Option Nothing
+                    | otherwise  = Option . Just $ First (x / y)
+{-# INLINABLE coincides #-}
+
+-- | Checks if two lines coincide in space, and have the same
+-- orientation.
+coincides' :: (Epsilon a, Fractional a, Ord a) => Plucker a -> Plucker a -> Bool
+coincides' p1 p2 = Foldable.all nearZero ((s *^ p2) - p1) && s > 0
+  where s = maybe 1 getFirst . getOption . fold $ saveDiv <$> p1 <*> p2
+        saveDiv x y | nearZero y = Option Nothing
+                    | otherwise  = Option . Just $ First (x / y)
+{-# INLINABLE coincides' #-}
+
+-- | When lines are represented as Plücker coordinates, we have the
+-- ability to check for both directed and undirected
+-- equality. Undirected equality between 'Line's (or a 'Line' and a
+-- 'Ray') checks that the two lines coincide in 3D space. Directed
+-- equality, between two 'Ray's, checks that two lines coincide in 3D,
+-- and have the same direction. To accomodate these two notions of
+-- equality, we use an 'Eq' instance on the 'Coincides' data type.
+--
+-- For example, to check the /directed/ equality between two lines,
+-- @p1@ and @p2@, we write, @Ray p1 == Ray p2@.
+data Coincides a where
+  Line :: (Epsilon a, Fractional a) => Plucker a -> Coincides a
+  Ray  :: (Epsilon a, Fractional a, Ord a) => Plucker a -> Coincides a
+
+instance Eq (Coincides a) where
+  Line a == Line b  = coincides a b
+  Line a == Ray b   = coincides a b
+  Ray a  == Line b  = coincides a b
+  Ray a  == Ray b   = coincides' a b
+
+-- | The minimum squared distance of a line from the origin.
+quadranceToOrigin :: Fractional a => Plucker a -> a
+quadranceToOrigin p = (v `dot` v) / (u `dot` u)
+  where V2 u v = toUV p
+{-# INLINE quadranceToOrigin #-}
+
+-- | The point where a line is closest to the origin.
+closestToOrigin :: Fractional a => Plucker a -> V3 a
+closestToOrigin p = normalizePoint $ V4 x y z (u `dot` u)
+  where V2 u v = toUV p
+        V3 x y z = v `cross` u
+{-# INLINE closestToOrigin #-}
+
+-- | Not all 6-dimensional points correspond to a line in 3D. This
+-- predicate tests that a Plücker coordinate lies on the Grassmann
+-- manifold, and does indeed represent a 3D line.
+isLine :: Epsilon a => Plucker a -> Bool
+isLine p = nearZero $ u `dot` v
+  where V2 u v = toUV p
+{-# INLINE isLine #-}
 
 -- TODO: drag some more stuff out of my thesis
