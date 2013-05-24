@@ -1,5 +1,6 @@
 module Plucker (tests) where
 import Linear
+import Linear.Plucker
 import Test.HUnit
 
 ln2,ln3,ln4,ln5,ln6,ln7,ln8,ln9 :: Plucker Float
