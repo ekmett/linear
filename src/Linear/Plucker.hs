@@ -334,10 +334,10 @@ data LinePass = Coplanar
 -- | Check how two lines pass each other. @passes l1 l2@ describes
 -- @l2@ when looking down @l1@.
 passes :: (Epsilon a, Num a, Ord a) => Plucker a -> Plucker a -> LinePass
-passes a b = case () of
-               _ | nearZero s -> Coplanar
-               _ | s > 0      -> Counterclockwise
-               _ | otherwise  -> Clockwise
+passes a b 
+  | nearZero s = Coplanar
+  | s > 0 = Counterclockwise
+  | otherwise = Clockwise
   where s = (u1 `dot` v2) + (u2 `dot` v1)
         V2 u1 v1 = toUV a
         V2 u2 v2 = toUV b
