@@ -33,7 +33,9 @@ import Foreign.Storable
 #ifdef USE_TYPE_LITS
 import GHC.TypeLits
 #endif
+#if !(MIN_VERSION_reflection(1,3,0))
 import Language.Haskell.TH
+#endif
 import Linear.Core
 import Linear.Epsilon
 import Linear.Metric
