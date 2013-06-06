@@ -55,6 +55,7 @@ library
     Linear.Metric
     Linear.Plucker
     Linear.Quaternion
+    Linear.Trace
     Linear.V
     Linear.V0
     Linear.V2

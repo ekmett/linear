@@ -1,6 +1,5 @@
------------------------------------------------------------------------------
+---------------------------------------------------------------------------
 -- |
--- Module      :  Linear.Matrix
 -- Copyright   :  (C) 2012-2013 Edward Kmett,
 -- License     :  BSD-style (see the file LICENSE)
 --
@@ -9,14 +8,14 @@
 -- Portability :  non-portable
 --
 -- Simple matrix operation for low-dimensional primitives.
-----------------------------------------------------------------------------
+---------------------------------------------------------------------------
 module Linear.Matrix
   ( (!*!), (!+!), (!-!), (!*) , (*!), (!!*), (*!!)
   , adjoint
   , M22, M33, M44, M43, m33_to_m44, m43_to_m44
   , det22, det33, inv22, inv33
   , eye2, eye3, eye4
-  , trace
+  , Trace(..)
   , translation
   , fromQuaternion
   , mkTransformation
@@ -24,7 +23,6 @@ module Linear.Matrix
   ) where
 
 import Control.Applicative
-import Control.Monad (join)
 import Data.Distributive
 import Data.Foldable as Foldable
 import Linear.Epsilon
@@ -35,6 +33,7 @@ import Linear.V3
 import Linear.V4
 import Linear.Vector
 import Linear.Conjugate
+import Linear.Trace
 
 -- $setup
 -- >>> import Data.Complex
@@ -109,14 +108,6 @@ infixl 7 !!*
 adjoint :: (Functor m, Distributive n, Conjugate a) => m (n a) -> n (m a)
 adjoint = collect (fmap conjugate)
 {-# INLINE adjoint #-}
-
--- | Compute the trace of a matrix
---
--- >>> trace (V2 (V2 a b) (V2 c d))
--- a + d
-trace :: (Monad f, Foldable f, Num a) => f (f a) -> a
-trace m = Foldable.sum (join m)
-{-# INLINE trace #-}
 
 -- * Matrices
 --

@@ -19,6 +19,7 @@ module Linear
   , module Linear.Metric
   , module Linear.Plucker
   , module Linear.Quaternion
+  , module Linear.Trace
   , module Linear.V0
   , module Linear.V2
   , module Linear.V3
@@ -34,6 +35,7 @@ import Linear.Matrix
 import Linear.Metric
 import Linear.Plucker
 import Linear.Quaternion
+import Linear.Trace
 import Linear.V0
 import Linear.V2
 import Linear.V3
