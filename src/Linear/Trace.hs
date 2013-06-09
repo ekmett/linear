@@ -48,23 +48,31 @@ class Functor m => Trace m where
   --
   -- >>> trace (V2 (V2 a b) (V2 c d))
   -- a + d
-
   trace :: Num a => m (m a) -> a
-  default trace :: (Foldable m, Monad m, Num a) => m (m a) -> a
-  trace = Foldable.sum . Monad.join
+  default trace :: (Foldable m, Num a) => m (m a) -> a
+  trace = Foldable.sum . diagonal
   {-# INLINE trace #-}
+
+  -- | Compute the diagonal of a matrix
+  --
+  -- >>> diagonal (V2 (V2 a b) (V2 c d))
+  -- V2 a d
+  diagonal :: m (m a) -> m a
+  default diagonal :: Monad m => m (m a) -> m a
+  diagonal = Monad.join
+  {-# INLINE diagonal #-}
 
 instance Trace IntMap where
-  trace = Foldable.sum . Bind.join
-  {-# INLINE trace #-}
+  diagonal = Bind.join
+  {-# INLINE diagonal #-}
 
 instance Ord k => Trace (Map k) where
-  trace = Foldable.sum . Bind.join
-  {-# INLINE trace #-}
+  diagonal = Bind.join
+  {-# INLINE diagonal #-}
 
 instance (Eq k, Hashable k) => Trace (HashMap k) where
-  trace = Foldable.sum . Bind.join
-  {-# INLINE trace #-}
+  diagonal = Bind.join
+  {-# INLINE diagonal #-}
 
 instance Dim n => Trace (V n)
 instance Trace V0
@@ -76,8 +84,10 @@ instance Trace Quaternion
 
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ > 704
 instance Trace Complex where
-  trace ((a :+ _) :+ (_ :+ b)) = a :+ b
+  trace ((a :+ _) :+ (_ :+ b)) = a + b
   {-# INLINE trace #-}
+  diagonal ((a :+ _) :+ (_ :+ b)) = a :+ b
+  {-# INLINE diagonal #-}
 #endif
 
 instance (Trace f, Trace g) => Trace (Product f g) where
@@ -85,7 +95,13 @@ instance (Trace f, Trace g) => Trace (Product f g) where
     pfst (Pair x _) = x
     psnd (Pair _ y) = y
   {-# INLINE trace #-}
+  diagonal (Pair xx yy) = diagonal (pfst <$> xx) `Pair` diagonal (psnd <$> yy) where
+    pfst (Pair x _) = x
+    psnd (Pair _ y) = y
+  {-# INLINE diagonal #-}
 
 instance (Distributive g, Trace g, Trace f) => Trace (Compose g f) where
   trace = trace . fmap (fmap trace . distribute) . getCompose . fmap getCompose
   {-# INLINE trace #-}
+  diagonal = Compose . fmap diagonal . diagonal . fmap distribute . getCompose . fmap getCompose
+  {-# INLINE diagonal #-}
