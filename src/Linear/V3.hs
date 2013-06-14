@@ -14,6 +14,7 @@
 module Linear.V3
   ( V3(..)
   , cross, triple
+  , R1(..)
   , R2(..)
   , R3(..)
   ) where
@@ -142,9 +143,11 @@ class R2 t => R3 t where
   -- @
   _xyz :: Functor f => (V3 a -> f (V3 a)) -> t a -> f (t a)
 
-instance R2 V3 where
+instance R1 V3 where
   _x f (V3 a b c) = (\a' -> V3 a' b c) <$> f a
   {-# INLINE _x #-}
+
+instance R2 V3 where
   _y f (V3 a b c) = (\b' -> V3 a b' c) <$> f b
   {-# INLINE _y #-}
   _xy f (V3 a b c) = (\(V2 a' b') -> V3 a' b' c) <$> f (V2 a b)

@@ -48,7 +48,7 @@ instance Conjugate Float
 instance Conjugate CFloat
 instance Conjugate CDouble
 
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ > 704
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ > 706
 instance Conjugate a => Conjugate (Complex a) where
 #else
 instance (Conjugate a, RealFloat a) => Conjugate (Complex a) where

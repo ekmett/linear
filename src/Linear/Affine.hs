@@ -34,6 +34,7 @@ import Linear.Plucker
 import Linear.Quaternion
 import Linear.V
 import Linear.V0
+import Linear.V1
 import Linear.V2
 import Linear.V3
 import Linear.V4
@@ -83,6 +84,7 @@ ADDITIVE(IntMap)
 ADDITIVE(Identity)
 ADDITIVE(Vector)
 ADDITIVE(V0)
+ADDITIVE(V1)
 ADDITIVE(V2)
 ADDITIVE(V3)
 ADDITIVE(V4)
@@ -97,7 +99,7 @@ ADDITIVEC(Dim n, (V n))
 -- type level
 newtype Point f a = P (f a)
   deriving ( Eq, Ord, Show, Read, Monad, Functor, Applicative, Foldable
-           , Traversable, Apply, Bind, Additive, Metric, Core, R2, R3, R4
+           , Traversable, Apply, Bind, Additive, Metric, Core, R1, R2, R3, R4
            , Fractional , Num, Ix, Storable, Epsilon
            )
 
