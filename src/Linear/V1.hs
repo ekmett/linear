@@ -76,7 +76,7 @@ instance Apply V1 where
   {-@ INLINE (<.>) #-}
 
 instance Applicative V1 where
-  pure a = V1 a
+  pure = V1
   {-# INLINE pure #-}
   V1 f <*> V1 x = V1 (f x)
   {-@ INLINE (<*>) #-}
@@ -94,7 +94,7 @@ instance Bind V1 where
   {-# INLINE (>>-) #-}
 
 instance Monad V1 where
-  return a = V1 a
+  return = V1
   {-# INLINE return #-}
   V1 a >>= f = f a
   {-# INLINE (>>=) #-}
