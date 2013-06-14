@@ -27,6 +27,7 @@ import Control.Applicative
 import Data.Data
 import Data.Distributive
 import Data.Foldable
+import Data.Functor.Identity (Identity(..))
 import Data.Traversable
 import Data.Semigroup.Foldable
 import Data.Semigroup.Traversable
@@ -142,6 +143,10 @@ class R1 t where
 
 instance R1 V1 where
   _x f (V1 a) = V1 <$> f a
+  {-# INLINE _x #-}
+
+instance R1 Identity where
+  _x f (Identity a) = Identity <$> f a
   {-# INLINE _x #-}
 
 instance Core V1 where
