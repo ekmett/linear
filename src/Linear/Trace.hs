@@ -49,18 +49,22 @@ class Functor m => Trace m where
   -- >>> trace (V2 (V2 a b) (V2 c d))
   -- a + d
   trace :: Num a => m (m a) -> a
+#ifndef HLINT
   default trace :: (Foldable m, Num a) => m (m a) -> a
   trace = Foldable.sum . diagonal
   {-# INLINE trace #-}
+#endif
 
   -- | Compute the diagonal of a matrix
   --
   -- >>> diagonal (V2 (V2 a b) (V2 c d))
   -- V2 a d
   diagonal :: m (m a) -> m a
+#ifndef HLINT
   default diagonal :: Monad m => m (m a) -> m a
   diagonal = Monad.join
   {-# INLINE diagonal #-}
+#endif
 
 instance Trace IntMap where
   diagonal = Bind.join

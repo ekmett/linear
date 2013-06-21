@@ -14,6 +14,7 @@
 module Linear.V4
   ( V4(..)
   , vector, point
+  , R1(..)
   , R2(..)
   , R3(..)
   , R4(..)
@@ -149,9 +150,11 @@ class R3 t => R4 t where
   -- @
   _xyzw :: Functor f => (V4 a -> f (V4 a)) -> t a -> f (t a)
 
-instance R2 V4 where
+instance R1 V4 where
   _x f (V4 a b c d) = (\a' -> V4 a' b c d) <$> f a
   {-# INLINE _x #-}
+
+instance R2 V4 where
   _y f (V4 a b c d) = (\b' -> V4 a b' c d) <$> f b
   {-# INLINE _y #-}
   _xy f (V4 a b c d) = (\(V2 a' b') -> V4 a' b' c d) <$> f (V2 a b)

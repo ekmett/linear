@@ -16,6 +16,7 @@
 ----------------------------------------------------------------------------
 module Linear.V2
   ( V2(..)
+  , R1(..)
   , R2(..)
   , perp
   ) where
@@ -36,6 +37,7 @@ import Linear.Core
 import Linear.Metric
 import Linear.Epsilon
 import Linear.Vector
+import Linear.V1 (R1(..))
 import Prelude hiding (sum)
 
 -- $setup
@@ -140,21 +142,7 @@ instance Metric V2 where
   {-# INLINE dot #-}
 
 -- | A space that distinguishes 2 orthogonal basis vectors '_x' and '_y', but may have more.
-class R2 t where
-  -- |
-  -- >>> V2 1 2 ^._x
-  -- 1
-  --
-  -- >>> V2 1 2 & _x .~ 3
-  -- V2 3 2
-  --
-  -- @
-  -- '_x' :: Lens' (t a) a
-  -- @
-  _x :: Functor f => (a -> f a) -> t a -> f (t a)
-  _x = _xy._x
-  {-# INLINE _x #-}
-
+class R1 t => R2 t where
   -- |
   -- >>> V2 1 2 ^._y
   -- 2
@@ -175,9 +163,11 @@ class R2 t where
   -- @
   _xy :: Functor f => (V2 a -> f (V2 a)) -> t a -> f (t a)
 
-instance R2 V2 where
+instance R1 V2 where
   _x f (V2 a b) = (`V2` b) <$> f a
   {-# INLINE _x #-}
+
+instance R2 V2 where
   _y f (V2 a b) = V2 a <$> f b
   {-# INLINE _y #-}
   _xy = id
