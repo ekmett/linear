@@ -48,11 +48,7 @@ instance Conjugate Float
 instance Conjugate CFloat
 instance Conjugate CDouble
 
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ > 704
-instance Conjugate a => Conjugate (Complex a) where
-#else
 instance (Conjugate a, RealFloat a) => Conjugate (Complex a) where
-#endif
   {-# SPECIALIZE instance Conjugate (Complex Float) #-}
   {-# SPECIALIZE instance Conjugate (Complex Double) #-}
   conjugate (a :+ b) = conjugate a :+ negate b
