@@ -9,6 +9,9 @@
 {-# LANGUAGE PolyKinds #-}
 #define USE_TYPE_LITS 1
 #endif
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+{-# LANGUAGE Trustworthy #-}
+#endif
 
 module Linear.V
   ( V(toVector)

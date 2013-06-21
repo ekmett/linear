@@ -2,9 +2,11 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+{-# LANGUAGE Trustworthy #-}
+#endif
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Linear.Vector
 -- License     :  BSD-style (see the file LICENSE)
 -- Maintainer  :  Edward Kmett <ekmett@gmail.com>
 -- Stability   :  provisional
@@ -48,11 +50,11 @@ import Linear.Vector
 -- > (a .-. b) ^+^ v  =  (a .+^ v) .-. q@
 class Additive (Diff p) => Affine p where
   type Diff p :: * -> *
-  
+
   infixl 6 .-.
   -- | Get the difference between two points as a vector offset.
   (.-.) :: Num a => p a -> p a -> Diff p a
-  
+
   infixl 6 .+^
   -- | Add a vector offset to a point.
   (.+^) :: Num a => p a -> Diff p a -> p a

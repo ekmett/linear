@@ -1,3 +1,7 @@
+1.1.4
+-----
+* Marked modules `Trustworthy` as necessary.
+
 1.1.2
 -----
 * Dependency bump for `reflection` compatibility
