@@ -5,7 +5,6 @@
 #endif
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Linear.V3
 -- Copyright   :  (C) 2012-2013 Edward Kmett,
 -- License     :  BSD-style (see the file LICENSE)
 --
