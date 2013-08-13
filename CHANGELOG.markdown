@@ -1,3 +1,7 @@
+1.2
+---
+* Improved matrix multiplication to properly support the sparse/sparse case.
+
 1.1.4
 -----
 * Marked modules `Trustworthy` as necessary.
