@@ -10,27 +10,26 @@
 <pre><a name="line-1"></a><span class='hs-comment'>{-# LANGUAGE RankNTypes #-}</span>
 <a name="line-2"></a><span class='hs-comment'>-----------------------------------------------------------------------------</span>
 <a name="line-3"></a><span class='hs-comment'>-- |</span>
-<a name="line-4"></a><span class='hs-comment'>-- Module      :  Linear.Core</span>
-<a name="line-5"></a><span class='hs-comment'>-- Copyright   :  (C) 2012-2013 Edward Kmett,</span>
-<a name="line-6"></a><span class='hs-comment'>-- License     :  BSD-style (see the file LICENSE)</span>
-<a name="line-7"></a><span class='hs-comment'>--</span>
-<a name="line-8"></a><span class='hs-comment'>-- Maintainer  :  Edward Kmett &lt;ekmett@gmail.com&gt;</span>
-<a name="line-9"></a><span class='hs-comment'>-- Stability   :  experimental</span>
-<a name="line-10"></a><span class='hs-comment'>-- Portability :  non-portable</span>
-<a name="line-11"></a><span class='hs-comment'>--</span>
-<a name="line-12"></a><span class='hs-comment'>-- Corepresentable functors as vector spaces</span>
-<a name="line-13"></a><span class='hs-comment'>----------------------------------------------------------------------------</span>
-<a name="line-14"></a><span class='hs-keyword'>module</span> <span class='hs-conid'>Linear</span><span class='hs-varop'>.</span><span class='hs-conid'>Core</span>
-<a name="line-15"></a>  <span class='hs-layout'>(</span> <span class='hs-conid'>Core</span><span class='hs-layout'>(</span><span class='hs-keyglyph'>..</span><span class='hs-layout'>)</span>
-<a name="line-16"></a>  <span class='hs-layout'>)</span> <span class='hs-keyword'>where</span>
-<a name="line-17"></a>
-<a name="line-18"></a><a name="Core"></a><span class='hs-comment'>-- |</span>
-<a name="line-19"></a><a name="Core"></a><span class='hs-comment'>-- A 'Functor' @f@ is corepresentable if it is isomorphic to @(x -&gt; a)@</span>
-<a name="line-20"></a><a name="Core"></a><span class='hs-comment'>-- for some x. Nearly all such functors can be represented by choosing @x@ to be</span>
-<a name="line-21"></a><a name="Core"></a><span class='hs-comment'>-- the set of lenses that are polymorphic in the contents of the 'Functor',</span>
-<a name="line-22"></a><a name="Core"></a><span class='hs-comment'>-- that is to say @x = 'Rep' f@ is a valid choice of 'x' for (nearly) every</span>
-<a name="line-23"></a><a name="Core"></a><span class='hs-comment'>-- 'Representable' 'Functor'.</span>
-<a name="line-24"></a><a name="Core"></a><span class='hs-keyword'>class</span> <span class='hs-conid'>Functor</span> <span class='hs-varid'>f</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-conid'>Core</span> <span class='hs-varid'>f</span> <span class='hs-keyword'>where</span>
-<a name="line-25"></a>  <span class='hs-varid'>core</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-layout'>(</span><span class='hs-keyword'>forall</span> <span class='hs-varid'>g</span> <span class='hs-varid'>x</span><span class='hs-varop'>.</span> <span class='hs-conid'>Functor</span> <span class='hs-varid'>g</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-layout'>(</span><span class='hs-varid'>x</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>g</span> <span class='hs-varid'>x</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>f</span> <span class='hs-varid'>x</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>g</span> <span class='hs-layout'>(</span><span class='hs-varid'>f</span> <span class='hs-varid'>x</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>f</span> <span class='hs-varid'>a</span>
+<a name="line-4"></a><span class='hs-comment'>-- Copyright   :  (C) 2012-2013 Edward Kmett,</span>
+<a name="line-5"></a><span class='hs-comment'>-- License     :  BSD-style (see the file LICENSE)</span>
+<a name="line-6"></a><span class='hs-comment'>--</span>
+<a name="line-7"></a><span class='hs-comment'>-- Maintainer  :  Edward Kmett &lt;ekmett@gmail.com&gt;</span>
+<a name="line-8"></a><span class='hs-comment'>-- Stability   :  experimental</span>
+<a name="line-9"></a><span class='hs-comment'>-- Portability :  non-portable</span>
+<a name="line-10"></a><span class='hs-comment'>--</span>
+<a name="line-11"></a><span class='hs-comment'>-- Corepresentable functors as vector spaces</span>
+<a name="line-12"></a><span class='hs-comment'>----------------------------------------------------------------------------</span>
+<a name="line-13"></a><span class='hs-keyword'>module</span> <span class='hs-conid'>Linear</span><span class='hs-varop'>.</span><span class='hs-conid'>Core</span>
+<a name="line-14"></a>  <span class='hs-layout'>(</span> <span class='hs-conid'>Core</span><span class='hs-layout'>(</span><span class='hs-keyglyph'>..</span><span class='hs-layout'>)</span>
+<a name="line-15"></a>  <span class='hs-layout'>)</span> <span class='hs-keyword'>where</span>
+<a name="line-16"></a>
+<a name="line-17"></a><a name="Core"></a><span class='hs-comment'>-- |</span>
+<a name="line-18"></a><a name="Core"></a><span class='hs-comment'>-- A 'Functor' @f@ is corepresentable if it is isomorphic to @(x -&gt; a)@</span>
+<a name="line-19"></a><a name="Core"></a><span class='hs-comment'>-- for some x. Nearly all such functors can be represented by choosing @x@ to be</span>
+<a name="line-20"></a><a name="Core"></a><span class='hs-comment'>-- the set of lenses that are polymorphic in the contents of the 'Functor',</span>
+<a name="line-21"></a><a name="Core"></a><span class='hs-comment'>-- that is to say @x = 'Rep' f@ is a valid choice of 'x' for (nearly) every</span>
+<a name="line-22"></a><a name="Core"></a><span class='hs-comment'>-- 'Representable' 'Functor'.</span>
+<a name="line-23"></a><a name="Core"></a><span class='hs-keyword'>class</span> <span class='hs-conid'>Functor</span> <span class='hs-varid'>f</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-conid'>Core</span> <span class='hs-varid'>f</span> <span class='hs-keyword'>where</span>
+<a name="line-24"></a>  <span class='hs-varid'>core</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-layout'>(</span><span class='hs-keyword'>forall</span> <span class='hs-varid'>g</span> <span class='hs-varid'>x</span><span class='hs-varop'>.</span> <span class='hs-conid'>Functor</span> <span class='hs-varid'>g</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-layout'>(</span><span class='hs-varid'>x</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>g</span> <span class='hs-varid'>x</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>f</span> <span class='hs-varid'>x</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>g</span> <span class='hs-layout'>(</span><span class='hs-varid'>f</span> <span class='hs-varid'>x</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>f</span> <span class='hs-varid'>a</span>
 </pre></body>
 </html>
