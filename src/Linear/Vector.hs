@@ -22,6 +22,7 @@ module Linear.Vector
   , (^*)
   , (*^)
   , (^/)
+  , sumV
   , basis
   , basisFor
   , kronecker
@@ -30,7 +31,7 @@ module Linear.Vector
 
 import Control.Applicative
 import Data.Complex
-import Data.Foldable as Foldable (foldMap, forM_)
+import Data.Foldable as Foldable (Foldable, foldMap, forM_, foldl')
 import Data.Functor.Identity
 import Data.HashMap.Lazy as HashMap
 import Data.Hashable
@@ -255,6 +256,14 @@ instance Additive Identity where
 negated :: (Functor f, Num a) => f a -> f a
 negated = fmap negate
 {-# INLINE negated #-}
+
+-- | Sum over multiple vectors
+--
+-- >>> sumV [V2 1 1, V2 3 4]
+-- V2 4 5
+sumV :: (Foldable f, Additive v, Num a) => f (v a) -> v a
+sumV = Foldable.foldl' (^+^) zero
+{-# INLINE sumV #-}
 
 -- | Compute the left scalar product
 --

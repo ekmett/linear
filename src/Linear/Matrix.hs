@@ -30,7 +30,6 @@ import Control.Applicative
 import Data.Distributive
 import Data.Foldable as Foldable
 import Linear.Epsilon
-import Linear.Metric
 import Linear.Quaternion
 import Linear.V2
 import Linear.V3
@@ -45,15 +44,15 @@ import Linear.Trace
 -- >>> import Debug.SimpleReflect.Vars
 
 infixl 7 !*!
--- | Matrix product. This can compute mixed dense-dense, sparse-dense and sparse-sparse matrix products.
+-- | Matrix product. This can compute any combination of sparse and dense multiplication.
 --
 -- >>> V2 (V3 1 2 3) (V3 4 5 6) !*! V3 (V2 1 2) (V2 3 4) (V2 4 5)
 -- V2 (V2 19 25) (V2 43 58)
 --
 -- >>> V2 (fromList [(1,2)]) (fromList [(2,3)]) !*! fromList [(1,V3 0 0 1), (2, V3 0 0 5)]
 -- V2 (V3 0 0 2) (V3 0 0 15)
-(!*!) :: (Functor m, Foldable r, Additive r, Distributive n, Num a) => m (r a) -> r (n a) -> m (n a)
-f !*! g = fmap (\r -> Foldable.sum . liftI2 (*) r <$> g') f where g' = distribute g
+(!*!) :: (Functor m, Foldable t, Additive t, Additive n, Num a) => m (t a) -> t (n a) -> m (n a)
+f !*! g = fmap (\ f' -> Foldable.foldl' (^+^) zero $ liftI2 (*^) f' g) f
 
 infixl 6 !+!
 -- | Entry-wise matrix addition.
@@ -76,16 +75,20 @@ infixl 7 !*
 --
 -- >>> V2 (V3 1 2 3) (V3 4 5 6) !* V3 7 8 9
 -- V2 50 122
-(!*) :: (Functor m, Metric r, Num a) => m (r a) -> r a -> m a
-m !* v = dot v <$> m
+(!*) :: (Functor m, Foldable r, Additive r, Num a) => m (r a) -> r a -> m a
+m !* v = fmap (\r -> Foldable.sum $ liftI2 (*) r v) m
 
 infixl 7 *!
 -- | Row vector * matrix
 --
 -- >>> V2 1 2 *! V2 (V3 3 4 5) (V3 6 7 8)
 -- V3 15 18 21
-(*!) :: (Metric r, Distributive n, Num a) => r a -> r (n a) -> n a
-f *! g = dot f <$> distribute g
+
+-- (*!) :: (Metric r, Additive n, Num a) => r a -> r (n a) -> n a
+-- f *! g = dot f <$> distribute g
+
+(*!) :: (Num a, Foldable t, Additive f, Additive t) => t a -> t (f a) -> f a
+f *! g = sumV $ liftI2 (*^) f g
 
 infixl 7 *!!
 -- | Scalar-matrix product
