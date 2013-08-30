@@ -209,10 +209,10 @@ plucker (V4 a b c d)
         (V4 e f g h) =
   Plucker (a*f-b*e)
           (a*g-c*e)
-          (a*d-h*e)
-          (c*h-d*g)
-          (d*f-b*h)
           (b*g-c*f)
+          (a*h-d*e)
+          (b*h-d*f)
+          (c*h-d*g)
 {-# INLINE plucker #-}
 
 -- | These elements form a basis for the Plücker space, or the Grassmanian manifold @Gr(2,V4)@.
@@ -276,7 +276,7 @@ squaredError v = v >< v
 -- | This isn't th actual metric because this bilinear form gives rise to an isotropic quadratic space
 infixl 5 ><
 (><) :: Num a => Plucker a -> Plucker a -> a
-Plucker a b c d e f >< Plucker g h i j k l = a*g+b*h+c*i-d*j-e*k-f*l
+Plucker a b c d e f >< Plucker g h i j k l = a*l-b*k+c*j+d*i-e*h+f*g
 {-# INLINE (><) #-}
 
 -- | Checks if the line is near-isotropic (isotropic vectors in this quadratic space represent lines in real 3d space)
