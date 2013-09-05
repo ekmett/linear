@@ -29,6 +29,7 @@ module Linear.Matrix
 import Control.Applicative
 import Data.Distributive
 import Data.Foldable as Foldable
+import Data.Functor.Identity
 import Linear.Epsilon
 import Linear.Quaternion
 import Linear.V2
@@ -197,10 +198,26 @@ eye4 = V4 (V4 1 0 0 0)
           (V4 0 0 0 1)
 
 -- |Extract the translation vector (first three entries of the last
--- column) from a 3x4 or 4x4 matrix
-translation :: (R3 t, R4 v, Functor f, Functor t) => (V3 a -> f (V3 a)) -> t (v a) -> f (t a)
-translation = (. fmap (^._w)) . _xyz where
-  x ^. l = getConst (l Const x)
+-- column) from a 3x4 or 4x4 matrix.
+-- 
+-- @
+-- 'translation' :: (R4 v, R3 t) => Lens' (t (v a)) ('V3' a)
+-- @
+translation :: (Functor f, R4 v, R3 t) => (V3 a -> f (V3 a)) -> t (v a) -> f (t (v a))
+translation f rs = aux <$> f ((^._w) <$> rs^._xyz)
+ where aux (V3 x y z) = (_x._w .~ x) . (_y._w .~ y) . (_z._w .~ z) $ rs
+       -- (.~) :: (forall f. Functor f => (a -> f b) -> s -> f t) -> b -> s -> t
+       (.~) :: ((a -> Identity b) -> s -> Identity t) -> b -> s -> t
+       l .~ x = runIdentity . l (const $ Identity x)
+       infixr 4 .~
+       -- (^.) :: s -> (forall f. Functor f => (a -> f b) -> s -> f t) -> a
+       (^.) :: s -> ((a -> Const a a) -> s -> Const a s) -> a
+       x ^. l = getConst $ l Const x
+       infixl 8 ^.
+
+-- translation :: (R3 t, R4 v, Functor f, Functor t) => (V3 a -> f (V3 a)) -> t (v a) -> f (t a)
+-- translation = (. fmap (^._w)) . _xyz where
+--   x ^. l = getConst (l Const x)
 
 -- |2x2 matrix determinant.
 --
