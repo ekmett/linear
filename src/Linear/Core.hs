@@ -27,7 +27,7 @@ class Functor f => Core f where
   -- | Form a structure by applying the given function to lenses focused on its holes.
   --
   -- @
-  -- 'core' :: (forall x. 'Control.Lens.Lens' (f x) x -> a) -> f a
+  -- 'core' :: ((forall x. 'Control.Lens.Lens' (f x) x) -> a) -> f a
   -- @
   core :: ((forall g x. Functor g => (x -> g x) -> f x -> g (f x)) -> a) -> f a
 
