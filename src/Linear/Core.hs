@@ -24,6 +24,11 @@ import Control.Applicative
 -- that is to say @x = 'Rep' f@ is a valid choice of 'x' for (nearly) every
 -- 'Representable' 'Functor'.
 class Functor f => Core f where
+  -- | Form a structure by applying the given function to lenses focused on its holes.
+  --
+  -- @
+  -- 'core' :: (forall x. 'Control.Lens.Lens' (f x) x -> a) -> f a
+  -- @
   core :: ((forall g x. Functor g => (x -> g x) -> f x -> g (f x)) -> a) -> f a
 
 data Context a b t = Context { peek :: b -> t, pos :: a }
