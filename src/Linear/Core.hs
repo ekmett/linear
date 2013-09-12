@@ -12,7 +12,10 @@
 ----------------------------------------------------------------------------
 module Linear.Core
   ( Core(..)
+  , incore
   ) where
+
+import Control.Applicative
 
 -- |
 -- A 'Functor' @f@ is corepresentable if it is isomorphic to @(x -> a)@
@@ -22,3 +25,22 @@ module Linear.Core
 -- 'Representable' 'Functor'.
 class Functor f => Core f where
   core :: ((forall g x. Functor g => (x -> g x) -> f x -> g (f x)) -> a) -> f a
+
+data Context a b t = Context { peek :: b -> t, pos :: a }
+
+instance Functor (Context a b) where
+  fmap f (Context bt a) = Context (f.bt) a
+
+view :: ((a -> Const a b) -> s -> Const a t) -> s -> a
+view l = getConst . l Const
+
+-- | This is a generalization of 'Control.Lens.inside' to work over any corepresentable 'Functor'.
+--
+-- @
+-- 'incore' :: 'Core' f => 'Lens' s t a b -> 'Lens' (f s) (f t) (f a) (f b)
+-- @
+incore :: (Functor g, Core f) => ((a -> Context a b b) -> s -> Context a b t) -> (f a -> g (f b)) -> f s -> g (f t)
+incore l f es = o <$> f i where
+   go = l (Context id)
+   i = core $ \ e -> pos $ go (view e es)
+   o eb = core $ \ e -> peek (go (view e es)) (view e eb)
