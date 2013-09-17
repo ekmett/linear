@@ -75,25 +75,25 @@
 <a name="line-66"></a>            <span class='hs-conid'>Functor</span><span class='hs-layout'>,</span><span class='hs-conid'>Foldable</span><span class='hs-layout'>,</span><span class='hs-conid'>Traversable</span><span class='hs-layout'>,</span>
 <a name="line-67"></a>            <span class='hs-conid'>Epsilon</span><span class='hs-layout'>,</span><span class='hs-conid'>Storable</span><span class='hs-layout'>)</span>
 <a name="line-68"></a>
-<a name="line-69"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Foldable1</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span>
+<a name="line-69"></a><a name="instance%20Foldable1%20V1"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Foldable1</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span>
 <a name="line-70"></a>  <span class='hs-varid'>foldMap1</span> <span class='hs-varid'>f</span> <span class='hs-layout'>(</span><span class='hs-conid'>V1</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>f</span> <span class='hs-varid'>a</span>
 <a name="line-71"></a>  <span class='hs-comment'>{-# INLINE foldMap1 #-}</span>
 <a name="line-72"></a>
-<a name="line-73"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Traversable1</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span>
+<a name="line-73"></a><a name="instance%20Traversable1%20V1"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Traversable1</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span>
 <a name="line-74"></a>  <span class='hs-varid'>traverse1</span> <span class='hs-varid'>f</span> <span class='hs-layout'>(</span><span class='hs-conid'>V1</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>V1</span> <span class='hs-varop'>&lt;$&gt;</span> <span class='hs-varid'>f</span> <span class='hs-varid'>a</span>
 <a name="line-75"></a>  <span class='hs-comment'>{-# INLINE traverse1 #-}</span>
 <a name="line-76"></a>
-<a name="line-77"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Apply</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span>
+<a name="line-77"></a><a name="instance%20Apply%20V1"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Apply</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span>
 <a name="line-78"></a>  <span class='hs-conid'>V1</span> <span class='hs-varid'>f</span> <span class='hs-varop'>&lt;.&gt;</span> <span class='hs-conid'>V1</span> <span class='hs-varid'>x</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>V1</span> <span class='hs-layout'>(</span><span class='hs-varid'>f</span> <span class='hs-varid'>x</span><span class='hs-layout'>)</span>
 <a name="line-79"></a>  <span class='hs-comment'>{-@ INLINE (&lt;.&gt;) #-}</span>
 <a name="line-80"></a>
-<a name="line-81"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Applicative</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span>
+<a name="line-81"></a><a name="instance%20Applicative%20V1"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Applicative</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span>
 <a name="line-82"></a>  <span class='hs-varid'>pure</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>V1</span>
 <a name="line-83"></a>  <span class='hs-comment'>{-# INLINE pure #-}</span>
 <a name="line-84"></a>  <span class='hs-conid'>V1</span> <span class='hs-varid'>f</span> <span class='hs-varop'>&lt;*&gt;</span> <span class='hs-conid'>V1</span> <span class='hs-varid'>x</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>V1</span> <span class='hs-layout'>(</span><span class='hs-varid'>f</span> <span class='hs-varid'>x</span><span class='hs-layout'>)</span>
 <a name="line-85"></a>  <span class='hs-comment'>{-@ INLINE (&lt;*&gt;) #-}</span>
 <a name="line-86"></a>
-<a name="line-87"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Additive</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span>
+<a name="line-87"></a><a name="instance%20Additive%20V1"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Additive</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span>
 <a name="line-88"></a>  <span class='hs-varid'>zero</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>pure</span> <span class='hs-num'>0</span>
 <a name="line-89"></a>  <span class='hs-comment'>{-# INLINE zero #-}</span>
 <a name="line-90"></a>  <span class='hs-varid'>liftU2</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>liftA2</span>
@@ -101,17 +101,17 @@
 <a name="line-92"></a>  <span class='hs-varid'>liftI2</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>liftA2</span>
 <a name="line-93"></a>  <span class='hs-comment'>{-# INLINE liftI2 #-}</span>
 <a name="line-94"></a>
-<a name="line-95"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Bind</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span>
+<a name="line-95"></a><a name="instance%20Bind%20V1"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Bind</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span>
 <a name="line-96"></a>  <span class='hs-conid'>V1</span> <span class='hs-varid'>a</span> <span class='hs-varop'>&gt;&gt;-</span> <span class='hs-varid'>f</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>f</span> <span class='hs-varid'>a</span>
 <a name="line-97"></a>  <span class='hs-comment'>{-# INLINE (&gt;&gt;-) #-}</span>
 <a name="line-98"></a>
-<a name="line-99"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Monad</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span>
+<a name="line-99"></a><a name="instance%20Monad%20V1"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Monad</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span>
 <a name="line-100"></a>  <span class='hs-varid'>return</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>V1</span>
 <a name="line-101"></a>  <span class='hs-comment'>{-# INLINE return #-}</span>
 <a name="line-102"></a>  <span class='hs-conid'>V1</span> <span class='hs-varid'>a</span> <span class='hs-varop'>&gt;&gt;=</span> <span class='hs-varid'>f</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>f</span> <span class='hs-varid'>a</span>
 <a name="line-103"></a>  <span class='hs-comment'>{-# INLINE (&gt;&gt;=) #-}</span>
 <a name="line-104"></a>
-<a name="line-105"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Num</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-conid'>Num</span> <span class='hs-layout'>(</span><span class='hs-conid'>V1</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyword'>where</span>
+<a name="line-105"></a><a name="instance%20Num%20(V1%20a)"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Num</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-conid'>Num</span> <span class='hs-layout'>(</span><span class='hs-conid'>V1</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyword'>where</span>
 <a name="line-106"></a>  <span class='hs-layout'>(</span><span class='hs-varop'>+</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>liftA2</span> <span class='hs-layout'>(</span><span class='hs-varop'>+</span><span class='hs-layout'>)</span>
 <a name="line-107"></a>  <span class='hs-comment'>{-# INLINE (+) #-}</span>
 <a name="line-108"></a>  <span class='hs-layout'>(</span><span class='hs-comment'>-</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>liftA2</span> <span class='hs-layout'>(</span><span class='hs-comment'>-</span><span class='hs-layout'>)</span>
@@ -127,7 +127,7 @@
 <a name="line-118"></a>  <span class='hs-varid'>fromInteger</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>pure</span> <span class='hs-varop'>.</span> <span class='hs-varid'>fromInteger</span>
 <a name="line-119"></a>  <span class='hs-comment'>{-# INLINE fromInteger #-}</span>
 <a name="line-120"></a>
-<a name="line-121"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Fractional</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-conid'>Fractional</span> <span class='hs-layout'>(</span><span class='hs-conid'>V1</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyword'>where</span>
+<a name="line-121"></a><a name="instance%20Fractional%20(V1%20a)"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Fractional</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-conid'>Fractional</span> <span class='hs-layout'>(</span><span class='hs-conid'>V1</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyword'>where</span>
 <a name="line-122"></a>  <span class='hs-varid'>recip</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>fmap</span> <span class='hs-varid'>recip</span>
 <a name="line-123"></a>  <span class='hs-comment'>{-# INLINE recip #-}</span>
 <a name="line-124"></a>  <span class='hs-layout'>(</span><span class='hs-varop'>/</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>liftA2</span> <span class='hs-layout'>(</span><span class='hs-varop'>/</span><span class='hs-layout'>)</span>
@@ -135,7 +135,7 @@
 <a name="line-126"></a>  <span class='hs-varid'>fromRational</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>pure</span> <span class='hs-varop'>.</span> <span class='hs-varid'>fromRational</span>
 <a name="line-127"></a>  <span class='hs-comment'>{-# INLINE fromRational #-}</span>
 <a name="line-128"></a>
-<a name="line-129"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Metric</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span>
+<a name="line-129"></a><a name="instance%20Metric%20V1"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Metric</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span>
 <a name="line-130"></a>  <span class='hs-varid'>dot</span> <span class='hs-layout'>(</span><span class='hs-conid'>V1</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-layout'>(</span><span class='hs-conid'>V1</span> <span class='hs-varid'>b</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>a</span> <span class='hs-varop'>*</span> <span class='hs-varid'>b</span>
 <a name="line-131"></a>  <span class='hs-comment'>{-# INLINE dot #-}</span>
 <a name="line-132"></a>
@@ -153,23 +153,23 @@
 <a name="line-144"></a>  <span class='hs-comment'>-- @</span>
 <a name="line-145"></a>  <span class='hs-sel'>_x</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Functor</span> <span class='hs-varid'>f</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-layout'>(</span><span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>f</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>t</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>f</span> <span class='hs-layout'>(</span><span class='hs-varid'>t</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span>
 <a name="line-146"></a>
-<a name="line-147"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>R1</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span>
+<a name="line-147"></a><a name="instance%20R1%20V1"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>R1</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span>
 <a name="line-148"></a>  <span class='hs-sel'>_x</span> <span class='hs-varid'>f</span> <span class='hs-layout'>(</span><span class='hs-conid'>V1</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>V1</span> <span class='hs-varop'>&lt;$&gt;</span> <span class='hs-varid'>f</span> <span class='hs-varid'>a</span>
 <a name="line-149"></a>  <span class='hs-comment'>{-# INLINE _x #-}</span>
 <a name="line-150"></a>
-<a name="line-151"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>R1</span> <span class='hs-conid'>Identity</span> <span class='hs-keyword'>where</span>
+<a name="line-151"></a><a name="instance%20R1%20Identity"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>R1</span> <span class='hs-conid'>Identity</span> <span class='hs-keyword'>where</span>
 <a name="line-152"></a>  <span class='hs-sel'>_x</span> <span class='hs-varid'>f</span> <span class='hs-layout'>(</span><span class='hs-conid'>Identity</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Identity</span> <span class='hs-varop'>&lt;$&gt;</span> <span class='hs-varid'>f</span> <span class='hs-varid'>a</span>
 <a name="line-153"></a>  <span class='hs-comment'>{-# INLINE _x #-}</span>
 <a name="line-154"></a>
-<a name="line-155"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Core</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span>
+<a name="line-155"></a><a name="instance%20Core%20V1"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Core</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span>
 <a name="line-156"></a>  <span class='hs-varid'>core</span> <span class='hs-varid'>f</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>V1</span> <span class='hs-layout'>(</span><span class='hs-varid'>f</span> <span class='hs-sel'>_x</span><span class='hs-layout'>)</span>
 <a name="line-157"></a>  <span class='hs-comment'>{-# INLINE core #-}</span>
 <a name="line-158"></a>
-<a name="line-159"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Distributive</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span>
+<a name="line-159"></a><a name="instance%20Distributive%20V1"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Distributive</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span>
 <a name="line-160"></a>  <span class='hs-varid'>distribute</span> <span class='hs-varid'>f</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>V1</span> <span class='hs-layout'>(</span><span class='hs-varid'>fmap</span> <span class='hs-layout'>(</span><span class='hs-keyglyph'>\</span><span class='hs-layout'>(</span><span class='hs-conid'>V1</span> <span class='hs-varid'>x</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>x</span><span class='hs-layout'>)</span> <span class='hs-varid'>f</span><span class='hs-layout'>)</span>
 <a name="line-161"></a>  <span class='hs-comment'>{-# INLINE distribute #-}</span>
 <a name="line-162"></a>
-<a name="line-163"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Ix</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-conid'>Ix</span> <span class='hs-layout'>(</span><span class='hs-conid'>V1</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyword'>where</span>
+<a name="line-163"></a><a name="instance%20Ix%20(V1%20a)"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Ix</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-conid'>Ix</span> <span class='hs-layout'>(</span><span class='hs-conid'>V1</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyword'>where</span>
 <a name="line-164"></a>  <span class='hs-comment'>{-# SPECIALISE instance Ix (V1 Int) #-}</span>
 <a name="line-165"></a>
 <a name="line-166"></a>  <span class='hs-varid'>range</span> <span class='hs-layout'>(</span><span class='hs-conid'>V1</span> <span class='hs-varid'>l1</span><span class='hs-layout'>,</span> <span class='hs-conid'>V1</span> <span class='hs-varid'>u1</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span>
