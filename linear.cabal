@@ -31,6 +31,7 @@ source-repository head
 library
   build-depends:
     base                 >= 4.5   && < 5,
+    binary               >= 0.7   && < 0.8,
     containers           >= 0.4   && < 0.6,
     distributive         >= 0.2.2 && < 1,
     ghc-prim,
@@ -47,6 +48,7 @@ library
   exposed-modules:
     Linear
     Linear.Affine
+    Linear.Binary
     Linear.Conjugate
     Linear.Core
     Linear.Epsilon
@@ -84,11 +86,13 @@ test-suite doctests
 test-suite UnitTests
   type:           exitcode-stdio-1.0
   main-is:        UnitTests.hs
-  other-modules:  Plucker
+  other-modules:  Plucker, Binary
   ghc-options:    -Wall -Werror -threaded
   hs-source-dirs: tests
   build-depends:
     base,
+    binary,
+    bytestring,
     test-framework >= 0.8,
     test-framework-hunit >= 0.3,
     HUnit >= 1.2.5,
