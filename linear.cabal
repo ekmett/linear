@@ -31,7 +31,7 @@ source-repository head
 library
   build-depends:
     base                 >= 4.5   && < 5,
-    binary               >= 0.7   && < 0.8,
+    binary               >= 0.5   && < 0.8,
     containers           >= 0.4   && < 0.6,
     distributive         >= 0.2.2 && < 1,
     ghc-prim,
