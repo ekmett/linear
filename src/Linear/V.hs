@@ -4,7 +4,7 @@
 {-# LANGUAGE Rank2Types #-}
 {-# LANGUAGE EmptyDataDecls #-}
 {-# LANGUAGE MultiParamTypeClasses, FlexibleContexts, FlexibleInstances, UndecidableInstances #-}
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 707
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE PolyKinds #-}
 #define USE_TYPE_LITS 1
@@ -65,8 +65,8 @@ dim _ = reflectDim (Proxy :: Proxy n)
 {-# INLINE dim #-}
 
 #ifdef USE_TYPE_LITS
-instance SingRep n Integer => Dim (n :: Nat) where
-  reflectDim _ = fromInteger $ withSing $ \(x :: Sing n) -> fromSing x
+instance KnownNat n => Dim (n :: Nat) where
+  reflectDim = fromInteger . natVal
   {-# INLINE reflectDim #-}
 #endif
 
