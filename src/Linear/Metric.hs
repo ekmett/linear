@@ -21,6 +21,10 @@ module Linear.Metric
 import Data.Foldable as Foldable
 import Data.Functor.Identity
 import Data.Vector (Vector)
+import Data.IntMap (IntMap)
+import Data.Map (Map)
+import Data.HashMap.Strict (HashMap)
+import Data.Hashable (Hashable)
 import Linear.Epsilon
 import Linear.Vector
 
@@ -64,6 +68,12 @@ class Additive f => Metric f where
 
 instance Metric Identity where
   dot (Identity x) (Identity y) = x * y
+
+instance Metric IntMap
+
+instance Ord k => Metric (Map k)
+
+instance (Hashable k, Eq k) => Metric (HashMap k)
 
 instance Metric Vector
 
