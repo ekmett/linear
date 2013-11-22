@@ -32,7 +32,10 @@ import Data.Traversable as Traversable
 import Data.Vector (Vector)
 import Foreign.Storable
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
-import GHC.Generics (Generic, Generic1)
+import GHC.Generics (Generic)
+#endif
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
+import GHC.Generics (Generic1)
 #endif
 import Linear.Core
 import Linear.Epsilon
@@ -109,7 +112,10 @@ newtype Point f a = P (f a)
            , Traversable, Apply, Bind, Additive, Metric, Core, R1, R2, R3, R4
            , Fractional , Num, Ix, Storable, Epsilon
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
-           , Generic, Generic1
+           , Generic
+#endif
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
+           , Generic1
 #endif
            )
 

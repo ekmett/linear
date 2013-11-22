@@ -51,7 +51,10 @@ import Foreign.Ptr (castPtr)
 import Foreign.Storable (Storable(..))
 import GHC.Arr (Ix(..))
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
-import GHC.Generics (Generic, Generic1)
+import GHC.Generics (Generic)
+#endif
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
+import GHC.Generics (Generic1)
 #endif
 
 import Linear.Core
@@ -67,7 +70,10 @@ import Linear.Vector
 -- | Plücker coordinates for lines in a 3-dimensional space.
 data Plucker a = Plucker !a !a !a !a !a !a deriving (Eq,Ord,Show,Read
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
-                                                    ,Generic, Generic1
+                                                    ,Generic
+#endif
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
+                                                    ,Generic1
 #endif
                                                     )
 

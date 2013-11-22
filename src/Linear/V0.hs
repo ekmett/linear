@@ -30,7 +30,10 @@ import Data.Traversable
 import Data.Semigroup
 import Data.Functor.Bind
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
-import GHC.Generics (Generic, Generic1)
+import GHC.Generics (Generic)
+#endif
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
+import GHC.Generics (Generic1)
 #endif
 import Foreign.Storable (Storable(..))
 import Linear.Core
@@ -52,7 +55,10 @@ import Prelude hiding (sum)
 --
 data V0 a = V0 deriving (Eq,Ord,Show,Read,Ix,Enum,Data,Typeable
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
-                        ,Generic, Generic1
+                        ,Generic
+#endif
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
+                        ,Generic1
 #endif
                         )
 

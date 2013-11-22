@@ -39,7 +39,10 @@ import Data.Functor.Bind
 import Foreign.Storable (Storable)
 import GHC.Arr (Ix(..))
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
-import GHC.Generics (Generic, Generic1)
+import GHC.Generics (Generic)
+#endif
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
+import GHC.Generics (Generic1)
 #endif
 import Linear.Core
 import Linear.Metric
@@ -70,7 +73,10 @@ newtype V1 a = V1 a
             Functor,Foldable,Traversable,
             Epsilon,Storable
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
-           ,Generic, Generic1
+           ,Generic
+#endif
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
+           ,Generic1
 #endif
            )
 
