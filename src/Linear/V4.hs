@@ -2,6 +2,7 @@
 {-# LANGUAGE CPP #-}
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE DeriveGeneric #-}
 #endif
 -----------------------------------------------------------------------------
 -- |
@@ -35,6 +36,12 @@ import Data.Traversable
 import Foreign.Ptr (castPtr)
 import Foreign.Storable (Storable(..))
 import GHC.Arr (Ix(..))
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+import GHC.Generics (Generic)
+#endif
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
+import GHC.Generics (Generic1)
+#endif
 import Linear.Core
 import Linear.Epsilon
 import Linear.Metric
@@ -45,7 +52,14 @@ import Linear.Vector
 {-# ANN module "HLint: ignore Reduce duplication" #-}
 
 -- | A 4-dimensional vector.
-data V4 a = V4 !a !a !a !a deriving (Eq,Ord,Show,Read,Data,Typeable)
+data V4 a = V4 !a !a !a !a deriving (Eq,Ord,Show,Read,Data,Typeable
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+                                    ,Generic
+#endif
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
+                                    ,Generic1
+#endif
+                                    )
 
 instance Functor V4 where
   fmap f (V4 a b c d) = V4 (f a) (f b) (f c) (f d)

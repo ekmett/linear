@@ -9,6 +9,7 @@
 {-# LANGUAGE CPP #-}
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE DeriveGeneric #-}
 #endif
 -----------------------------------------------------------------------------
 -- |
@@ -37,6 +38,12 @@ import Data.Semigroup.Traversable
 import Data.Functor.Bind
 import Foreign.Storable (Storable)
 import GHC.Arr (Ix(..))
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+import GHC.Generics (Generic)
+#endif
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
+import GHC.Generics (Generic1)
+#endif
 import Linear.Core
 import Linear.Metric
 import Linear.Epsilon
@@ -64,7 +71,14 @@ import Prelude hiding (sum)
 newtype V1 a = V1 a
   deriving (Eq,Ord,Show,Read,Data,Typeable,
             Functor,Foldable,Traversable,
-            Epsilon,Storable)
+            Epsilon,Storable
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+           ,Generic
+#endif
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
+           ,Generic1
+#endif
+           )
 
 instance Foldable1 V1 where
   foldMap1 f (V1 a) = f a

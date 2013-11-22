@@ -1,4 +1,8 @@
 {-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE CPP #-}
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+{-# LANGUAGE DeriveGeneric #-}
+#endif
 -----------------------------------------------------------------------------
 -- |
 -- Copyright   :  (C) 2012-2013 Edward Kmett,
@@ -16,6 +20,12 @@ module Linear.Core
   ) where
 
 import Control.Applicative
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+import GHC.Generics (Generic)
+#endif
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
+import GHC.Generics (Generic1)
+#endif
 
 -- |
 -- A 'Functor' @f@ is corepresentable if it is isomorphic to @(x -> a)@
@@ -32,6 +42,11 @@ class Functor f => Core f where
   core :: ((forall g x. Functor g => (x -> g x) -> f x -> g (f x)) -> a) -> f a
 
 data Context a b t = Context { peek :: b -> t, pos :: a }
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
+                   deriving (Generic, Generic1)
+#elif defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+                   deriving (Generic)
+#endif
 
 instance Functor (Context a b) where
   fmap f (Context bt a) = Context (f.bt) a

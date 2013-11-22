@@ -2,6 +2,7 @@
 {-# LANGUAGE CPP #-}
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE DeriveGeneric #-}
 #endif
 -----------------------------------------------------------------------------
 -- |
@@ -43,6 +44,12 @@ import qualified Data.Foldable as F
 import Data.Monoid
 import Foreign.Ptr (castPtr, plusPtr)
 import Foreign.Storable (Storable(..))
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+import GHC.Generics (Generic)
+#endif
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
+import GHC.Generics (Generic1)
+#endif
 import Linear.Core
 import Linear.Epsilon
 import Linear.Conjugate
@@ -55,7 +62,14 @@ import Prelude hiding (any)
 
 -- | Quaternions
 data Quaternion a = Quaternion !a {-# UNPACK #-}!(V3 a)
-                    deriving (Eq,Ord,Read,Show,Data,Typeable)
+                    deriving (Eq,Ord,Read,Show,Data,Typeable
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+                             ,Generic
+#endif
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
+                             ,Generic1
+#endif
+                             )
 
 instance Functor Quaternion where
   fmap f (Quaternion e v) = Quaternion (f e) (fmap f v)

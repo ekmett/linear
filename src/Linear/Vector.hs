@@ -1,10 +1,11 @@
 {-# LANGUAGE CPP #-}
-{-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE TypeFamilies #-}
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE DefaultSignatures #-}
+#define USE_GHC_GENERICS
 #endif
 -----------------------------------------------------------------------------
 -- |
@@ -41,7 +42,9 @@ import Data.Monoid (Sum(..), mempty)
 import Data.Vector as Vector
 import Data.Vector.Mutable as Mutable
 import Data.Traversable (Traversable, mapAccumL)
+#ifdef USE_GHC_GENERICS
 import GHC.Generics
+#endif
 import Linear.Instances ()
 
 -- $setup
@@ -51,6 +54,7 @@ import Linear.Instances ()
 infixl 6 ^+^, ^-^
 infixl 7 ^*, *^, ^/
 
+#ifdef USE_GHC_GENERICS
 class GAdditive f where
   gzero :: Num a => f a
   gliftU2 :: (a -> a -> a) -> f a -> f a -> f a
@@ -94,15 +98,18 @@ instance GAdditive Par1 where
   {-# INLINE gliftU2 #-}
   gliftI2 f (Par1 a) (Par1 b) = Par1 (f a b)
   {-# INLINE gliftI2 #-}
+#endif
 
 
 -- | A vector is an additive group with additional structure.
 class Functor f => Additive f where
   -- | The zero vector
   zero :: Num a => f a
+#ifdef USE_GHC_GENERICS
 #ifndef HLINT
   default zero :: (GAdditive (Rep1 f), Generic1 f, Num a) => f a
   zero = to1 gzero
+#endif
 #endif
 
   -- | Compute the sum of two vectors
@@ -110,10 +117,12 @@ class Functor f => Additive f where
   -- >>> V2 1 2 ^+^ V2 3 4
   -- V2 4 6
   (^+^) :: Num a => f a -> f a -> f a
+#ifdef USE_GHC_GENERICS
 #ifndef HLINT
   default (^+^) :: Num a => f a -> f a -> f a
   (^+^) = liftU2 (+)
   {-# INLINE (^+^) #-}
+#endif
 #endif
 
   -- | Compute the difference between two vectors
@@ -121,10 +130,12 @@ class Functor f => Additive f where
   -- >>> V2 4 5 - V2 3 1
   -- V2 1 4
   (^-^) :: Num a => f a -> f a -> f a
+#ifdef USE_GHC_GENERICS
 #ifndef HLINT
   default (^-^) :: Num a => f a -> f a -> f a
   x ^-^ y = x ^+^ negated y
   {-# INLINE (^-^) #-}
+#endif
 #endif
 
   -- | Linearly interpolate between two vectors.
@@ -138,10 +149,12 @@ class Functor f => Additive f where
   --
   -- * For a sparse vector this is equivalent to 'unionWith'.
   liftU2 :: (a -> a -> a) -> f a -> f a -> f a
+#ifdef USE_GHC_GENERICS
 #ifndef HLINT
   default liftU2 :: Applicative f => (a -> a -> a) -> f a -> f a -> f a
   liftU2 = liftA2
   {-# INLINE liftU2 #-}
+#endif
 #endif
 
   -- | Apply a function to the components of two vectors.
@@ -150,10 +163,12 @@ class Functor f => Additive f where
   --
   -- * For a sparse vector this is equivalent to 'intersectionWith'.
   liftI2 :: (a -> b -> c) -> f a -> f b -> f c
+#ifdef USE_GHC_GENERICS
 #ifndef HLINT
   default liftI2 :: Applicative f => (a -> b -> c) -> f a -> f b -> f c
   liftI2 = liftA2
   {-# INLINE liftI2 #-}
+#endif
 #endif
 
 instance Additive ZipList where
@@ -163,6 +178,12 @@ instance Additive ZipList where
   {-# INLINE liftU2 #-}
   liftI2 = liftA2
   {-# INLINE liftI2 #-}
+#ifndef USE_GHC_GENERICS
+  (^+^) = liftU2 (+)
+  {-# INLINE (^+^) #-}
+  x ^-^ y = x ^+^ negated y
+  {-# INLINE (^-^) #-}
+#endif
 
 instance Additive Vector where
   zero = mempty
@@ -179,6 +200,12 @@ instance Additive Vector where
   {-# INLINE liftU2 #-}
   liftI2 = Vector.zipWith
   {-# INLINE liftI2 #-}
+#ifndef USE_GHC_GENERICS
+  (^+^) = liftU2 (+)
+  {-# INLINE (^+^) #-}
+  x ^-^ y = x ^+^ negated y
+  {-# INLINE (^-^) #-}
+#endif
 
 instance Additive Maybe where
   zero = Nothing
@@ -189,6 +216,12 @@ instance Additive Maybe where
   {-# INLINE liftU2 #-}
   liftI2 = liftA2
   {-# INLINE liftI2 #-}
+#ifndef USE_GHC_GENERICS
+  (^+^) = liftU2 (+)
+  {-# INLINE (^+^) #-}
+  x ^-^ y = x ^+^ negated y
+  {-# INLINE (^-^) #-}
+#endif
 
 instance Additive [] where
   zero = []
@@ -200,6 +233,12 @@ instance Additive [] where
   {-# INLINE liftU2 #-}
   liftI2 = Prelude.zipWith
   {-# INLINE liftI2 #-}
+#ifndef USE_GHC_GENERICS
+  (^+^) = liftU2 (+)
+  {-# INLINE (^+^) #-}
+  x ^-^ y = x ^+^ negated y
+  {-# INLINE (^-^) #-}
+#endif
 
 instance Additive IntMap where
   zero = IntMap.empty
@@ -208,6 +247,12 @@ instance Additive IntMap where
   {-# INLINE liftU2 #-}
   liftI2 = IntMap.intersectionWith
   {-# INLINE liftI2 #-}
+#ifndef USE_GHC_GENERICS
+  (^+^) = liftU2 (+)
+  {-# INLINE (^+^) #-}
+  x ^-^ y = x ^+^ negated y
+  {-# INLINE (^-^) #-}
+#endif
 
 instance Ord k => Additive (Map k) where
   zero = Map.empty
@@ -216,6 +261,12 @@ instance Ord k => Additive (Map k) where
   {-# INLINE liftU2 #-}
   liftI2 = Map.intersectionWith
   {-# INLINE liftI2 #-}
+#ifndef USE_GHC_GENERICS
+  (^+^) = liftU2 (+)
+  {-# INLINE (^+^) #-}
+  x ^-^ y = x ^+^ negated y
+  {-# INLINE (^-^) #-}
+#endif
 
 instance (Eq k, Hashable k) => Additive (HashMap k) where
   zero = HashMap.empty
@@ -224,6 +275,12 @@ instance (Eq k, Hashable k) => Additive (HashMap k) where
   {-# INLINE liftU2 #-}
   liftI2 = HashMap.intersectionWith
   {-# INLINE liftI2 #-}
+#ifndef USE_GHC_GENERICS
+  (^+^) = liftU2 (+)
+  {-# INLINE (^+^) #-}
+  x ^-^ y = x ^+^ negated y
+  {-# INLINE (^-^) #-}
+#endif
 
 instance Additive ((->) b) where
   zero   = const 0
@@ -232,6 +289,12 @@ instance Additive ((->) b) where
   {-# INLINE liftU2 #-}
   liftI2 = liftA2
   {-# INLINE liftI2 #-}
+#ifndef USE_GHC_GENERICS
+  (^+^) = liftU2 (+)
+  {-# INLINE (^+^) #-}
+  x ^-^ y = x ^+^ negated y
+  {-# INLINE (^-^) #-}
+#endif
 
 instance Additive Complex where
   zero = 0 :+ 0
@@ -240,6 +303,12 @@ instance Additive Complex where
   {-# INLINE liftU2 #-}
   liftI2 f (a :+ b) (c :+ d) = f a c :+ f b d
   {-# INLINE liftI2 #-}
+#ifndef USE_GHC_GENERICS
+  (^+^) = liftU2 (+)
+  {-# INLINE (^+^) #-}
+  x ^-^ y = x ^+^ negated y
+  {-# INLINE (^-^) #-}
+#endif
 
 instance Additive Identity where
   zero = Identity 0
@@ -248,6 +317,12 @@ instance Additive Identity where
   {-# INLINE liftU2 #-}
   liftI2 = liftA2
   {-# INLINE liftI2 #-}
+#ifndef USE_GHC_GENERICS
+  (^+^) = liftU2 (+)
+  {-# INLINE (^+^) #-}
+  x ^-^ y = x ^+^ negated y
+  {-# INLINE (^-^) #-}
+#endif
 
 -- | Compute the negation of a vector
 --
