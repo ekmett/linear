@@ -51,6 +51,9 @@ import GHC.TypeLits
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 import GHC.Generics (Generic)
 #endif
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 707
+import GHC.Generics (Generic1)
+#endif
 #if !(MIN_VERSION_reflection(1,3,0))
 import Language.Haskell.TH
 #endif
@@ -65,6 +68,10 @@ class Dim n where
 newtype V n a = V { toVector :: V.Vector a } deriving (Eq,Ord,Show,Read
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
                                                       ,Generic
+#endif
+-- GHC bug: https://ghc.haskell.org/trac/ghc/ticket/8468
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 707
+                                                      ,Generic1
 #endif
                                                       )
 
