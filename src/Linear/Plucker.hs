@@ -3,6 +3,7 @@
 {-# LANGUAGE GADTs #-}
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE DeriveGeneric #-}
 #endif
 -----------------------------------------------------------------------------
 -- |
@@ -49,6 +50,10 @@ import Data.Traversable
 import Foreign.Ptr (castPtr)
 import Foreign.Storable (Storable(..))
 import GHC.Arr (Ix(..))
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+import GHC.Generics (Generic, Generic1)
+#endif
+
 import Linear.Core
 import Linear.Epsilon
 import Linear.Metric
@@ -60,7 +65,11 @@ import Linear.Vector
 {-# ANN module "HLint: ignore Reduce duplication" #-}
 
 -- | Plücker coordinates for lines in a 3-dimensional space.
-data Plucker a = Plucker !a !a !a !a !a !a deriving (Eq,Ord,Show,Read)
+data Plucker a = Plucker !a !a !a !a !a !a deriving (Eq,Ord,Show,Read
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+                                                    ,Generic, Generic1
+#endif
+                                                    )
 
 instance Functor Plucker where
   fmap g (Plucker a b c d e f) = Plucker (g a) (g b) (g c) (g d) (g e) (g f)
@@ -329,7 +338,11 @@ data LinePass = Coplanar
               | Counterclockwise
               -- ^ The lines pass each other counterclockwise
               -- (left-handed screw).
-                deriving (Eq, Show)
+                deriving (Eq, Show
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+                         ,Generic
+#endif
+                         )
 
 -- | Check how two lines pass each other. @passes l1 l2@ describes
 -- @l2@ when looking down @l1@.

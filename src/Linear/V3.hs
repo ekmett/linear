@@ -2,6 +2,7 @@
 {-# LANGUAGE CPP #-}
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE DeriveGeneric #-}
 #endif
 -----------------------------------------------------------------------------
 -- |
@@ -34,6 +35,9 @@ import Data.Semigroup.Traversable
 import Foreign.Ptr (castPtr)
 import Foreign.Storable (Storable(..))
 import GHC.Arr (Ix(..))
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+import GHC.Generics (Generic, Generic1)
+#endif
 import Linear.Core
 import Linear.Epsilon
 import Linear.Metric
@@ -43,7 +47,12 @@ import Linear.Vector
 {-# ANN module "HLint: ignore Reduce duplication" #-}
 
 -- | A 3-dimensional vector
-data V3 a = V3 !a !a !a deriving (Eq,Ord,Show,Read,Data,Typeable)
+data V3 a = V3 !a !a !a deriving (Eq,Ord,Show,Read,Data,Typeable
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+                                 ,Generic, Generic1
+#endif
+                                 )
+
 
 instance Functor V3 where
   fmap f (V3 a b c) = V3 (f a) (f b) (f c)

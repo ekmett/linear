@@ -11,6 +11,7 @@
 #endif
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE DeriveGeneric #-}
 #endif
 -----------------------------------------------------------------------------
 -- |
@@ -47,6 +48,9 @@ import Foreign.Storable
 #ifdef USE_TYPE_LITS
 import GHC.TypeLits
 #endif
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+import GHC.Generics (Generic)
+#endif
 #if !(MIN_VERSION_reflection(1,3,0))
 import Language.Haskell.TH
 #endif
@@ -58,7 +62,11 @@ import Linear.Vector
 class Dim n where
   reflectDim :: p n -> Int
 
-newtype V n a = V { toVector :: V.Vector a } deriving (Eq,Ord,Show,Read)
+newtype V n a = V { toVector :: V.Vector a } deriving (Eq,Ord,Show,Read
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+                                                      ,Generic
+#endif
+                                                      )
 
 dim :: forall n a. Dim n => V n a -> Int
 dim _ = reflectDim (Proxy :: Proxy n)
