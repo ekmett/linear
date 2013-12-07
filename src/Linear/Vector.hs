@@ -369,7 +369,7 @@ setElement i x = snd . mapAccumL aux 0
                   in j' `seq` (j', y')
 
 -- A variation on the list applicative that does not combine elements from the ones list.
-data SetOne a = SetOne { filler :: a, choices :: [a] }
+data SetOne a = SetOne { filler :: !a, choices :: [a] }
 instance Functor SetOne where
   fmap f (SetOne a os) = SetOne (f a) (fmap f os)
 instance Applicative SetOne where
