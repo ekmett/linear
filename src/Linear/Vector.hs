@@ -369,26 +369,27 @@ setElement i x = snd . mapAccumL aux 0
                   in j' `seq` (j', y')
 
 -- A variation on the list applicative that does not combine elements from the ones list.
-data MaxOne a = MaxOne { zeros :: [a], ones :: [a] }
-instance Functor MaxOne where
-  fmap f (MaxOne zs os) = MaxOne (fmap f zs) (fmap f os)
-instance Applicative MaxOne where
-  pure a = MaxOne [a] []
-  MaxOne zfs ofs <*> MaxOne zas oas = MaxOne (zfs <*> zas) ((ofs <*> zas) ++ (zfs <*> oas))
+data SetOne a = SetOne { filler :: a, choices :: [a] }
+instance Functor SetOne where
+  fmap f (SetOne a os) = SetOne (f a) (fmap f os)
+instance Applicative SetOne where
+  pure a = SetOne a []
+  SetOne f fs <*> SetOne a as = SetOne (f a) (foldr ((:) . ($ a)) (map f as) fs) 
+                                             -- map ($ a) fs ++ map f as
   
 -- | Produce a default basis for a vector space. If the dimensionality
 -- of the vector space is not statically known, see 'basisFor'.
 basis :: (Applicative t, Traversable t, Num a) => [t a]
-basis = ones $ traverse (\a -> MaxOne [0] [a]) (pure 1)
+basis = choices $ traverse (\a -> SetOne 0 [a]) (pure 1)
 
 -- | Produce a default basis for a vector space from which the
 -- argument is drawn.
 basisFor :: (Traversable t, Num a) => t b -> [t a]
-basisFor = ones . traverse (\_ -> MaxOne [0] [1])
+basisFor = choices . traverse (\_ -> SetOne 0 [1])
 
 -- | Produce a diagonal matrix from a vector.
 kronecker :: (Traversable t, Num a) => t a -> t (t a)
-kronecker v = fillFromList (ones $ traverse (\a -> MaxOne [0] [a]) v) v
+kronecker v = fillFromList (choices $ traverse (\a -> SetOne 0 [a]) v) v
 
 fillFromList :: Traversable t => [a] -> t b -> t a
 fillFromList l = snd . mapAccumL aux l
