@@ -41,7 +41,7 @@ import Data.Map as Map
 import Data.Monoid (Sum(..), mempty)
 import Data.Vector as Vector
 import Data.Vector.Mutable as Mutable
-import Data.Traversable (Traversable, mapAccumL)
+import Data.Traversable (Traversable, traverse, mapAccumL)
 #ifdef USE_GHC_GENERICS
 import GHC.Generics
 #endif
