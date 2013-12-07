@@ -368,7 +368,7 @@ setElement i x = snd . mapAccumL aux 0
                       y' = if i == j then x else y
                   in j' `seq` (j', y')
 
--- A variation on the list applicative that does not combine elements from the ones list.
+-- `SetOne` builds all combinations of the filler with one value from the choices list.
 data SetOne a = SetOne { filler :: !a, choices :: [a] }
 instance Functor SetOne where
   fmap f (SetOne a os) = SetOne (f a) (fmap f os)
