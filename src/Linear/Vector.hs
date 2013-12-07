@@ -368,26 +368,32 @@ setElement i x = snd . mapAccumL aux 0
                       y' = if i == j then x else y
                   in j' `seq` (j', y')
 
+-- A variation on the list applicative that does not combine elements from the ones list.
+data MaxOne a = MaxOne { zeros :: [a], ones :: [a] }
+instance Functor MaxOne where
+  fmap f (MaxOne zs os) = MaxOne (fmap f zs) (fmap f os)
+instance Applicative MaxOne where
+  pure a = MaxOne [a] []
+  MaxOne zfs ofs <*> MaxOne zas oas = MaxOne (zfs <*> zas) ((ofs <*> zas) ++ (zfs <*> oas))
+  
 -- | Produce a default basis for a vector space. If the dimensionality
 -- of the vector space is not statically known, see 'basisFor'.
 basis :: (Applicative t, Traversable t, Num a) => [t a]
-basis = [ setElement k 1 z | k <- [0..n - 1] ]
-  where z = pure 0
-        n = getSum $ foldMap (const (Sum 1)) z
+basis = ones $ traverse (\a -> MaxOne [0] [a]) (pure 1)
 
 -- | Produce a default basis for a vector space from which the
 -- argument is drawn.
-basisFor :: (Traversable t, Enum a, Num a) => t a -> [t a]
-basisFor v = [ setElement k 1 z | k <- [0..n-1] ]
-  where z = 0 <$ v
-        n = getSum $ foldMap (const (Sum 1)) v
+basisFor :: (Traversable t, Num a) => t b -> [t a]
+basisFor = ones . traverse (\_ -> MaxOne [0] [1])
 
 -- | Produce a diagonal matrix from a vector.
-kronecker :: (Applicative t, Num a, Traversable t) => t a -> t (t a)
-kronecker v = snd $ mapAccumL aux 0 v
-  where aux i e = let i' = i + 1
-                  in i' `seq` (i', setElement i e z)
-        z = pure 0
+kronecker :: (Traversable t, Num a) => t a -> t (t a)
+kronecker v = fillFromList (ones $ traverse (\a -> MaxOne [0] [a]) v) v
+
+fillFromList :: Traversable t => [a] -> t b -> t a
+fillFromList l = snd . mapAccumL aux l
+  where aux (a:as) _ = (as, a)
+        aux [] _ = error "too few elements in takeFromList"
 
 -- | Outer (tensor) product of two vectors
 outer :: (Functor f, Functor g, Num a) => f a -> g a -> f (g a)
