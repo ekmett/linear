@@ -1,3 +1,7 @@
+1.3.1.1
+-------
+* Build bugfix
+
 1.3.1
 ---
 * Better implementations of `basis` and `basisFor`.
