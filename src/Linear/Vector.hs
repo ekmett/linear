@@ -41,7 +41,7 @@ import Data.Map as Map
 import Data.Monoid (Sum(..), mempty)
 import Data.Vector as Vector
 import Data.Vector.Mutable as Mutable
-import Data.Traversable (Traversable, mapAccumL)
+import Data.Traversable (Traversable, traverse, mapAccumL)
 #ifdef USE_GHC_GENERICS
 import GHC.Generics
 #endif
@@ -368,26 +368,33 @@ setElement i x = snd . mapAccumL aux 0
                       y' = if i == j then x else y
                   in j' `seq` (j', y')
 
+-- `SetOne` builds all combinations of the filler with one value from the choices list.
+data SetOne a = SetOne { filler :: !a, choices :: [a] }
+instance Functor SetOne where
+  fmap f (SetOne a os) = SetOne (f a) (fmap f os)
+instance Applicative SetOne where
+  pure a = SetOne a []
+  SetOne f fs <*> SetOne a as = SetOne (f a) (foldr ((:) . ($ a)) (map f as) fs) 
+                                             -- map ($ a) fs ++ map f as
+  
 -- | Produce a default basis for a vector space. If the dimensionality
 -- of the vector space is not statically known, see 'basisFor'.
 basis :: (Applicative t, Traversable t, Num a) => [t a]
-basis = [ setElement k 1 z | k <- [0..n - 1] ]
-  where z = pure 0
-        n = getSum $ foldMap (const (Sum 1)) z
+basis = choices $ traverse (\a -> SetOne 0 [a]) (pure 1)
 
 -- | Produce a default basis for a vector space from which the
 -- argument is drawn.
-basisFor :: (Traversable t, Enum a, Num a) => t a -> [t a]
-basisFor v = [ setElement k 1 z | k <- [0..n-1] ]
-  where z = 0 <$ v
-        n = getSum $ foldMap (const (Sum 1)) v
+basisFor :: (Traversable t, Num a) => t b -> [t a]
+basisFor = choices . traverse (\_ -> SetOne 0 [1])
 
 -- | Produce a diagonal matrix from a vector.
-kronecker :: (Applicative t, Num a, Traversable t) => t a -> t (t a)
-kronecker v = snd $ mapAccumL aux 0 v
-  where aux i e = let i' = i + 1
-                  in i' `seq` (i', setElement i e z)
-        z = pure 0
+kronecker :: (Traversable t, Num a) => t a -> t (t a)
+kronecker v = fillFromList (choices $ traverse (\a -> SetOne 0 [a]) v) v
+
+fillFromList :: Traversable t => [a] -> t b -> t a
+fillFromList l = snd . mapAccumL aux l
+  where aux (a:as) _ = (as, a)
+        aux [] _ = error "too few elements in takeFromList"
 
 -- | Outer (tensor) product of two vectors
 outer :: (Functor f, Functor g, Num a) => f a -> g a -> f (g a)
