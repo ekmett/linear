@@ -1,3 +1,8 @@
+1.3.1
+---
+* Better implementations of `basis` and `basisFor`.
+* Derived Generic instances.
+
 1.2
 ---
 * Improved matrix multiplication to properly support the sparse/sparse case.
