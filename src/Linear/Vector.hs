@@ -32,13 +32,13 @@ module Linear.Vector
 
 import Control.Applicative
 import Data.Complex
-import Data.Foldable as Foldable (Foldable, foldMap, forM_, foldl')
+import Data.Foldable as Foldable (Foldable, forM_, foldl')
 import Data.Functor.Identity
 import Data.HashMap.Lazy as HashMap
 import Data.Hashable
 import Data.IntMap as IntMap
 import Data.Map as Map
-import Data.Monoid (Sum(..), mempty)
+import Data.Monoid (mempty)
 import Data.Vector as Vector
 import Data.Vector.Mutable as Mutable
 import Data.Traversable (Traversable, traverse, mapAccumL)
@@ -361,22 +361,14 @@ f ^* a = fmap (*a) f
 f ^/ a = fmap (/a) f
 {-# INLINE (^/) #-}
 
--- @setElement i x v@ sets the @i@'th element of @v@ to @x@.
-setElement :: Traversable t => Int -> a -> t a -> t a
-setElement i x = snd . mapAccumL aux 0
-  where aux j y = let j' = j + 1
-                      y' = if i == j then x else y
-                  in j' `seq` (j', y')
-
 -- `SetOne` builds all combinations of the filler with one value from the choices list.
-data SetOne a = SetOne { filler :: !a, choices :: [a] }
+data SetOne a = SetOne { _filler :: !a, choices :: [a] }
 instance Functor SetOne where
   fmap f (SetOne a os) = SetOne (f a) (fmap f os)
 instance Applicative SetOne where
   pure a = SetOne a []
-  SetOne f fs <*> SetOne a as = SetOne (f a) (foldr ((:) . ($ a)) (map f as) fs) 
-                                             -- map ($ a) fs ++ map f as
-  
+  SetOne f fs <*> SetOne a as = SetOne (f a) (Prelude.foldr ((:) . ($ a)) (Prelude.map f as) fs)
+
 -- | Produce a default basis for a vector space. If the dimensionality
 -- of the vector space is not statically known, see 'basisFor'.
 basis :: (Applicative t, Traversable t, Num a) => [t a]
