@@ -109,7 +109,7 @@ ADDITIVEC(Dim n, (V n))
 -- type level
 newtype Point f a = P (f a)
   deriving ( Eq, Ord, Show, Read, Monad, Functor, Applicative, Foldable
-           , Traversable, Apply, Bind, Additive, Metric, Core, R1, R2, R3, R4
+           , Traversable, Apply, Additive, Metric
            , Fractional , Num, Ix, Storable, Epsilon
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
            , Generic
@@ -118,6 +118,30 @@ newtype Point f a = P (f a)
            , Generic1
 #endif
            )
+
+lensP :: Functor f => (g a -> f (g a)) -> Point g a -> f (Point g a)
+lensP afb (P a) = (\b -> P b) <$> afb a
+
+instance Bind f => Bind (Point f) where
+  join (P m) = P $ join $ fmap (\(P m')->m') m
+
+instance Core f => Core (Point f) where
+  core f = P $ core (\l->f (lensP . l))
+
+instance R1 f => R1 (Point f) where
+  _x = lensP . _x
+
+instance R2 f => R2 (Point f) where
+  _y = lensP . _y
+  _xy = lensP . _xy
+
+instance R3 f => R3 (Point f) where
+  _z = lensP . _z
+  _xyz = lensP . _xyz
+
+instance R4 f => R4 (Point f) where
+  _w = lensP . _w
+  _xyzw = lensP . _xyzw
 
 instance Additive f => Affine (Point f) where
   type Diff (Point f) = f
