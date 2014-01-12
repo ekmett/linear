@@ -1,3 +1,7 @@
+1.4
+---
+* Renamed `incore` to `column` and added an example.
+
 1.3.1.1
 -------
 * Build bugfix
