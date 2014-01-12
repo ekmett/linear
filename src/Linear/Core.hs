@@ -16,7 +16,7 @@
 ----------------------------------------------------------------------------
 module Linear.Core
   ( Core(..)
-  , incore
+  , column
   ) where
 
 import Control.Applicative
@@ -27,6 +27,10 @@ import GHC.Generics (Generic)
 import GHC.Generics (Generic1)
 #endif
 
+type LensLike f s t a b = (a -> f b) -> s -> f t
+type Lens s t a b = forall f. Functor f => (a -> f b) -> s -> f t
+type Lens' s a = forall f. Functor f => (a -> f a) -> s -> f s
+
 -- |
 -- A 'Functor' @f@ is corepresentable if it is isomorphic to @(x -> a)@
 -- for some x. Nearly all such functors can be represented by choosing @x@ to be
@@ -35,11 +39,7 @@ import GHC.Generics (Generic1)
 -- 'Representable' 'Functor'.
 class Functor f => Core f where
   -- | Form a structure by applying the given function to lenses focused on its holes.
-  --
-  -- @
-  -- 'core' :: ((forall x. 'Control.Lens.Lens' (f x) x) -> a) -> f a
-  -- @
-  core :: ((forall g x. Functor g => (x -> g x) -> f x -> g (f x)) -> a) -> f a
+  core :: ((forall x. Lens' (f x) x) -> a) -> f a
 
 data Context a b t = Context { peek :: b -> t, pos :: a }
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
@@ -51,16 +51,25 @@ data Context a b t = Context { peek :: b -> t, pos :: a }
 instance Functor (Context a b) where
   fmap f (Context bt a) = Context (f.bt) a
 
-view :: ((a -> Const a b) -> s -> Const a t) -> s -> a
+view :: LensLike (Const a) s t a b -> s -> a
 view l = getConst . l Const
 
 -- | This is a generalization of 'Control.Lens.inside' to work over any corepresentable 'Functor'.
 --
 -- @
--- 'incore' :: 'Core' f => 'Lens' s t a b -> 'Lens' (f s) (f t) (f a) (f b)
+-- 'column' :: 'Core' f => 'Lens' s t a b -> 'Lens' (f s) (f t) (f a) (f b)
 -- @
-incore :: (Functor g, Core f) => ((a -> Context a b b) -> s -> Context a b t) -> (f a -> g (f b)) -> f s -> g (f t)
-incore l f es = o <$> f i where
+--
+-- In practice it is used to access a column of a matrix.
+--
+--
+-- >>> V2 (V3 1 2 3) (V3 4 5 6) ^._x
+-- V3 1 2 3
+--
+-- >>> V2 (V3 1 2 3) (V3 4 5 6) ^.column _x
+-- V2 1 4
+column :: Core f => LensLike (Context a b) s t a b -> Lens (f s) (f t) (f a) (f b)
+column l f es = o <$> f i where
    go = l (Context id)
    i = core $ \ e -> pos $ go (view e es)
    o eb = core $ \ e -> peek (go (view e es)) (view e eb)
