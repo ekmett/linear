@@ -27,6 +27,10 @@ import GHC.Generics (Generic)
 import GHC.Generics (Generic1)
 #endif
 
+-- $setup
+-- >>> import Linear
+-- >>> import Control.Lens
+
 type LensLike f s t a b = (a -> f b) -> s -> f t
 type Lens s t a b = forall f. Functor f => (a -> f b) -> s -> f t
 type Lens' s a = forall f. Functor f => (a -> f a) -> s -> f s
