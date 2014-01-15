@@ -353,7 +353,7 @@ data LinePass = Coplanar
 -- | Check how two lines pass each other. @passes l1 l2@ describes
 -- @l2@ when looking down @l1@.
 passes :: (Epsilon a, Num a, Ord a) => Plucker a -> Plucker a -> LinePass
-passes a b 
+passes a b
   | nearZero s = Coplanar
   | s > 0 = Counterclockwise
   | otherwise = Clockwise

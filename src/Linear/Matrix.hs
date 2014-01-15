@@ -199,7 +199,7 @@ eye4 = V4 (V4 1 0 0 0)
 
 -- |Extract the translation vector (first three entries of the last
 -- column) from a 3x4 or 4x4 matrix.
--- 
+--
 -- @
 -- 'translation' :: (R4 v, R3 t) => Lens' (t (v a)) ('V3' a)
 -- @
