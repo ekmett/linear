@@ -19,16 +19,18 @@
 module Linear.Affine where
 
 import Control.Applicative
+import Control.Lens
 import Data.Complex (Complex)
+import Data.Distributive
 import Data.Foldable as Foldable
 import Data.Functor.Bind
 import Data.Functor.Identity (Identity)
+import Data.Functor.Rep as Rep
 import Data.HashMap.Lazy (HashMap)
 import Data.Hashable
 import Data.IntMap (IntMap)
 import Data.Ix
 import Data.Map (Map)
-import Data.Traversable as Traversable
 import Data.Vector (Vector)
 import Foreign.Storable
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
@@ -37,7 +39,6 @@ import GHC.Generics (Generic)
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
 import GHC.Generics (Generic1)
 #endif
-import Linear.Core
 import Linear.Epsilon
 import Linear.Metric
 import Linear.Plucker
@@ -119,14 +120,21 @@ newtype Point f a = P (f a)
 #endif
            )
 
-lensP :: Functor f => (g a -> f (g a)) -> Point g a -> f (Point g a)
+lensP :: Lens' (Point g a) (g a)
 lensP afb (P a) = (\b -> P b) <$> afb a
 
 instance Bind f => Bind (Point f) where
   join (P m) = P $ join $ fmap (\(P m')->m') m
 
-instance Core f => Core (Point f) where
-  core f = P $ core (\l->f (lensP . l))
+instance Distributive f => Distributive (Point f) where
+  distribute = P . collect (\(P p) -> p)
+
+instance Representable f => Representable (Point f) where
+  type Rep (Point f) = Rep f
+  tabulate f = P (tabulate f)
+  {-# INLINE tabulate #-}
+  index (P xs) e = Rep.index xs e
+  {-# INLINE index #-}
 
 instance R1 f => R1 (Point f) where
   _x = lensP . _x

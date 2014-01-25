@@ -138,10 +138,6 @@ instance Metric V0 where
   dot V0 V0 = 0
   {-# INLINE dot #-}
 
-instance Core V0 where
-  core _ = V0
-  {-# INLINE core #-}
-
 instance Distributive V0 where
   distribute _ = V0
   {-# INLINE distribute #-}

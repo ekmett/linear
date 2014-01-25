@@ -1,5 +1,8 @@
-{-# LANGUAGE DeriveDataTypeable, PatternGuards, ScopedTypeVariables #-}
+{-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE PatternGuards #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE CPP #-}
+{-# LANGUAGE TypeFamilies #-}
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE DeriveGeneric #-}
@@ -33,12 +36,13 @@ module Linear.Quaternion
   ) where
 
 import Control.Applicative
+import Control.Lens hiding ((<.>))
 import Data.Complex (Complex((:+)))
 import Data.Data
 import Data.Distributive
-import Data.Traversable
 import Data.Foldable
 import Data.Functor.Bind
+import Data.Functor.Rep
 import GHC.Arr (Ix(..))
 import qualified Data.Foldable as F
 import Data.Monoid
@@ -129,9 +133,12 @@ instance Ix a => Ix (Quaternion a) where
       inRange (l1,u1) i1 && inRange (l2,u2) i2
     {-# INLINE inRange #-}
 
-instance Core Quaternion where
-  core f = Quaternion (f _e) (V3 (f _i) (f _j) (f _k))
-  {-# INLINE core #-}
+instance Representable Quaternion where
+  type Rep Quaternion = E Quaternion
+  tabulate f = Quaternion (f ee) (V3 (f ei) (f ej) (f ek))
+  {-# INLINE tabulate #-}
+  index xs (E l) = view l xs
+  {-# INLINE index #-}
 
 instance Foldable Quaternion where
   foldMap f (Quaternion e v) = f e `mappend` foldMap f v
@@ -220,16 +227,11 @@ instance Metric Quaternion where
 
 -- | A vector space that includes the basis elements '_e' and '_i'
 class Complicated t where
-  -- |
-  -- @
-  -- '_e' :: Lens' (t a) a
-  -- @
-  _e :: Functor f => (a -> f a) -> t a -> f (t a)
-  -- |
-  -- @
-  -- '_i' :: Lens' (t a) a
-  -- @
-  _i :: Functor f => (a -> f a) -> t a -> f (t a)
+  _e, _i :: Lens' (t a) a
+
+ee, ei :: Complicated t => E t
+ee = E _e
+ei = E _i
 
 instance Complicated Complex where
   _e f (a :+ b) = (:+ b) <$> f a
@@ -245,21 +247,12 @@ instance Complicated Quaternion where
 
 -- | A vector space that includes the basis elements '_e', '_i', '_j' and '_k'
 class Complicated t => Hamiltonian t where
-  -- |
-  -- @
-  -- '_j' :: Lens' (t a) a
-  -- @
-  _j :: Functor f => (a -> f a) -> t a -> f (t a)
-  -- |
-  -- @
-  -- '_k' :: Lens' (t a) a
-  -- @
-  _k :: Functor f => (a -> f a) -> t a -> f (t a)
-  -- |
-  -- @
-  -- '_ijk' :: Lens' (t a) (V3 a)
-  -- @
-  _ijk :: Functor f => (V3 a -> f (V3 a)) -> t a -> f (t a)
+  _j, _k :: Lens' (t a) a
+  _ijk :: Lens' (t a) (V3 a)
+
+ej, ek :: Hamiltonian t => E t
+ej = E _j
+ek = E _k
 
 instance Hamiltonian Quaternion where
   _j f (Quaternion a v) = Quaternion a <$> _y f v
@@ -311,7 +304,7 @@ instance RealFloat a => Floating (Quaternion a) where
   {-# INLINE pi #-}
   exp q@(Quaternion e v)
     | qiq == 0 = Quaternion (exp e) v
-    | ai <- sqrt qiq, ee <- exp e = reimagine (ee * cos ai) (ee * (sin ai / ai)) q
+    | ai <- sqrt qiq, exe <- exp e = reimagine (exe * cos ai) (exe * (sin ai / ai)) q
     where qiq = qi q
   {-# INLINE exp #-}
   log q@(Quaternion e v@(V3 _i j k))

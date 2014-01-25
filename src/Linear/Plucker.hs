@@ -1,5 +1,6 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE GADTs #-}
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
@@ -40,13 +41,14 @@ module Linear.Plucker
   ) where
 
 import Control.Applicative
+import Control.Lens hiding (index, (<.>))
 import Data.Distributive
 import Data.Foldable as Foldable
 import Data.Functor.Bind
+import Data.Functor.Rep
 import Data.Semigroup
 import Data.Semigroup.Foldable
 import Data.Semigroup.Traversable
-import Data.Traversable
 import Foreign.Ptr (castPtr)
 import Foreign.Storable (Storable(..))
 import GHC.Arr (Ix(..))
@@ -132,9 +134,12 @@ instance Distributive Plucker where
                          (fmap (\(Plucker _ _ _ _ _ x) -> x) f)
   {-# INLINE distribute #-}
 
-instance Core Plucker where
-  core f = Plucker (f p01) (f p02) (f p03) (f p23) (f p31) (f p12)
-  {-# INLINE core #-}
+instance Representable Plucker where
+  type Rep Plucker = E Plucker
+  tabulate f = Plucker (f e01) (f e02) (f e03) (f e23) (f e31) (f e12)
+  {-# INLINE tabulate #-}
+  index xs (E l) = view l xs
+  {-# INLINE index #-}
 
 instance Foldable Plucker where
   foldMap g (Plucker a b c d e f) =
@@ -268,7 +273,7 @@ plucker3D p q = Plucker a b c d e f
 -- 'p31' :: Lens' ('Plucker' a) a
 -- 'p12' :: Lens' ('Plucker' a) a
 -- @
-p01, p02, p03, p23, p31, p12 :: Functor f => (a -> f a) -> Plucker a -> f (Plucker a)
+p01, p02, p03, p23, p31, p12 :: Lens' (Plucker a) a
 p01 g (Plucker a b c d e f) = (\a' -> Plucker a' b c d e f) <$> g a
 p02 g (Plucker a b c d e f) = (\b' -> Plucker a b' c d e f) <$> g b
 p03 g (Plucker a b c d e f) = (\c' -> Plucker a b c' d e f) <$> g c
@@ -281,6 +286,14 @@ p12 g (Plucker a b c d e f) = Plucker a b c d e <$> g f
 {-# INLINE p23 #-}
 {-# INLINE p31 #-}
 {-# INLINE p12 #-}
+
+e01, e02, e03, e23, e31, e12 :: E Plucker
+e01 = E p01
+e02 = E p02
+e03 = E p03
+e23 = E p23
+e31 = E p31
+e12 = E p12
 
 -- | These elements form an alternate basis for the Plücker space, or the Grassmanian manifold @Gr(2,V4)@.
 --

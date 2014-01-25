@@ -197,10 +197,6 @@ instance R2 V2 where
   _xy = id
   {-# INLINE _xy #-}
 
-instance Core V2 where
-  core f = V2 (f _x) (f _y)
-  {-# INLINE core #-}
-
 instance Distributive V2 where
   distribute f = V2 (fmap (\(V2 x _) -> x) f) (fmap (\(V2 _ y) -> y) f)
   {-# INLINE distribute #-}

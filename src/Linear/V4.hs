@@ -198,10 +198,6 @@ instance R4 V4 where
   _xyzw = id
   {-# INLINE _xyzw #-}
 
-instance Core V4 where
-  core f = V4 (f _x) (f _y) (f _z) (f _w)
-  {-# INLINE core #-}
-
 instance Storable a => Storable (V4 a) where
   sizeOf _ = 4 * sizeOf (undefined::a)
   {-# INLINE sizeOf #-}

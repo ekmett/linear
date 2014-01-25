@@ -1,4 +1,5 @@
 {-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE CPP #-}
 -----------------------------------------------------------------------------
 -- |
@@ -12,16 +13,23 @@
 -- Corepresentable functors as vector spaces
 ----------------------------------------------------------------------------
 module Linear.Core
-  ( Core(..)
-  , coreE
+  ( core
   , E(..)
   , column
-  , imapCore
+  , imapRep
   ) where
 
 import Control.Applicative
-import Control.Lens
+import Control.Lens hiding (index)
 import Control.Lens.Internal.Context
+import Data.Functor.Rep
+
+-- | Basis element
+newtype E t = E { el :: forall x. Lens' (t x) x }
+
+imapRep :: Representable f => (Rep f -> a -> b) -> f a -> f b
+imapRep f xs = tabulate $ \l -> f l (index xs l)
+{-# INLINE imapRep #-}
 
 -- $setup
 -- >>> import Linear
@@ -33,9 +41,12 @@ import Control.Lens.Internal.Context
 -- the set of lenses that are polymorphic in the contents of the 'Functor',
 -- that is to say @x = 'Rep' f@ is a valid choice of 'x' for (nearly) every
 -- 'Representable' 'Functor'.
-class Functor f => Core f where
-  -- | Form a structure by applying the given function to lenses focused on its holes.
-  core :: ((forall x. Lens' (f x) x) -> a) -> f a
+--
+-- Form a structure by applying the given function to lenses focused on its holes.
+
+core :: (Representable f, Rep f ~ E f) => ((forall x. Lens' (f x) x) -> a) -> f a
+core k = tabulate $ \x -> k (el x)
+{-# INLINE core #-}
 
 -- | This is a generalization of 'Control.Lens.inside' to work over any corepresentable 'Functor'.
 --
@@ -51,18 +62,8 @@ class Functor f => Core f where
 --
 -- >>> V2 (V3 1 2 3) (V3 4 5 6) ^.column _x
 -- V2 1 4
-column :: Core f => LensLike (Context a b) s t a b -> Lens (f s) (f t) (f a) (f b)
+column :: Representable f => LensLike (Context a b) s t a b -> Lens (f s) (f t) (f a) (f b)
 column l f es = o <$> f i where
    go = l (Context id)
-   i = core $ \ e -> ipos $ go (view e es)
-   o eb = core $ \ e -> ipeek (view e eb) (go (view e es))
-
--- | Basis element
-newtype E t = E { el :: forall x. Lens' (t x) x }
-
-coreE :: Core f => (E f -> a) -> f a
-coreE f = core $ \x -> f (E x)
-
-imapCore :: Core f => (E f -> a -> b) -> f a -> f b
-imapCore f xs = core $ \l -> f (E l) (xs^.l)
-{-# INLINE imapCore #-}
+   i = tabulate $ \ e -> ipos $ go (index es e)
+   o eb = tabulate $ \ e -> ipeek (index eb e) (go (index es e))

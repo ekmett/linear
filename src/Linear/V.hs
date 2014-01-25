@@ -42,10 +42,11 @@ module Linear.V
   ) where
 
 import Control.Applicative
-import Control.Lens
+import Control.Lens as Lens
 import Data.Distributive
 import Data.Foldable as Foldable
 import Data.Functor.Bind
+import Data.Functor.Rep
 import Data.Proxy
 import Data.Reflection as R
 import Data.Vector as V
@@ -182,11 +183,6 @@ instance (Dim n, Fractional a) => Fractional (V n a) where
   fromRational = pure . fromRational
   {-# INLINE fromRational #-}
 
-instance Dim n => Core (V n) where
-  core f = V $ generate (reflectDim (Proxy :: Proxy n)) $ \i -> f $ \g (V v) ->
-    (\a -> V $ v V.// [(i,a)]) <$> g (unsafeIndex v i)
-  {-# INLINE core #-}
-
 instance Dim n => Distributive (V n) where
   distribute f = V $ V.generate (reflectDim (Proxy :: Proxy n)) $ \i -> fmap (\(V v) -> unsafeIndex v i) f
   {-# INLINE distribute #-}
@@ -266,13 +262,24 @@ int n = case quotRem n 2 of
   _     -> error "ghc is bad at math"
 #endif
 
-type instance Index (V n a) = Int
+instance Dim n => Representable (V n) where
+  type Rep (V n) = E (V n)
+  tabulate f = V $ generate (reflectDim (Proxy :: Proxy n)) $ \i -> f $ E $ \g (V v) ->
+    (\a -> V $ v V.// [(i,a)]) <$> g (unsafeIndex v i)
+  {-# INLINE tabulate #-}
+  index xs (E l) = view l xs
+  {-# INLINE index #-}
+
+type instance Index (V n a) = E (V n)
 type instance IxValue (V n a) = a
 
 #if MIN_VERSION_lens(4,0,0)
-instance Ixed (V n a) where
-  ix i f (V xs) = V <$> ix i f xs
+instance Ixed (V2 a) where
+  ix = el
+  {-# INLINE ix #-}
 #else
-instance Applicative f => Ixed f (V n a) where
-  ix i f (V xs) = V <$> ix i f xs
+instance Functor f => Ixed f (V n a) where
+  ix i f = el i (Lens.indexed f i)
+  {-# INLINE ix #-}
 #endif
+

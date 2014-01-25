@@ -186,10 +186,6 @@ instance R3 V3 where
   _xyz = id
   {-# INLINE _xyz #-}
 
-instance Core V3 where
-  core f = V3 (f _x) (f _y) (f _z)
-  {-# INLINE core #-}
-
 instance Storable a => Storable (V3 a) where
   sizeOf _ = 3 * sizeOf (undefined::a)
   {-# INLINE sizeOf #-}

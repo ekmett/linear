@@ -170,10 +170,6 @@ instance R1 Identity where
   _x f (Identity a) = Identity <$> f a
   {-# INLINE _x #-}
 
-instance Core V1 where
-  core f = V1 (f _x)
-  {-# INLINE core #-}
-
 instance Distributive V1 where
   distribute f = V1 (fmap (\(V1 x) -> x) f)
   {-# INLINE distribute #-}
