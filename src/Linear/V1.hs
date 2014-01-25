@@ -35,10 +35,11 @@ import Control.Lens
 import Data.Data
 import Data.Distributive
 import Data.Foldable
+import Data.Functor.Bind
 import Data.Functor.Identity (Identity(..))
+import Data.Functor.Rep
 import Data.Semigroup.Foldable
 import Data.Semigroup.Traversable
-import Data.Functor.Bind
 import Foreign.Storable (Storable)
 import GHC.Arr (Ix(..))
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
@@ -189,6 +190,13 @@ instance Ix a => Ix (V1 a) where
 
   inRange (V1 l1,V1 u1) (V1 i1) = inRange (l1,u1) i1
   {-# INLINE inRange #-}
+
+instance Representable V1 where
+  type Rep V1 = E V1
+  tabulate f = V1 (f ex)
+  {-# INLINE tabulate #-}
+  index xs (E l) = view l xs
+  {-# INLINE index #-}
 
 instance FunctorWithIndex (E V1) V1 where
   imap f (V1 a) = V1 (f ex a)

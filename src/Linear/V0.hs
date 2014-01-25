@@ -31,16 +31,17 @@ import Control.Lens
 import Data.Data
 import Data.Distributive
 import Data.Foldable
+import Data.Functor.Rep
+import Data.Functor.Bind
 import Data.Ix
 import Data.Semigroup
-import Data.Functor.Bind
+import Foreign.Storable (Storable(..))
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 import GHC.Generics (Generic)
 #endif
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
 import GHC.Generics (Generic1)
 #endif
-import Foreign.Storable (Storable(..))
 import Linear.Core
 import Linear.Metric
 import Linear.Epsilon
@@ -170,6 +171,13 @@ instance FoldableWithIndex (E V0) V0 where
 instance TraversableWithIndex (E V0) V0 where
   itraverse _ V0 = pure V0
   {-# INLINE itraverse #-}
+
+instance Representable V0 where
+  type Rep V0 = E V0
+  tabulate _ = V0
+  {-# INLINE tabulate #-}
+  index xs (E l) = view l xs
+  {-# INLINE index #-}
 
 type instance Index (V0 a) = E V0
 type instance IxValue (V0 a) = a

@@ -33,10 +33,11 @@ import Control.Lens hiding ((<.>))
 import Data.Data
 import Data.Distributive
 import Data.Foldable
+import Data.Functor.Bind
+import Data.Functor.Rep
 import Data.Semigroup
 import Data.Semigroup.Foldable
 import Data.Semigroup.Traversable
-import Data.Functor.Bind
 import Foreign.Ptr (castPtr)
 import Foreign.Storable (Storable(..))
 import GHC.Arr (Ix(..))
@@ -242,6 +243,13 @@ instance Ix a => Ix (V2 a) where
   inRange (V2 l1 l2,V2 u1 u2) (V2 i1 i2) =
     inRange (l1,u1) i1 && inRange (l2,u2) i2
   {-# INLINE inRange #-}
+
+instance Representable V2 where
+  type Rep V2 = E V2
+  tabulate f = V2 (f ex) (f ey)
+  {-# INLINE tabulate #-}
+  index xs (E l) = view l xs
+  {-# INLINE index #-}
 
 instance FunctorWithIndex (E V2) V2 where
   imap f (V2 a b) = V2 (f ex a) (f ey b)

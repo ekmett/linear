@@ -35,6 +35,7 @@ import Data.Data
 import Data.Distributive
 import Data.Foldable
 import Data.Functor.Bind
+import Data.Functor.Rep
 import Data.Semigroup
 import Data.Semigroup.Foldable
 import Data.Semigroup.Traversable
@@ -262,6 +263,13 @@ instance Ix a => Ix (V4 a) where
     inRange (l1,u1) i1 && inRange (l2,u2) i2 &&
     inRange (l3,u3) i3 && inRange (l4,u4) i4
   {-# INLINE inRange #-}
+
+instance Representable V4 where
+  type Rep V4 = E V4
+  tabulate f = V4 (f ex) (f ey) (f ez) (f ew)
+  {-# INLINE tabulate #-}
+  index xs (E l) = view l xs
+  {-# INLINE index #-}
 
 instance FunctorWithIndex (E V4) V4 where
   imap f (V4 a b c d) = V4 (f ex a) (f ey b) (f ez c) (f ew d)
