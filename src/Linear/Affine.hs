@@ -121,7 +121,7 @@ newtype Point f a = P (f a)
            )
 
 lensP :: Lens' (Point g a) (g a)
-lensP afb (P a) = (\b -> P b) <$> afb a
+lensP afb (P a) = P <$> afb a
 
 instance Bind f => Bind (Point f) where
   join (P m) = P $ join $ fmap (\(P m')->m') m
