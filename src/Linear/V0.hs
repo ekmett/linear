@@ -1,14 +1,19 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE CPP #-}
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE Trustworthy #-}
 #endif
+#ifndef MIN_VERSION_lens
+#define MIN_VERSION_lens(x,y,z) 1
+#endif
 -----------------------------------------------------------------------------
 -- |
--- Copyright   :  (C) 2012-2013 Edward Kmett,
+-- Copyright   :  (C) 2012-2013 Edward Kmett
 -- License     :  BSD-style (see the file LICENSE)
 --
 -- Maintainer  :  Edward Kmett <ekmett@gmail.com>
@@ -22,11 +27,11 @@ module Linear.V0
   ) where
 
 import Control.Applicative
+import Control.Lens
 import Data.Data
 import Data.Distributive
 import Data.Foldable
 import Data.Ix
-import Data.Traversable
 import Data.Semigroup
 import Data.Functor.Bind
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
@@ -153,3 +158,28 @@ instance Storable a => Storable (V0 a) where
   {-# INLINE poke #-}
   peek _ = return V0
   {-# INLINE peek #-}
+
+instance FunctorWithIndex (E V0) V0 where
+  imap _ V0 = V0
+  {-# INLINE imap #-}
+
+instance FoldableWithIndex (E V0) V0 where
+  ifoldMap _ V0 = mempty
+  {-# INLINE ifoldMap #-}
+
+instance TraversableWithIndex (E V0) V0 where
+  itraverse _ V0 = pure V0
+  {-# INLINE itraverse #-}
+
+type instance Index (V0 a) = E V0
+type instance IxValue (V0 a) = a
+
+#if MIN_VERSION_lens(4,0,0)
+instance Ixed (V0 a) where
+  ix = el
+  {-# INLINE ix #-}
+#else
+instance Functor f => Ixed f (V0 a) where
+  ix i f = el i (indexed f i)
+  {-# INLINE ix #-}
+#endif

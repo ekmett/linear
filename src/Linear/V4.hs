@@ -1,4 +1,8 @@
-{-# LANGUAGE DeriveDataTypeable, ScopedTypeVariables #-}
+{-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE CPP #-}
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
@@ -22,9 +26,11 @@ module Linear.V4
   , R2(..)
   , R3(..)
   , R4(..)
+  , ex, ey, ez, ew
   ) where
 
 import Control.Applicative
+import Control.Lens hiding ((<.>))
 import Data.Data
 import Data.Distributive
 import Data.Foldable
@@ -32,7 +38,6 @@ import Data.Functor.Bind
 import Data.Semigroup
 import Data.Semigroup.Foldable
 import Data.Semigroup.Traversable
-import Data.Traversable
 import Foreign.Ptr (castPtr)
 import Foreign.Storable (Storable(..))
 import GHC.Arr (Ix(..))
@@ -167,6 +172,9 @@ class R3 t => R4 t where
   -- @
   _xyzw :: Functor f => (V4 a -> f (V4 a)) -> t a -> f (t a)
 
+ew :: R4 t => E t
+ew = E _w
+
 instance R1 V4 where
   _x f (V4 a b c d) = (\a' -> V4 a' b c d) <$> f a
   {-# INLINE _x #-}
@@ -254,3 +262,28 @@ instance Ix a => Ix (V4 a) where
     inRange (l1,u1) i1 && inRange (l2,u2) i2 &&
     inRange (l3,u3) i3 && inRange (l4,u4) i4
   {-# INLINE inRange #-}
+
+instance FunctorWithIndex (E V4) V4 where
+  imap f (V4 a b c d) = V4 (f ex a) (f ey b) (f ez c) (f ew d)
+  {-# INLINE imap #-}
+
+instance FoldableWithIndex (E V4) V4 where
+  ifoldMap f (V4 a b c d) = f ex a `mappend` f ey b `mappend` f ez c `mappend` f ew d
+  {-# INLINE ifoldMap #-}
+
+instance TraversableWithIndex (E V4) V4 where
+  itraverse f (V4 a b c d) = V4 <$> f ex a <*> f ey b <*> f ez c <*> f ew d
+  {-# INLINE itraverse #-}
+
+type instance Index (V4 a) = E V4
+type instance IxValue (V4 a) = a
+
+#if MIN_VERSION_lens(4,0,0)
+instance Ixed (V4 a) where
+  ix = el
+#else
+instance Functor f => Ixed f (V4 a) where
+  ix i f = el i (indexed f i)
+#endif
+
+

@@ -2,6 +2,8 @@
 {-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE DeriveFoldable #-}
 {-# LANGUAGE DeriveTraversable #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE ScopedTypeVariables #-}
@@ -25,14 +27,15 @@
 module Linear.V1
   ( V1(..)
   , R1(..)
+  , ex
   ) where
 
 import Control.Applicative
+import Control.Lens
 import Data.Data
 import Data.Distributive
 import Data.Foldable
 import Data.Functor.Identity (Identity(..))
-import Data.Traversable
 import Data.Semigroup.Foldable
 import Data.Semigroup.Traversable
 import Data.Functor.Bind
@@ -153,10 +156,10 @@ class R1 t where
   -- >>> V1 2 & _x .~ 3
   -- V1 3
   --
-  -- @
-  -- '_x' :: Lens' (t a) a
-  -- @
-  _x :: Functor f => (a -> f a) -> t a -> f (t a)
+  _x :: Lens' (t a) a
+
+ex :: R1 t => E t
+ex = E _x
 
 instance R1 V1 where
   _x f (V1 a) = V1 <$> f a
@@ -186,3 +189,28 @@ instance Ix a => Ix (V1 a) where
 
   inRange (V1 l1,V1 u1) (V1 i1) = inRange (l1,u1) i1
   {-# INLINE inRange #-}
+
+instance FunctorWithIndex (E V1) V1 where
+  imap f (V1 a) = V1 (f ex a)
+  {-# INLINE imap #-}
+
+instance FoldableWithIndex (E V1) V1 where
+  ifoldMap f (V1 a) = f ex a
+  {-# INLINE ifoldMap #-}
+
+instance TraversableWithIndex (E V1) V1 where
+  itraverse f (V1 a) = V1 <$> f ex a
+  {-# INLINE itraverse #-}
+
+type instance Index (V1 a) = E V1
+type instance IxValue (V1 a) = a
+
+#if MIN_VERSION_lens(4,0,0)
+instance Ixed (V1 a) where
+  ix = el
+  {-# INLINE ix #-}
+#else
+instance Functor f => Ixed f (V1 a) where
+  ix i f = el i (indexed f i)
+  {-# INLINE ix #-}
+#endif
