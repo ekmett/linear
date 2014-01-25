@@ -45,11 +45,13 @@ library
     template-haskell     >= 2.7   && < 3.0,
     transformers         >= 0.2   && < 0.4,
     unordered-containers >= 0.2.3 && < 0.3,
-    vector               >= 0.10  && < 0.11
+    vector               >= 0.10  && < 0.11,
+    void                 >= 0.6   && < 1
 
   exposed-modules:
     Linear
     Linear.Affine
+    Linear.Algebra
     Linear.Binary
     Linear.Conjugate
     Linear.Covector

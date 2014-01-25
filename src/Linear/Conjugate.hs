@@ -1,4 +1,5 @@
 {-# LANGUAGE CPP #-}
+{-# LANGUAGE DefaultSignatures #-}
 -----------------------------------------------------------------------------
 -- |
 -- Copyright   :  (C) 2012-2013 Edward Kmett,
@@ -12,6 +13,7 @@
 ----------------------------------------------------------------------------
 module Linear.Conjugate
   ( Conjugate(..)
+  , TrivialConjugate
   ) where
 
 import Data.Complex hiding (conjugate)
@@ -29,7 +31,15 @@ class Num a => Conjugate a where
   -- >>> conjugate 1
   -- 1
   conjugate :: a -> a
+  default conjugate :: TrivialConjugate a => a -> a
   conjugate = id
+
+-- | Requires and provides a default definition such that
+--
+-- @
+-- 'conjugate' = 'id'
+-- @
+class Conjugate a => TrivialConjugate a
 
 instance Conjugate Integer
 instance Conjugate Int
@@ -51,3 +61,19 @@ instance (Conjugate a, RealFloat a) => Conjugate (Complex a) where
   {-# SPECIALIZE instance Conjugate (Complex Float) #-}
   {-# SPECIALIZE instance Conjugate (Complex Double) #-}
   conjugate (a :+ b) = conjugate a :+ negate b
+
+instance TrivialConjugate Integer
+instance TrivialConjugate Int
+instance TrivialConjugate Int64
+instance TrivialConjugate Int32
+instance TrivialConjugate Int16
+instance TrivialConjugate Int8
+instance TrivialConjugate Word
+instance TrivialConjugate Word64
+instance TrivialConjugate Word32
+instance TrivialConjugate Word16
+instance TrivialConjugate Word8
+instance TrivialConjugate Double
+instance TrivialConjugate Float
+instance TrivialConjugate CFloat
+instance TrivialConjugate CDouble

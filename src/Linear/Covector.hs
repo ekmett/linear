@@ -10,6 +10,7 @@ import Data.Functor.Plus hiding (zero)
 import qualified Data.Functor.Plus as Plus
 import Data.Functor.Bind
 import Data.Functor.Rep as Rep
+import Linear.Algebra
 
 -- | Linear functionals from elements of an (infinite) free module to a scalar
 
@@ -50,3 +51,12 @@ instance Num r => Alternative (Covector r) where
 instance Num r => MonadPlus (Covector r) where
   Covector m `mplus` Covector n = Covector $ \k -> m k + n k
   mzero = Covector (const 0)
+
+instance Coalgebra r m => Num (Covector r m) where
+  Covector f + Covector g = Covector $ \k -> f k + g k
+  Covector f - Covector g = Covector $ \k -> f k - g k
+  Covector f * Covector g = Covector $ \k -> f $ \m -> g $ comult k m
+  negate (Covector f) = Covector $ \k -> negate (f k)
+  abs _    = error "Covector.abs: undefined"
+  signum _ = error "Covector.signum: undefined"
+  fromInteger n = Covector $ \ k -> fromInteger n * counital k

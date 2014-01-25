@@ -24,6 +24,7 @@ module Linear.Quaternion
   ( Quaternion(..)
   , Complicated(..)
   , Hamiltonian(..)
+  , ee, ei, ej, ek
   , slerp
   , asinq
   , acosq

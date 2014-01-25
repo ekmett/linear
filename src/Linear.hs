@@ -11,7 +11,8 @@
 -- that make up the linear package.
 ----------------------------------------------------------------------------
 module Linear
-  ( module Linear.Conjugate
+  ( module Linear.Algebra
+  , module Linear.Conjugate
   , module Linear.Covector
   , module Linear.Epsilon
   , module Linear.Matrix
@@ -26,6 +27,7 @@ module Linear
   , module Linear.Vector
   )  where
 
+import Linear.Algebra
 import Linear.Conjugate
 import Linear.Covector
 import Linear.Epsilon
