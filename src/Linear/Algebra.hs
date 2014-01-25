@@ -1,8 +1,11 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 module Linear.Algebra
   ( Algebra(..)
   , Coalgebra(..)
+  , multRep, unitalRep
+  , comultRep, counitalRep
   ) where
 
 import Control.Lens hiding (index)
@@ -22,6 +25,12 @@ import Linear.V4
 class Num r => Algebra r m where
   mult :: (m -> m -> r) -> m -> r
   unital :: r -> m -> r
+
+multRep :: (Representable f, Algebra r (Rep f)) => f (f r) -> f r
+multRep ffr = tabulate $ mult (index . index ffr)
+
+unitalRep :: (Representable f, Algebra r (Rep f)) => r -> f r
+unitalRep = tabulate . unital
 
 instance Num r => Algebra r Void where
   mult _ _ = 0
@@ -60,6 +69,12 @@ instance (Num r, TrivialConjugate r) => Algebra r (E Quaternion) where
 class Num r => Coalgebra r m where
   comult :: (m -> r) -> m -> m -> r
   counital :: (m -> r) -> r
+
+comultRep :: (Representable f, Coalgebra r (Rep f)) => f r -> f (f r)
+comultRep fr = tabulate $ \i -> tabulate $ \j -> comult (index fr) i j
+
+counitalRep :: (Representable f, Coalgebra r (Rep f)) => f r -> r
+counitalRep = counital . index
 
 instance Num r => Coalgebra r Void where
   comult _ _ _ = 0
