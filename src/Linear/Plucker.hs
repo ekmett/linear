@@ -1,6 +1,8 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE GADTs #-}
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
@@ -38,6 +40,8 @@ module Linear.Plucker
   , p10,      p12, p13
   , p20, p21,      p23
   , p30, p31, p32
+
+  , e01, e02, e03, e12, e31, e23
   ) where
 
 import Control.Applicative
@@ -287,14 +291,6 @@ p12 g (Plucker a b c d e f) = Plucker a b c d e <$> g f
 {-# INLINE p31 #-}
 {-# INLINE p12 #-}
 
-e01, e02, e03, e23, e31, e12 :: E Plucker
-e01 = E p01
-e02 = E p02
-e03 = E p03
-e23 = E p23
-e31 = E p31
-e12 = E p12
-
 -- | These elements form an alternate basis for the Plücker space, or the Grassmanian manifold @Gr(2,V4)@.
 --
 -- @
@@ -321,6 +317,40 @@ p21 = anti p21
 
 anti :: (Functor f, Num a) => ((a -> f a) -> r) -> (a -> f a) -> r
 anti k f = k (fmap negate . f . negate)
+
+e01, e02, e03, e23, e31, e12 :: E Plucker
+e01 = E p01
+e02 = E p02
+e03 = E p03
+e23 = E p23
+e31 = E p31
+e12 = E p12
+
+instance FunctorWithIndex (E Plucker) Plucker where
+  imap f (Plucker a b c d e g) = Plucker (f e01 a) (f e02 b) (f e03 c) (f e23 d) (f e31 e) (f e12 g)
+  {-# INLINE imap #-}
+
+instance FoldableWithIndex (E Plucker) Plucker where
+  ifoldMap f (Plucker a b c d e g) = f e01 a `mappend` f e02 b `mappend` f e03 c
+                           `mappend` f e23 d `mappend` f e31 e `mappend` f e12 g
+  {-# INLINE ifoldMap #-}
+
+instance TraversableWithIndex (E Plucker) Plucker where
+  itraverse f (Plucker a b c d e g) = Plucker <$> f e01 a <*> f e02 b <*> f e03 c
+                                              <*> f e23 d <*> f e31 e <*> f e12 g
+  {-# INLINE itraverse #-}
+
+type instance Index (Plucker a) = E Plucker
+type instance IxValue (Plucker a) = a
+
+#if MIN_VERSION_lens(4,0,0)
+instance Ixed (Plucker a) where
+  ix = el
+#else
+instance Functor f => Ixed f (Plucker a) where
+  ix i f = el i (indexed f i)
+#endif
+
 
 -- | Valid Plücker coordinates @p@ will have @'squaredError' p '==' 0@
 --
@@ -446,3 +476,4 @@ isLine p = nearZero $ u `dot` v
 {-# INLINE isLine #-}
 
 -- TODO: drag some more stuff out of my thesis
+
