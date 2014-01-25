@@ -111,7 +111,7 @@ instance Num r => Coalgebra r (E V4) where
 
 instance Num r => Coalgebra r (E Complex) where
   comult f = \i j -> c^.el i.el j where
-    c = ((f ee :+ 0) :+ (0 :+ f ei))
+    c = (f ee :+ 0) :+ (0 :+ f ei)
   counital f = f ee + f ei
 
 instance (Num r, TrivialConjugate r) => Coalgebra r (E Quaternion) where
