@@ -1,8 +1,5 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE CPP #-}
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
-{-# LANGUAGE DeriveGeneric #-}
-#endif
 -----------------------------------------------------------------------------
 -- |
 -- Copyright   :  (C) 2012-2013 Edward Kmett,
@@ -16,17 +13,15 @@
 ----------------------------------------------------------------------------
 module Linear.Core
   ( Core(..)
+  , coreE
+  , E(..)
   , column
+  , imapCore
   ) where
 
 import Control.Applicative
-import Control.Lens.Type
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
-import GHC.Generics (Generic)
-#endif
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
-import GHC.Generics (Generic1)
-#endif
+import Control.Lens
+import Control.Lens.Internal.Context
 
 -- $setup
 -- >>> import Linear
@@ -41,19 +36,6 @@ import GHC.Generics (Generic1)
 class Functor f => Core f where
   -- | Form a structure by applying the given function to lenses focused on its holes.
   core :: ((forall x. Lens' (f x) x) -> a) -> f a
-
-data Context a b t = Context { peek :: b -> t, pos :: a }
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
-                   deriving (Generic, Generic1)
-#elif defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
-                   deriving (Generic)
-#endif
-
-instance Functor (Context a b) where
-  fmap f (Context bt a) = Context (f.bt) a
-
-view :: LensLike (Const a) s t a b -> s -> a
-view l = getConst . l Const
 
 -- | This is a generalization of 'Control.Lens.inside' to work over any corepresentable 'Functor'.
 --
@@ -72,5 +54,15 @@ view l = getConst . l Const
 column :: Core f => LensLike (Context a b) s t a b -> Lens (f s) (f t) (f a) (f b)
 column l f es = o <$> f i where
    go = l (Context id)
-   i = core $ \ e -> pos $ go (view e es)
-   o eb = core $ \ e -> peek (go (view e es)) (view e eb)
+   i = core $ \ e -> ipos $ go (view e es)
+   o eb = core $ \ e -> ipeek (view e eb) (go (view e es))
+
+-- | Basis element
+newtype E t = E { el :: forall x. Lens' (t x) x }
+
+coreE :: Core f => (E f -> a) -> f a
+coreE f = core $ \x -> f (E x)
+
+imapCore :: Core f => (E f -> a -> b) -> f a -> f b
+imapCore f xs = core $ \l -> f (E l) (xs^.l)
+{-# INLINE imapCore #-}
