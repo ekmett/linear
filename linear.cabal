@@ -52,6 +52,7 @@ library
     Linear.Binary
     Linear.Conjugate
     Linear.Core
+    Linear.Covector
     Linear.Epsilon
     Linear.Instances
     Linear.Matrix

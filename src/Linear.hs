@@ -13,6 +13,7 @@
 module Linear
   ( module Linear.Conjugate
   , module Linear.Core
+  , module Linear.Covector
   , module Linear.Epsilon
   , module Linear.Matrix
   , module Linear.Metric
@@ -28,6 +29,7 @@ module Linear
 
 import Linear.Conjugate
 import Linear.Core
+import Linear.Covector
 import Linear.Epsilon
 import Linear.Instances ()
 import Linear.Matrix
