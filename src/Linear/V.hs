@@ -1,7 +1,10 @@
 {-# LANGUAGE CPP #-}
-{-# LANGUAGE DataKinds, KindSignatures, ScopedTypeVariables, GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE KindSignatures #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE Rank2Types #-}
+{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE EmptyDataDecls #-}
 {-# LANGUAGE MultiParamTypeClasses, FlexibleContexts, FlexibleInstances, UndecidableInstances #-}
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 707
@@ -12,6 +15,9 @@
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE DeriveGeneric #-}
+#endif
+#ifndef MIN_VERSION_lens
+#define MIN_VERSION_lens(x,y,z) 1
 #endif
 -----------------------------------------------------------------------------
 -- |
@@ -36,12 +42,12 @@ module Linear.V
   ) where
 
 import Control.Applicative
+import Control.Lens
 import Data.Distributive
 import Data.Foldable as Foldable
 import Data.Functor.Bind
 import Data.Proxy
 import Data.Reflection as R
-import Data.Traversable
 import Data.Vector as V
 import Foreign.Ptr
 import Foreign.Storable
@@ -260,3 +266,13 @@ int n = case quotRem n 2 of
   _     -> error "ghc is bad at math"
 #endif
 
+type instance Index (V n a) = Int
+type instance IxValue (V n a) = a
+
+#if MIN_VERSION_lens(4,0,0)
+instance Ixed (V n a) where
+  ix i f (V xs) = V <$> ix i f xs
+#else
+instance Applicative f => Ixed f (V n a) where
+  ix i f (V xs) = V <$> ix i f xs
+#endif
