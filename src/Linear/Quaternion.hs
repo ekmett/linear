@@ -1,6 +1,8 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE PatternGuards #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE TypeFamilies #-}
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
@@ -139,6 +141,29 @@ instance Representable Quaternion where
   {-# INLINE tabulate #-}
   index xs (E l) = view l xs
   {-# INLINE index #-}
+
+instance FunctorWithIndex (E Quaternion) Quaternion where
+  imap f (Quaternion a (V3 b c d)) = Quaternion (f ee a) $ V3 (f ei b) (f ej c) (f ek d)
+  {-# INLINE imap #-}
+
+instance FoldableWithIndex (E Quaternion) Quaternion where
+  ifoldMap f (Quaternion a (V3 b c d)) = f ee a `mappend` f ei b `mappend` f ej c `mappend` f ek d
+  {-# INLINE ifoldMap #-}
+
+instance TraversableWithIndex (E Quaternion) Quaternion where
+  itraverse f (Quaternion a (V3 b c d)) = Quaternion <$> f ee a <*> (V3 <$> f ei b <*> f ej c <*> f ek d)
+  {-# INLINE itraverse #-}
+
+type instance Index (Quaternion a) = E Quaternion
+type instance IxValue (Quaternion a) = a
+
+#if MIN_VERSION_lens(4,0,0)
+instance Ixed (Quaternion a) where
+  ix = el
+#else
+instance Functor f => Ixed f (Quaternion a) where
+  ix i f = el i (indexed f i)
+#endif
 
 instance Foldable Quaternion where
   foldMap f (Quaternion e v) = f e `mappend` foldMap f v
