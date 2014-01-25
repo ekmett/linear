@@ -64,7 +64,6 @@ import GHC.Generics (Generic1)
 #if !(MIN_VERSION_reflection(1,3,0))
 import Language.Haskell.TH
 #endif
-import Linear.Core
 import Linear.Epsilon
 import Linear.Metric
 import Linear.Vector

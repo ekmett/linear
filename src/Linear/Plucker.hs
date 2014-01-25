@@ -63,7 +63,6 @@ import GHC.Generics (Generic)
 import GHC.Generics (Generic1)
 #endif
 
-import Linear.Core
 import Linear.Epsilon
 import Linear.Metric
 import Linear.V2

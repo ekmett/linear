@@ -46,7 +46,7 @@ import Linear.Trace
 -- | This is a generalization of 'Control.Lens.inside' to work over any corepresentable 'Functor'.
 --
 -- @
--- 'column' :: 'Core' f => 'Lens' s t a b -> 'Lens' (f s) (f t) (f a) (f b)
+-- 'column' :: 'Representable' f => 'Lens' s t a b -> 'Lens' (f s) (f t) (f a) (f b)
 -- @
 --
 -- In practice it is used to access a column of a matrix.

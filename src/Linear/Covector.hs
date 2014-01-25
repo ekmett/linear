@@ -6,11 +6,10 @@ module Linear.Covector
 
 import Control.Applicative
 import Control.Monad
-import Control.Lens
 import Data.Functor.Plus hiding (zero)
 import qualified Data.Functor.Plus as Plus
 import Data.Functor.Bind
-import Linear.Core
+import Data.Functor.Rep as Rep
 
 -- | Linear functionals from elements of an (infinite) free module to a scalar
 
@@ -18,8 +17,8 @@ newtype Covector r a = Covector { runCovector :: (a -> r) -> r }
 
 infixr 0 $*
 
-($*) :: Covector r (E t) -> t r -> r
-Covector f $* m = f $ \e -> view (el e) m
+($*) :: Representable f => Covector r (Rep f) -> f r -> r
+Covector f $* m = f (Rep.index m)
 
 instance Functor (Covector r) where
   fmap f (Covector m) = Covector $ \k -> m (k . f)

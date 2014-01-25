@@ -56,7 +56,6 @@ import GHC.Generics (Generic)
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
 import GHC.Generics (Generic1)
 #endif
-import Linear.Core
 import Linear.Epsilon
 import Linear.Conjugate
 import Linear.Metric
