@@ -133,7 +133,7 @@ instance Representable f => Representable (Point f) where
   type Rep (Point f) = Rep f
   tabulate f = P (tabulate f)
   {-# INLINE tabulate #-}
-  index (P xs) e = Rep.index xs e
+  index (P xs) = Rep.index xs
   {-# INLINE index #-}
 
 instance R1 f => R1 (Point f) where
