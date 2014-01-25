@@ -20,6 +20,7 @@ module Linear.Core
   ) where
 
 import Control.Applicative
+import Control.Lens.Type
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 import GHC.Generics (Generic)
 #endif
@@ -30,10 +31,6 @@ import GHC.Generics (Generic1)
 -- $setup
 -- >>> import Linear
 -- >>> import Control.Lens
-
-type LensLike f s t a b = (a -> f b) -> s -> f t
-type Lens s t a b = forall f. Functor f => (a -> f b) -> s -> f t
-type Lens' s a = forall f. Functor f => (a -> f a) -> s -> f s
 
 -- |
 -- A 'Functor' @f@ is corepresentable if it is isomorphic to @(x -> a)@

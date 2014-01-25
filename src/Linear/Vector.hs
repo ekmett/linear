@@ -33,6 +33,7 @@ module Linear.Vector
   ) where
 
 import Control.Applicative
+import Control.Lens
 import Data.Complex
 import Data.Foldable as Foldable (Foldable, forM_, foldl')
 import Data.Functor.Identity
@@ -41,16 +42,15 @@ import Data.Hashable
 import Data.IntMap as IntMap
 import Data.Map as Map
 import Data.Monoid (mempty)
+import Data.Traversable (mapAccumL)
 import Data.Vector as Vector
 import Data.Vector.Mutable as Mutable
-import Data.Traversable (Traversable, traverse, mapAccumL)
 #ifdef USE_GHC_GENERICS
 import GHC.Generics
 #endif
 import Linear.Instances ()
 
 -- $setup
--- >>> import Control.Lens
 -- >>> import Linear.V2
 
 infixl 6 ^+^, ^-^
@@ -384,8 +384,6 @@ basisFor = choices . traverse (\_ -> SetOne 0 [1])
 -- | Produce a diagonal matrix from a vector.
 kronecker :: (Traversable t, Num a) => t a -> t (t a)
 kronecker v = fillFromList (choices $ traverse (\a -> SetOne 0 [a]) v) v
-
-type Lens' s a = forall f. Functor f => (a -> f a) -> s -> f s
 
 -- | Create a unit vector.
 --
