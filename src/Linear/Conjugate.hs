@@ -31,8 +31,10 @@ class Num a => Conjugate a where
   -- >>> conjugate 1
   -- 1
   conjugate :: a -> a
+#ifndef HLINT
   default conjugate :: TrivialConjugate a => a -> a
   conjugate = id
+#endif
 
 -- | Requires and provides a default definition such that
 --
