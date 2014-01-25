@@ -1,6 +1,7 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE TypeFamilies #-}
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
@@ -28,6 +29,7 @@ module Linear.Vector
   , basisFor
   , kronecker
   , outer
+  , unit
   ) where
 
 import Control.Applicative
@@ -382,6 +384,15 @@ basisFor = choices . traverse (\_ -> SetOne 0 [1])
 -- | Produce a diagonal matrix from a vector.
 kronecker :: (Traversable t, Num a) => t a -> t (t a)
 kronecker v = fillFromList (choices $ traverse (\a -> SetOne 0 [a]) v) v
+
+type Lens' s a = forall f. Functor f => (a -> f a) -> s -> f s
+
+-- | Create a unit vector.
+--
+-- >>> unit _x :: V2 Int
+-- V2 1 0
+unit :: (Applicative t, Num a) => Lens' (t a) a -> t a
+unit l = runIdentity $ l (Identity . const 1) $ pure 0
 
 fillFromList :: Traversable t => [a] -> t b -> t a
 fillFromList l = snd . mapAccumL aux l
