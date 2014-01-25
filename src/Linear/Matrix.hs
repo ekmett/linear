@@ -1,4 +1,5 @@
 {-# LANGUAGE CPP #-}
+{-# LANGUAGE RankNTypes #-}
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
 #endif
@@ -15,6 +16,7 @@
 ---------------------------------------------------------------------------
 module Linear.Matrix
   ( (!*!), (!+!), (!-!), (!*) , (*!), (!!*), (*!!)
+  , column
   , adjoint
   , M22, M33, M44, M43, m33_to_m44, m43_to_m44
   , det22, det33, inv22, inv33
@@ -27,9 +29,11 @@ module Linear.Matrix
   ) where
 
 import Control.Applicative
+import Control.Lens hiding (index)
+import Control.Lens.Internal.Context
 import Data.Distributive
 import Data.Foldable as Foldable
-import Data.Functor.Identity
+import Data.Functor.Rep
 import Linear.Epsilon
 import Linear.Quaternion
 import Linear.V2
@@ -38,6 +42,25 @@ import Linear.V4
 import Linear.Vector
 import Linear.Conjugate
 import Linear.Trace
+
+-- | This is a generalization of 'Control.Lens.inside' to work over any corepresentable 'Functor'.
+--
+-- @
+-- 'column' :: 'Core' f => 'Lens' s t a b -> 'Lens' (f s) (f t) (f a) (f b)
+-- @
+--
+-- In practice it is used to access a column of a matrix.
+--
+-- >>> V2 (V3 1 2 3) (V3 4 5 6) ^._x
+-- V3 1 2 3
+--
+-- >>> V2 (V3 1 2 3) (V3 4 5 6) ^.column _x
+-- V2 1 4
+column :: Representable f => LensLike (Context a b) s t a b -> Lens (f s) (f t) (f a) (f b)
+column l f es = o <$> f i where
+   go = l (Context id)
+   i = tabulate $ \ e -> ipos $ go (index es e)
+   o eb = tabulate $ \ e -> ipeek (index eb e) (go (index es e))
 
 -- $setup
 -- >>> import Data.Complex
@@ -199,25 +222,16 @@ eye4 = V4 (V4 1 0 0 0)
 
 -- |Extract the translation vector (first three entries of the last
 -- column) from a 3x4 or 4x4 matrix.
---
--- @
--- 'translation' :: (R4 v, R3 t) => Lens' (t (v a)) ('V3' a)
--- @
-translation :: (Functor f, R4 v, R3 t) => (V3 a -> f (V3 a)) -> t (v a) -> f (t (v a))
-translation f rs = aux <$> f ((^._w) <$> rs^._xyz)
+translation :: (Representable t, R3 t, R4 v) => Lens' (t (v a)) (V3 a)
+translation = column _w._xyz
+{-
+translation f rs = aux <$> f (view _w <$> view _xyz rs)
  where aux (V3 x y z) = (_x._w .~ x) . (_y._w .~ y) . (_z._w .~ z) $ rs
-       -- (.~) :: (forall f. Functor f => (a -> f b) -> s -> f t) -> b -> s -> t
-       (.~) :: ((a -> Identity b) -> s -> Identity t) -> b -> s -> t
-       l .~ x = runIdentity . l (const $ Identity x)
-       infixr 4 .~
-       -- (^.) :: s -> (forall f. Functor f => (a -> f b) -> s -> f t) -> a
-       (^.) :: s -> ((a -> Const a a) -> s -> Const a s) -> a
-       x ^. l = getConst $ l Const x
-       infixl 8 ^.
 
 -- translation :: (R3 t, R4 v, Functor f, Functor t) => (V3 a -> f (V3 a)) -> t (v a) -> f (t a)
 -- translation = (. fmap (^._w)) . _xyz where
 --   x ^. l = getConst (l Const x)
+-}
 
 -- |2x2 matrix determinant.
 --
@@ -272,3 +286,4 @@ inv33 m@(V3 (V3 a b c)
         cofactor (q,r,s,t) = det22 (V2 (V2 q r) (V2 s t))
         det = det33 m
 {-# INLINE inv33 #-}
+
