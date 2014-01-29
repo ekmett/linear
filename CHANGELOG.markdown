@@ -1,3 +1,7 @@
+1.5
+---
+* `lens` 4 compatibility
+
 1.4
 ---
 * Renamed `incore` to `column` and added an example.

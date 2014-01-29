@@ -24,7 +24,6 @@ import Data.Complex (Complex)
 import Data.Distributive
 import Data.Foldable as Foldable
 import Data.Functor.Bind
-import Data.Functor.Identity (Identity)
 import Data.Functor.Rep as Rep
 import Data.HashMap.Lazy (HashMap)
 import Data.Hashable

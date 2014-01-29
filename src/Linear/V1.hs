@@ -36,10 +36,8 @@ import Data.Data
 import Data.Distributive
 import Data.Foldable
 import Data.Functor.Bind
-import Data.Functor.Identity (Identity(..))
 import Data.Functor.Rep
 import Data.Semigroup.Foldable
-import Data.Semigroup.Traversable
 import Foreign.Storable (Storable)
 import GHC.Arr (Ix(..))
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702

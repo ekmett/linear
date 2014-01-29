@@ -38,7 +38,6 @@ import Data.Functor.Bind
 import Data.Functor.Rep
 import Data.Semigroup
 import Data.Semigroup.Foldable
-import Data.Semigroup.Traversable
 import Foreign.Ptr (castPtr)
 import Foreign.Storable (Storable(..))
 import GHC.Arr (Ix(..))

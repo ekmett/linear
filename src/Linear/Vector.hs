@@ -37,7 +37,6 @@ import Control.Applicative
 import Control.Lens
 import Data.Complex
 import Data.Foldable as Foldable (Foldable, forM_, foldl')
-import Data.Functor.Identity
 import Data.HashMap.Lazy as HashMap
 import Data.Hashable
 import Data.IntMap as IntMap

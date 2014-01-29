@@ -273,7 +273,7 @@ type instance Index (V n a) = E (V n)
 type instance IxValue (V n a) = a
 
 #if MIN_VERSION_lens(4,0,0)
-instance Ixed (V2 a) where
+instance Ixed (V n a) where
   ix = el
   {-# INLINE ix #-}
 #else
