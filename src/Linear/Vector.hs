@@ -392,8 +392,8 @@ kronecker v = fillFromList (choices $ traverse (\a -> SetOne 0 [a]) v) v
 --
 -- >>> unit _x :: V2 Int
 -- V2 1 0
-unit :: (Applicative t, Num a) => Lens' (t a) a -> t a
-unit l = runIdentity $ l (Identity . const 1) $ pure 0
+unit :: (Applicative t, Num a) => ASetter' (t a) a -> t a
+unit l = set' l 1 (pure 0)
 
 fillFromList :: Traversable t => [a] -> t b -> t a
 fillFromList l = snd . mapAccumL aux l
