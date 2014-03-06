@@ -39,6 +39,7 @@ module Linear.Quaternion
   ) where
 
 import Control.Applicative
+import Control.Monad (liftM)
 import Control.Lens hiding ((<.>))
 import Data.Complex (Complex((:+)))
 import Data.Data
@@ -57,6 +58,9 @@ import GHC.Generics (Generic)
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
 import GHC.Generics (Generic1)
 #endif
+import qualified Data.Vector.Generic.Mutable as M
+import qualified Data.Vector.Generic as G
+import qualified Data.Vector.Unboxed.Base as U
 import Linear.Epsilon
 import Linear.Conjugate
 import Linear.Metric
@@ -493,3 +497,39 @@ axisAngle :: (Epsilon a, Floating a) => V3 a -> a -> Quaternion a
 axisAngle axis theta = Quaternion (cos half) (sin half *^ normalize axis)
   where half = theta / 2
 {-# INLINE axisAngle #-}
+
+data instance U.Vector    (Quaternion a) =  V_Quaternion !Int (U.Vector    a)
+data instance U.MVector s (Quaternion a) = MV_Quaternion !Int (U.MVector s a)
+instance U.Unbox a => U.Unbox (Quaternion a)
+
+instance U.Unbox a => M.MVector U.MVector (Quaternion a) where
+  basicLength (MV_Quaternion n _) = n
+  basicUnsafeSlice m n (MV_Quaternion _ v) = MV_Quaternion n (M.basicUnsafeSlice (4*m) (4*n) v)
+  basicOverlaps (MV_Quaternion _ v) (MV_Quaternion _ u) = M.basicOverlaps v u
+  basicUnsafeNew n = liftM (MV_Quaternion n) (M.basicUnsafeNew (4*n))
+  basicUnsafeRead (MV_Quaternion _ v) i =
+    do let o = 4*i
+       x <- M.basicUnsafeRead v o
+       y <- M.basicUnsafeRead v (o+1)
+       z <- M.basicUnsafeRead v (o+2)
+       w <- M.basicUnsafeRead v (o+3)
+       return (Quaternion x (V3 y z w))
+  basicUnsafeWrite (MV_Quaternion _ v) i (Quaternion x (V3 y z w)) =
+    do let o = 4*i
+       M.basicUnsafeWrite v o     x
+       M.basicUnsafeWrite v (o+1) y
+       M.basicUnsafeWrite v (o+2) z
+       M.basicUnsafeWrite v (o+3) w
+
+instance U.Unbox a => G.Vector U.Vector (Quaternion a) where
+  basicUnsafeFreeze (MV_Quaternion n v) = liftM ( V_Quaternion n) (G.basicUnsafeFreeze v)
+  basicUnsafeThaw   ( V_Quaternion n v) = liftM (MV_Quaternion n) (G.basicUnsafeThaw   v)
+  basicLength       ( V_Quaternion n _) = n
+  basicUnsafeSlice m n (V_Quaternion _ v) = V_Quaternion n (G.basicUnsafeSlice (4*m) (4*n) v)
+  basicUnsafeIndexM (V_Quaternion _ v) i =
+    do let o = 4*i
+       x <- G.basicUnsafeIndexM v o
+       y <- G.basicUnsafeIndexM v (o+1)
+       z <- G.basicUnsafeIndexM v (o+2)
+       w <- G.basicUnsafeIndexM v (o+3)
+       return (Quaternion x (V3 y z w))

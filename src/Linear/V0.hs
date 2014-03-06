@@ -42,6 +42,9 @@ import GHC.Generics (Generic)
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
 import GHC.Generics (Generic1)
 #endif
+import qualified Data.Vector.Generic.Mutable as M
+import qualified Data.Vector.Generic as G
+import qualified Data.Vector.Unboxed.Base as U
 import Linear.Metric
 import Linear.Epsilon
 import Linear.Vector
@@ -186,3 +189,22 @@ instance Functor f => Ixed f (V0 a) where
   ix i f = el i (indexed f i)
   {-# INLINE ix #-}
 #endif
+
+newtype instance U.Vector    (V0 a) = V_V0 Int
+newtype instance U.MVector s (V0 a) = MV_V0 Int
+instance U.Unbox (V0 a)
+
+instance M.MVector U.MVector (V0 a) where
+  basicLength (MV_V0 n) = n
+  basicUnsafeSlice _ n _ = MV_V0 n
+  basicOverlaps _ _ = False
+  basicUnsafeNew n = return (MV_V0 n)
+  basicUnsafeRead _ _ = return V0
+  basicUnsafeWrite _ _ _ = return ()
+
+instance G.Vector U.Vector (V0 a) where
+  basicUnsafeFreeze (MV_V0 n) = return (V_V0 n)
+  basicUnsafeThaw (V_V0 n) = return (MV_V0 n)
+  basicLength (V_V0 n) = n
+  basicUnsafeSlice _ n _ = V_V0 n
+  basicUnsafeIndexM _ _ = return V0

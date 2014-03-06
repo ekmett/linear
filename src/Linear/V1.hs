@@ -31,6 +31,7 @@ module Linear.V1
   ) where
 
 import Control.Applicative
+import Control.Monad (liftM)
 import Control.Lens
 import Data.Data
 import Data.Distributive
@@ -50,6 +51,10 @@ import Linear.Metric
 import Linear.Epsilon
 import Linear.Vector
 import Prelude hiding (sum)
+
+import qualified Data.Vector.Generic.Mutable as M
+import qualified Data.Vector.Generic as G
+import qualified Data.Vector.Unboxed.Base as U
 
 -- $setup
 -- >>> import Control.Lens
@@ -215,3 +220,22 @@ instance Functor f => Ixed f (V1 a) where
   ix i f = el i (indexed f i)
   {-# INLINE ix #-}
 #endif
+
+newtype instance U.Vector    (V1 a) = V_V1  (U.Vector    a)
+newtype instance U.MVector s (V1 a) = MV_V1 (U.MVector s a)
+instance U.Unbox a => U.Unbox (V1 a)
+
+instance U.Unbox a => M.MVector U.MVector (V1 a) where
+  basicLength (MV_V1 v) = M.basicLength v
+  basicUnsafeSlice m n (MV_V1 v) = MV_V1 (M.basicUnsafeSlice m n v)
+  basicOverlaps (MV_V1 v) (MV_V1 u) = M.basicOverlaps v u
+  basicUnsafeNew n = liftM MV_V1 (M.basicUnsafeNew n)
+  basicUnsafeRead (MV_V1 v) i = liftM V1 (M.basicUnsafeRead v i)
+  basicUnsafeWrite (MV_V1 v) i (V1 x) = M.basicUnsafeWrite v i x
+
+instance U.Unbox a => G.Vector U.Vector (V1 a) where
+  basicUnsafeFreeze (MV_V1 v) = liftM V_V1 (G.basicUnsafeFreeze v)
+  basicUnsafeThaw (V_V1 v) = liftM MV_V1 (G.basicUnsafeThaw v)
+  basicLength (V_V1 v) = G.basicLength v
+  basicUnsafeSlice m n (V_V1 v) = V_V1 (G.basicUnsafeSlice m n v)
+  basicUnsafeIndexM (V_V1 v) i = liftM V1 (G.basicUnsafeIndexM v i)

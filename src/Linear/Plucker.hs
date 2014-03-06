@@ -45,6 +45,7 @@ module Linear.Plucker
   ) where
 
 import Control.Applicative
+import Control.Monad (liftM)
 import Control.Lens hiding (index, (<.>))
 import Data.Distributive
 import Data.Foldable as Foldable
@@ -61,6 +62,9 @@ import GHC.Generics (Generic)
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
 import GHC.Generics (Generic1)
 #endif
+import qualified Data.Vector.Generic.Mutable as M
+import qualified Data.Vector.Generic as G
+import qualified Data.Vector.Unboxed.Base as U
 
 import Linear.Epsilon
 import Linear.Metric
@@ -475,3 +479,44 @@ isLine p = nearZero $ u `dot` v
 
 -- TODO: drag some more stuff out of my thesis
 
+data instance U.Vector    (Plucker a) =  V_Plucker !Int (U.Vector    a)
+data instance U.MVector s (Plucker a) = MV_Plucker !Int (U.MVector s a)
+instance U.Unbox a => U.Unbox (Plucker a)
+
+instance U.Unbox a => M.MVector U.MVector (Plucker a) where
+  basicLength (MV_Plucker n _) = n
+  basicUnsafeSlice m n (MV_Plucker _ v) = MV_Plucker n (M.basicUnsafeSlice (6*m) (6*n) v)
+  basicOverlaps (MV_Plucker _ v) (MV_Plucker _ u) = M.basicOverlaps v u
+  basicUnsafeNew n = liftM (MV_Plucker n) (M.basicUnsafeNew (6*n))
+  basicUnsafeRead (MV_Plucker _ a) i =
+    do let o = 6*i
+       x <- M.basicUnsafeRead a o
+       y <- M.basicUnsafeRead a (o+1)
+       z <- M.basicUnsafeRead a (o+2)
+       w <- M.basicUnsafeRead a (o+3)
+       v <- M.basicUnsafeRead a (o+4)
+       u <- M.basicUnsafeRead a (o+5)
+       return (Plucker x y z w v u)
+  basicUnsafeWrite (MV_Plucker _ a) i (Plucker x y z w v u) =
+    do let o = 6*i
+       M.basicUnsafeWrite a o     x
+       M.basicUnsafeWrite a (o+1) y
+       M.basicUnsafeWrite a (o+2) z
+       M.basicUnsafeWrite a (o+3) w
+       M.basicUnsafeWrite a (o+4) v
+       M.basicUnsafeWrite a (o+5) u
+
+instance U.Unbox a => G.Vector U.Vector (Plucker a) where
+  basicUnsafeFreeze (MV_Plucker n v) = liftM ( V_Plucker n) (G.basicUnsafeFreeze v)
+  basicUnsafeThaw   ( V_Plucker n v) = liftM (MV_Plucker n) (G.basicUnsafeThaw   v)
+  basicLength       ( V_Plucker n _) = n
+  basicUnsafeSlice m n (V_Plucker _ v) = V_Plucker n (G.basicUnsafeSlice (6*m) (6*n) v)
+  basicUnsafeIndexM (V_Plucker _ a) i =
+    do let o = 6*i
+       x <- G.basicUnsafeIndexM a o
+       y <- G.basicUnsafeIndexM a (o+1)
+       z <- G.basicUnsafeIndexM a (o+2)
+       w <- G.basicUnsafeIndexM a (o+3)
+       v <- G.basicUnsafeIndexM a (o+4)
+       u <- G.basicUnsafeIndexM a (o+5)
+       return (Plucker x y z w v u)

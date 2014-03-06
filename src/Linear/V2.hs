@@ -29,6 +29,7 @@ module Linear.V2
   ) where
 
 import Control.Applicative
+import Control.Monad (liftM)
 import Control.Lens hiding ((<.>))
 import Data.Data
 import Data.Distributive
@@ -46,6 +47,9 @@ import GHC.Generics (Generic)
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
 import GHC.Generics (Generic1)
 #endif
+import qualified Data.Vector.Generic.Mutable as M
+import qualified Data.Vector.Generic as G
+import qualified Data.Vector.Unboxed.Base as U
 import Linear.Metric
 import Linear.Epsilon
 import Linear.Vector
@@ -270,3 +274,32 @@ instance Functor f => Ixed f (V2 a) where
   {-# INLINE ix #-}
 #endif
 
+data instance U.Vector    (V2 a) =  V_V2 !Int (U.Vector    a)
+data instance U.MVector s (V2 a) = MV_V2 !Int (U.MVector s a)
+instance U.Unbox a => U.Unbox (V2 a)
+
+instance U.Unbox a => M.MVector U.MVector (V2 a) where
+  basicLength (MV_V2 n _) = n
+  basicUnsafeSlice m n (MV_V2 _ v) = MV_V2 n (M.basicUnsafeSlice (2*m) (2*n) v)
+  basicOverlaps (MV_V2 _ v) (MV_V2 _ u) = M.basicOverlaps v u
+  basicUnsafeNew n = liftM (MV_V2 n) (M.basicUnsafeNew (2*n))
+  basicUnsafeRead (MV_V2 _ v) i =
+    do let o = 2*i
+       x <- M.basicUnsafeRead v o
+       y <- M.basicUnsafeRead v (o+1)
+       return (V2 x y)
+  basicUnsafeWrite (MV_V2 _ v) i (V2 x y) =
+    do let o = 2*i
+       M.basicUnsafeWrite v o     x
+       M.basicUnsafeWrite v (o+1) y
+
+instance U.Unbox a => G.Vector U.Vector (V2 a) where
+  basicUnsafeFreeze (MV_V2 n v) = liftM ( V_V2 n) (G.basicUnsafeFreeze v)
+  basicUnsafeThaw   ( V_V2 n v) = liftM (MV_V2 n) (G.basicUnsafeThaw   v)
+  basicLength       ( V_V2 n _) = n
+  basicUnsafeSlice m n (V_V2 _ v) = V_V2 n (G.basicUnsafeSlice (2*m) (2*n) v)
+  basicUnsafeIndexM (V_V2 _ v) i =
+    do let o = 2*i
+       x <- G.basicUnsafeIndexM v o
+       y <- G.basicUnsafeIndexM v (o+1)
+       return (V2 x y)

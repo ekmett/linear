@@ -30,6 +30,7 @@ module Linear.V4
   ) where
 
 import Control.Applicative
+import Control.Monad (liftM)
 import Control.Lens hiding ((<.>))
 import Data.Data
 import Data.Distributive
@@ -47,6 +48,9 @@ import GHC.Generics (Generic)
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
 import GHC.Generics (Generic1)
 #endif
+import qualified Data.Vector.Generic.Mutable as M
+import qualified Data.Vector.Generic as G
+import qualified Data.Vector.Unboxed.Base as U
 import Linear.Epsilon
 import Linear.Metric
 import Linear.V2
@@ -288,4 +292,38 @@ instance Functor f => Ixed f (V4 a) where
   ix i f = el i (indexed f i)
 #endif
 
+data instance U.Vector    (V4 a) =  V_V4 !Int (U.Vector    a)
+data instance U.MVector s (V4 a) = MV_V4 !Int (U.MVector s a)
+instance U.Unbox a => U.Unbox (V4 a)
 
+instance U.Unbox a => M.MVector U.MVector (V4 a) where
+  basicLength (MV_V4 n _) = n
+  basicUnsafeSlice m n (MV_V4 _ v) = MV_V4 n (M.basicUnsafeSlice (4*m) (4*n) v)
+  basicOverlaps (MV_V4 _ v) (MV_V4 _ u) = M.basicOverlaps v u
+  basicUnsafeNew n = liftM (MV_V4 n) (M.basicUnsafeNew (4*n))
+  basicUnsafeRead (MV_V4 _ v) i =
+    do let o = 4*i
+       x <- M.basicUnsafeRead v o
+       y <- M.basicUnsafeRead v (o+1)
+       z <- M.basicUnsafeRead v (o+2)
+       w <- M.basicUnsafeRead v (o+3)
+       return (V4 x y z w)
+  basicUnsafeWrite (MV_V4 _ v) i (V4 x y z w) =
+    do let o = 4*i
+       M.basicUnsafeWrite v o     x
+       M.basicUnsafeWrite v (o+1) y
+       M.basicUnsafeWrite v (o+2) z
+       M.basicUnsafeWrite v (o+3) w
+
+instance U.Unbox a => G.Vector U.Vector (V4 a) where
+  basicUnsafeFreeze (MV_V4 n v) = liftM ( V_V4 n) (G.basicUnsafeFreeze v)
+  basicUnsafeThaw   ( V_V4 n v) = liftM (MV_V4 n) (G.basicUnsafeThaw   v)
+  basicLength       ( V_V4 n _) = n
+  basicUnsafeSlice m n (V_V4 _ v) = V_V4 n (G.basicUnsafeSlice (4*m) (4*n) v)
+  basicUnsafeIndexM (V_V4 _ v) i =
+    do let o = 4*i
+       x <- G.basicUnsafeIndexM v o
+       y <- G.basicUnsafeIndexM v (o+1)
+       z <- G.basicUnsafeIndexM v (o+2)
+       w <- G.basicUnsafeIndexM v (o+3)
+       return (V4 x y z w)
