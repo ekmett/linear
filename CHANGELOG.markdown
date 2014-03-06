@@ -1,3 +1,8 @@
+1.7
+---
+* Fixed `axisAngle`
+* `unit` now has a rank 1 type.
+
 1.5
 ---
 * `lens` 4 compatibility
