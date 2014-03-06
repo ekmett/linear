@@ -469,14 +469,15 @@ atanhq q@(Quaternion e _) u
 {-# INLINE atanhq #-}
 
 -- | Spherical linear interpolation between two quaternions.
+
 slerp :: RealFloat a => Quaternion a -> Quaternion a -> a -> Quaternion a
 slerp q p t
   | 1.0 - cosphi < 1e-8 = q
-  | phi <- acos cosphi, r <- recip (sin phi)
-  = (sin ((1-t)*phi)*r *^ q ^+^ f (sin (t*phi)*r) *^ p) ^/ sin phi
+  | otherwise           = ((sin ((1-t)*phi) *^ q) + (sin (t*phi)) *^ (f p)) ^/ (sin phi)
   where
-   dqp = dot q p
-   (cosphi, f) = if dqp < 0 then (-dqp, negate) else (dqp, id)
+    dqp = dot q p
+    (cosphi, f) = if dqp < 0 then (-dqp, negate) else (dqp, id)
+    phi = acos cosphi
 {-# SPECIALIZE slerp :: Quaternion Float -> Quaternion Float -> Float -> Quaternion Float #-}
 {-# SPECIALIZE slerp :: Quaternion Double -> Quaternion Double -> Double -> Quaternion Double #-}
 
