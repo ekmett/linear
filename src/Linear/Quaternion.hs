@@ -490,6 +490,6 @@ instance (RealFloat a, Epsilon a) => Epsilon (Quaternion a) where
 -- | @'axisAngle' axis theta@ builds a 'Quaternion' representing a
 -- rotation of @theta@ radians about @axis@.
 axisAngle :: (Epsilon a, Floating a) => V3 a -> a -> Quaternion a
-axisAngle axis theta = normalize $ Quaternion (cos half) $ sin half *^ axis
+axisAngle axis theta = Quaternion (cos half) (sin half *^ normalize axis)
   where half = theta / 2
 {-# INLINE axisAngle #-}
