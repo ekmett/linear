@@ -1,3 +1,7 @@
+1.8
+---
+* Added missing `Unbox` instances for working with unboxed vectors of `linear` data types.
+
 1.7
 ---
 * Fixed `axisAngle`
