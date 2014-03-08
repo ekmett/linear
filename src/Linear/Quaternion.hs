@@ -473,7 +473,7 @@ atanhq q@(Quaternion e _) u
 slerp :: RealFloat a => Quaternion a -> Quaternion a -> a -> Quaternion a
 slerp q p t
   | 1.0 - cosphi < 1e-8 = q
-  | otherwise           = ((sin ((1-t)*phi) *^ q) + (sin (t*phi)) *^ (f p)) ^/ (sin phi)
+  | otherwise           = ((sin ((1-t)*phi) *^ q) + sin (t*phi) *^ f p) ^/ sin phi
   where
     dqp = dot q p
     (cosphi, f) = if dqp < 0 then (-dqp, negate) else (dqp, id)
