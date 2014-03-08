@@ -161,13 +161,13 @@ instance TraversableWithIndex (E Quaternion) Quaternion where
 type instance Index (Quaternion a) = E Quaternion
 type instance IxValue (Quaternion a) = a
 
-#if MIN_VERSION_lens(4,0,0)
 instance Ixed (Quaternion a) where
   ix = el
-#else
-instance Functor f => Ixed f (Quaternion a) where
-  ix i f = el i (indexed f i)
-#endif
+  {-# INLINE ix #-}
+
+instance Each (Quaternion a) (Quaternion b) a b where
+  each = traverse
+  {-# INLINE each #-}
 
 instance Foldable Quaternion where
   foldMap f (Quaternion e v) = f e `mappend` foldMap f v

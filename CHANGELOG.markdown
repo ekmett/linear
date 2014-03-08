@@ -1,3 +1,7 @@
+1.8.2
+----
+* Added `Control.Lens.Each.Each` instances
+
 1.8.1
 -----
 * Bugfixed `slerp`
