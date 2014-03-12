@@ -39,6 +39,7 @@ module Linear.V
   ) where
 
 import Control.Applicative
+import Control.Monad.Fix
 import Control.Monad.Zip
 import Control.Lens as Lens
 import Data.Distributive
@@ -277,6 +278,9 @@ instance Ixed (V n a) where
 instance Dim n => MonadZip (V n) where
   mzip (V as) (V bs) = V $ V.zip as bs
   mzipWith f (V as) (V bs) = V $ V.zipWith f as bs
+
+instance Dim n => MonadFix (V n) where
+  mfix f = tabulate $ \r -> let a = index (f a) in a
 
 instance Each (V n a) (V n b) a b where
   each = traverse
