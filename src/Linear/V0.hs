@@ -25,6 +25,7 @@ module Linear.V0
 
 import Control.Applicative
 import Control.Lens
+import Control.Monad.Fix
 import Control.Monad.Zip
 import Data.Data
 import Data.Distributive
@@ -209,3 +210,6 @@ instance MonadZip V0 where
   mzip V0 V0 = V0
   mzipWith _ V0 V0 = V0
   munzip V0 = (V0, V0)
+
+instance MonadFix V0 where
+  mfix _ = V0

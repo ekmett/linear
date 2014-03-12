@@ -32,6 +32,7 @@ module Linear.V1
 
 import Control.Applicative
 import Control.Monad (liftM)
+import Control.Monad.Fix
 import Control.Monad.Zip
 import Control.Lens
 import Data.Data
@@ -244,3 +245,5 @@ instance MonadZip V1 where
   mzipWith f (V1 a) (V1 b) = V1 (f a b)
   munzip (V1 (a,b)) = (V1 a, V1 b)
 
+instance MonadFix V1 where
+  mfix f = V1 (let V1 a = f a in a)
