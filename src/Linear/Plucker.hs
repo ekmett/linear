@@ -46,6 +46,7 @@ module Linear.Plucker
 
 import Control.Applicative
 import Control.Monad (liftM)
+import Control.Monad.Fix
 import Control.Monad.Zip
 import Control.Lens hiding (index, (<.>))
 import Data.Distributive
@@ -524,3 +525,11 @@ instance U.Unbox a => G.Vector U.Vector (Plucker a) where
 
 instance MonadZip Plucker where
   mzipWith = liftA2
+
+instance MonadFix Plucker where
+  mfix f = Plucker (let Plucker a _ _ _ _ _ = f a in a)
+                   (let Plucker _ a _ _ _ _ = f a in a)
+                   (let Plucker _ _ a _ _ _ = f a in a)
+                   (let Plucker _ _ _ a _ _ = f a in a)
+                   (let Plucker _ _ _ _ a _ = f a in a)
+                   (let Plucker _ _ _ _ _ a = f a in a)
