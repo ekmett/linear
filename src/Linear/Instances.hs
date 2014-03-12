@@ -16,6 +16,7 @@
 module Linear.Instances () where
 
 import Control.Applicative
+import Control.Monad.Fix
 import Control.Monad.Zip
 import Data.Complex
 import Data.Foldable
@@ -66,6 +67,9 @@ instance Monad Complex where
 
 instance MonadZip Complex where
   mzipWith = liftA2
+
+instance MonadFix Complex where
+  mfix f = (let a :+ _ = f a in a) :+ (let _ :+ a = f a in a)
 
 instance Foldable Complex where
   foldMap f (a :+ b) = f a `mappend` f b
