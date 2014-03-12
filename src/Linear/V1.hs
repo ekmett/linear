@@ -58,6 +58,11 @@ import qualified Data.Vector.Generic.Mutable as M
 import qualified Data.Vector.Generic as G
 import qualified Data.Vector.Unboxed.Base as U
 
+#ifdef HLINT
+-- HLint is delusional
+{-# ANN module "HLint: ignore Unused LANGUAGE pragma" #-}
+#endif
+
 -- $setup
 -- >>> import Control.Lens
 
