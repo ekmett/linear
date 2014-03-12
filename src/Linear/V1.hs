@@ -32,6 +32,7 @@ module Linear.V1
 
 import Control.Applicative
 import Control.Monad (liftM)
+import Control.Monad.Zip
 import Control.Lens
 import Data.Data
 import Data.Distributive
@@ -239,3 +240,9 @@ instance U.Unbox a => G.Vector U.Vector (V1 a) where
   basicLength (V_V1 v) = G.basicLength v
   basicUnsafeSlice m n (V_V1 v) = V_V1 (G.basicUnsafeSlice m n v)
   basicUnsafeIndexM (V_V1 v) i = liftM V1 (G.basicUnsafeIndexM v i)
+
+instance MonadZip V1 where
+  mzip (V1 a) (V1 b) = V1 (a, b)
+  mzipWith f (V1 a) (V1 b) = V1 (f a b)
+  munzip (V1 (a,b)) = (V1 a, V1 b)
+

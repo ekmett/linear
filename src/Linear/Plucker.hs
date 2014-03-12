@@ -46,6 +46,7 @@ module Linear.Plucker
 
 import Control.Applicative
 import Control.Monad (liftM)
+import Control.Monad.Zip
 import Control.Lens hiding (index, (<.>))
 import Data.Distributive
 import Data.Foldable as Foldable
@@ -520,3 +521,6 @@ instance U.Unbox a => G.Vector U.Vector (Plucker a) where
        v <- G.basicUnsafeIndexM a (o+4)
        u <- G.basicUnsafeIndexM a (o+5)
        return (Plucker x y z w v u)
+
+instance MonadZip Plucker where
+  mzipWith = liftA2

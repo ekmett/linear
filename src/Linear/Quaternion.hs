@@ -40,6 +40,7 @@ module Linear.Quaternion
 
 import Control.Applicative
 import Control.Monad (liftM)
+import Control.Monad.Zip
 import Control.Lens hiding ((<.>))
 import Data.Complex (Complex((:+)))
 import Data.Data
@@ -534,3 +535,6 @@ instance U.Unbox a => G.Vector U.Vector (Quaternion a) where
        z <- G.basicUnsafeIndexM v (o+2)
        w <- G.basicUnsafeIndexM v (o+3)
        return (Quaternion x (V3 y z w))
+
+instance MonadZip Quaternion where
+  mzipWith = liftA2

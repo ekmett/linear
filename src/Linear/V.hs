@@ -42,6 +42,7 @@ module Linear.V
   ) where
 
 import Control.Applicative
+import Control.Monad.Zip
 import Control.Lens as Lens
 import Data.Distributive
 import Data.Foldable as Foldable
@@ -282,3 +283,6 @@ instance Functor f => Ixed f (V n a) where
   {-# INLINE ix #-}
 #endif
 
+instance Dim n => MonadZip (V n) where
+  mzip (V as) (V bs) = V $ V.zip as bs
+  mzipWith f (V as) (V bs) = V $ V.zipWith f as bs

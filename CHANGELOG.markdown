@@ -1,3 +1,7 @@
+1.9
+---
+* Added `MonadZip` instances.
+
 1.8.1
 -----
 * Bugfixed `slerp`

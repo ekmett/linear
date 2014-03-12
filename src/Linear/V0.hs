@@ -28,6 +28,7 @@ module Linear.V0
 
 import Control.Applicative
 import Control.Lens
+import Control.Monad.Zip
 import Data.Data
 import Data.Distributive
 import Data.Foldable
@@ -208,3 +209,8 @@ instance G.Vector U.Vector (V0 a) where
   basicLength (V_V0 n) = n
   basicUnsafeSlice _ n _ = V_V0 n
   basicUnsafeIndexM _ _ = return V0
+
+instance MonadZip V0 where
+  mzip V0 V0 = V0
+  mzipWith _ V0 V0 = V0
+  munzip V0 = (V0, V0)

@@ -31,6 +31,7 @@ module Linear.V4
 
 import Control.Applicative
 import Control.Monad (liftM)
+import Control.Monad.Zip
 import Control.Lens hiding ((<.>))
 import Data.Data
 import Data.Distributive
@@ -327,3 +328,6 @@ instance U.Unbox a => G.Vector U.Vector (V4 a) where
        z <- G.basicUnsafeIndexM v (o+2)
        w <- G.basicUnsafeIndexM v (o+3)
        return (V4 x y z w)
+
+instance MonadZip V4 where
+  mzipWith = liftA2
