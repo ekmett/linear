@@ -280,7 +280,7 @@ instance Dim n => MonadZip (V n) where
   mzipWith f (V as) (V bs) = V $ V.zipWith f as bs
 
 instance Dim n => MonadFix (V n) where
-  mfix f = tabulate $ \r -> let a = index (f a) in a
+  mfix f = tabulate $ \r -> let a = index (f a) r in a
 
 instance Each (V n a) (V n b) a b where
   each = traverse
