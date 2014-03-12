@@ -16,9 +16,6 @@
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE DeriveGeneric #-}
 #endif
-#ifndef MIN_VERSION_lens
-#define MIN_VERSION_lens(x,y,z) 1
-#endif
 -----------------------------------------------------------------------------
 -- |
 -- Copyright   :  (C) 2012-2013 Edward Kmett,
@@ -273,16 +270,14 @@ instance Dim n => Representable (V n) where
 type instance Index (V n a) = E (V n)
 type instance IxValue (V n a) = a
 
-#if MIN_VERSION_lens(4,0,0)
 instance Ixed (V n a) where
   ix = el
   {-# INLINE ix #-}
-#else
-instance Functor f => Ixed f (V n a) where
-  ix i f = el i (Lens.indexed f i)
-  {-# INLINE ix #-}
-#endif
 
 instance Dim n => MonadZip (V n) where
   mzip (V as) (V bs) = V $ V.zip as bs
   mzipWith f (V as) (V bs) = V $ V.zipWith f as bs
+
+instance Each (V n a) (V n b) a b where
+  each = traverse
+  {-# INLINE each #-}

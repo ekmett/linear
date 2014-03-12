@@ -212,15 +212,13 @@ instance TraversableWithIndex (E V1) V1 where
 type instance Index (V1 a) = E V1
 type instance IxValue (V1 a) = a
 
-#if MIN_VERSION_lens(4,0,0)
 instance Ixed (V1 a) where
   ix = el
   {-# INLINE ix #-}
-#else
-instance Functor f => Ixed f (V1 a) where
-  ix i f = el i (indexed f i)
-  {-# INLINE ix #-}
-#endif
+
+instance Each (V1 a) (V1 b) a b where
+  each f (V1 x) = V1 <$> f x
+  {-# INLINE each #-}
 
 newtype instance U.Vector    (V1 a) = V_V1  (U.Vector    a)
 newtype instance U.MVector s (V1 a) = MV_V1 (U.MVector s a)

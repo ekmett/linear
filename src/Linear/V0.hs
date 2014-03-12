@@ -8,9 +8,6 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE Trustworthy #-}
 #endif
-#ifndef MIN_VERSION_lens
-#define MIN_VERSION_lens(x,y,z) 1
-#endif
 -----------------------------------------------------------------------------
 -- |
 -- Copyright   :  (C) 2012-2013 Edward Kmett
@@ -181,15 +178,13 @@ instance Representable V0 where
 type instance Index (V0 a) = E V0
 type instance IxValue (V0 a) = a
 
-#if MIN_VERSION_lens(4,0,0)
 instance Ixed (V0 a) where
   ix = el
   {-# INLINE ix #-}
-#else
-instance Functor f => Ixed f (V0 a) where
-  ix i f = el i (indexed f i)
-  {-# INLINE ix #-}
-#endif
+
+instance Each (V0 a) (V0 b) a b where
+  each = traverse
+  {-# INLINE each #-}
 
 newtype instance U.Vector    (V0 a) = V_V0 Int
 newtype instance U.MVector s (V0 a) = MV_V0 Int

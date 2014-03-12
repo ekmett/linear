@@ -346,13 +346,13 @@ instance TraversableWithIndex (E Plucker) Plucker where
 type instance Index (Plucker a) = E Plucker
 type instance IxValue (Plucker a) = a
 
-#if MIN_VERSION_lens(4,0,0)
 instance Ixed (Plucker a) where
   ix = el
-#else
-instance Functor f => Ixed f (Plucker a) where
-  ix i f = el i (indexed f i)
-#endif
+  {-# INLINE ix #-}
+
+instance Each (Plucker a) (Plucker b) a b where
+  each = traverse
+  {-# INLINE each #-}
 
 
 -- | Valid Plücker coordinates @p@ will have @'squaredError' p '==' 0@

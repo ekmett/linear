@@ -260,13 +260,13 @@ instance TraversableWithIndex (E V3) V3 where
 type instance Index (V3 a) = E V3
 type instance IxValue (V3 a) = a
 
-#if MIN_VERSION_lens(4,0,0)
 instance Ixed (V3 a) where
   ix = el
-#else
-instance Functor f => Ixed f (V3 a) where
-  ix i f = el i (indexed f i)
-#endif
+  {-# INLINE ix #-}
+
+instance Each (V3 a) (V3 b) a b where
+  each = traverse
+  {-# INLINE each #-}
 
 data instance U.Vector    (V3 a) =  V_V3 !Int (U.Vector    a)
 data instance U.MVector s (V3 a) = MV_V3 !Int (U.MVector s a)

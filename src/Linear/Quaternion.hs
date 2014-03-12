@@ -162,13 +162,13 @@ instance TraversableWithIndex (E Quaternion) Quaternion where
 type instance Index (Quaternion a) = E Quaternion
 type instance IxValue (Quaternion a) = a
 
-#if MIN_VERSION_lens(4,0,0)
 instance Ixed (Quaternion a) where
   ix = el
-#else
-instance Functor f => Ixed f (Quaternion a) where
-  ix i f = el i (indexed f i)
-#endif
+  {-# INLINE ix #-}
+
+instance Each (Quaternion a) (Quaternion b) a b where
+  each = traverse
+  {-# INLINE each #-}
 
 instance Foldable Quaternion where
   foldMap f (Quaternion e v) = f e `mappend` foldMap f v
@@ -474,7 +474,7 @@ atanhq q@(Quaternion e _) u
 slerp :: RealFloat a => Quaternion a -> Quaternion a -> a -> Quaternion a
 slerp q p t
   | 1.0 - cosphi < 1e-8 = q
-  | otherwise           = ((sin ((1-t)*phi) *^ q) + (sin (t*phi)) *^ (f p)) ^/ (sin phi)
+  | otherwise           = ((sin ((1-t)*phi) *^ q) + sin (t*phi) *^ f p) ^/ sin phi
   where
     dqp = dot q p
     (cosphi, f) = if dqp < 0 then (-dqp, negate) else (dqp, id)
