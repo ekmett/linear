@@ -16,6 +16,11 @@
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE DeriveGeneric #-}
 #endif
+
+#ifndef MIN_VERSION_reflection
+#define MIN_VERSION_reflection(x,y,z) 1
+#endif
+
 -----------------------------------------------------------------------------
 -- |
 -- Copyright   :  (C) 2012-2013 Edward Kmett,
