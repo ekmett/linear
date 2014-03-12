@@ -30,6 +30,7 @@ module Linear.V2
 
 import Control.Applicative
 import Control.Monad (liftM)
+import Control.Monad.Fix
 import Control.Monad.Zip
 import Control.Lens hiding ((<.>))
 import Data.Data
@@ -305,3 +306,7 @@ instance U.Unbox a => G.Vector U.Vector (V2 a) where
 
 instance MonadZip V2 where
   mzipWith = liftA2
+
+instance MonadFix V2 where
+  mfix f = V2 (let V2 a _ = f a in a)
+              (let V2 _ a = f a in a)
