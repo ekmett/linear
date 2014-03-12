@@ -1,6 +1,7 @@
 1.9
 ---
 * Added `MonadZip` instances.
+* Added `MonadFix` instances.
 * Added `Control.Lens.Each.Each` instances
 
 1.8.1
