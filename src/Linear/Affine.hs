@@ -1,6 +1,7 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE TypeFamilies #-}
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
@@ -48,6 +49,10 @@ import Linear.V2
 import Linear.V3
 import Linear.V4
 import Linear.Vector
+
+#ifdef HLINT
+{-# ANN module "HLint: ignore Unused LANGUAGE pragma" #-}
+#endif
 
 -- | An affine space is roughly a vector space in which we have
 -- forgotten or at least pretend to have forgotten the origin.
