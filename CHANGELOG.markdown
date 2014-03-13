@@ -1,3 +1,7 @@
+1.9.0.1
+-----
+* Fixed a broken build
+
 1.9
 ---
 * Added `MonadZip` instances.
