@@ -49,7 +49,7 @@ import Control.Lens as Lens
 import Data.Distributive
 import Data.Foldable as Foldable
 import Data.Functor.Bind
-import Data.Functor.Rep
+import Data.Functor.Rep as Rep
 import Data.Proxy
 import Data.Reflection as R
 import Data.Vector as V
@@ -284,7 +284,7 @@ instance Dim n => MonadZip (V n) where
   mzipWith f (V as) (V bs) = V $ V.zipWith f as bs
 
 instance Dim n => MonadFix (V n) where
-  mfix f = tabulate $ \r -> let a = index (f a) r in a
+  mfix f = tabulate $ \r -> let a = Rep.index (f a) r in a
 
 instance Each (V n a) (V n b) a b where
   each = traverse
