@@ -9,6 +9,7 @@
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 707
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE RoleAnnotations #-}
 #define USE_TYPE_LITS 1
 #endif
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
@@ -74,6 +75,10 @@ import Linear.Vector
 class Dim n where
   reflectDim :: p n -> Int
 
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 707
+type role V nominal representational
+#endif
+
 newtype V n a = V { toVector :: V.Vector a } deriving (Eq,Ord,Show,Read
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
                                                       ,Generic
@@ -83,7 +88,6 @@ newtype V n a = V { toVector :: V.Vector a } deriving (Eq,Ord,Show,Read
                                                       ,Generic1
 #endif
                                                       )
-
 dim :: forall n a. Dim n => V n a -> Int
 dim _ = reflectDim (Proxy :: Proxy n)
 {-# INLINE dim #-}
