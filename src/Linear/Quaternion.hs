@@ -542,6 +542,6 @@ instance MonadZip Quaternion where
 
 instance MonadFix Quaternion where
   mfix f = Quaternion (let Quaternion a _ = f a in a)
-                      (let Quaternion _ (V3 a _ _) = f a in a)
-                      (let Quaternion _ (V3 _ a _) = f a in a)
-                      (let Quaternion _ (V3 _ _ a) = f a in a)
+                      (V3 (let Quaternion _ (V3 a _ _) = f a in a)
+                          (let Quaternion _ (V3 _ a _) = f a in a)
+                          (let Quaternion _ (V3 _ _ a) = f a in a))
