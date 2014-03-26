@@ -1,12 +1,16 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE CPP #-}
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE Trustworthy #-}
+#endif
+
+#ifndef MIN_VERSION_hashable
+#define MIN_VERSION_hashable
 #endif
 -----------------------------------------------------------------------------
 -- |
@@ -32,6 +36,7 @@ import Data.Distributive
 import Data.Foldable
 import Data.Functor.Rep
 import Data.Functor.Bind
+import Data.Hashable
 import Data.Ix
 import Data.Semigroup
 import Foreign.Storable (Storable(..))
@@ -142,6 +147,14 @@ instance Metric V0 where
 instance Distributive V0 where
   distribute _ = V0
   {-# INLINE distribute #-}
+
+instance Hashable (V0 a) where
+#if (MIN_VERSION_hashable(1,2,1)) || !(MIN_VERSION_hashable(1,2,0))
+  hash V0 = 0
+  {-# INLINE hash #-}
+#endif
+  hashWithSalt s V0 = s
+  {-# INLINE hashWithSalt #-}
 
 instance Epsilon a => Epsilon (V0 a) where
   nearZero _ = True

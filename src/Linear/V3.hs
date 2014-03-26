@@ -38,6 +38,7 @@ import Data.Distributive
 import Data.Foldable
 import Data.Functor.Bind
 import Data.Functor.Rep
+import Data.Hashable
 import Data.Semigroup
 import Data.Semigroup.Foldable
 import Foreign.Ptr (castPtr)
@@ -149,6 +150,10 @@ instance Fractional a => Fractional (V3 a) where
   {-# INLINE (/) #-}
   fromRational = pure . fromRational
   {-# INLINE fromRational #-}
+
+instance Hashable a => Hashable (V3 a) where
+  hashWithSalt s (V3 a b c) = s `hashWithSalt` a `hashWithSalt` b `hashWithSalt` c
+  {-# INLINE hashWithSalt #-}
 
 instance Metric V3 where
   dot (V3 a b c) (V3 d e f) = a * d + b * e + c * f

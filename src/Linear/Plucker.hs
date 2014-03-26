@@ -53,6 +53,7 @@ import Data.Distributive
 import Data.Foldable as Foldable
 import Data.Functor.Bind
 import Data.Functor.Rep
+import Data.Hashable
 import Data.Semigroup
 import Data.Semigroup.Foldable
 import Foreign.Ptr (castPtr)
@@ -218,6 +219,10 @@ instance Fractional a => Fractional (Plucker a) where
   {-# INLINE (/) #-}
   fromRational = pure . fromRational
   {-# INLINE fromRational #-}
+
+instance Hashable a => Hashable (Plucker a) where
+  hashWithSalt s (Plucker a b c d e f) = s `hashWithSalt` a `hashWithSalt` b `hashWithSalt` c `hashWithSalt` d `hashWithSalt` e `hashWithSalt` f
+  {-# INLINE hashWithSalt #-}
 
 instance Storable a => Storable (Plucker a) where
   sizeOf _ = 6 * sizeOf (undefined::a)

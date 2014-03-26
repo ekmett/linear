@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE DeriveFoldable #-}
@@ -8,10 +9,13 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 -- {-# OPTIONS_GHC -fno-warn-name-shadowing #-}
-{-# LANGUAGE CPP #-}
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE DeriveGeneric #-}
+#endif
+
+#ifndef MIN_VERSION_hashable
+#define MIN_VERSION_hashable(x,y,z) 1
 #endif
 -----------------------------------------------------------------------------
 -- |
@@ -40,6 +44,7 @@ import Data.Distributive
 import Data.Foldable
 import Data.Functor.Bind
 import Data.Functor.Rep
+import Data.Hashable
 import Data.Semigroup.Foldable
 import Foreign.Storable (Storable)
 import GHC.Arr (Ix(..))
@@ -152,6 +157,12 @@ instance Fractional a => Fractional (V1 a) where
   {-# INLINE (/) #-}
   fromRational = pure . fromRational
   {-# INLINE fromRational #-}
+
+instance Hashable a => Hashable (V1 a) where
+#if (MIN_VERSION_hashable(1,2,1)) || !(MIN_VERSION_hashable(1,2,0))
+  hash (V1 a) = hash a
+#endif
+  hashWithSalt s (V1 a) = s `hashWithSalt` a
 
 instance Metric V1 where
   dot (V1 a) (V1 b) = a * b

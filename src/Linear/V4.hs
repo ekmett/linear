@@ -39,6 +39,7 @@ import Data.Distributive
 import Data.Foldable
 import Data.Functor.Bind
 import Data.Functor.Rep
+import Data.Hashable
 import Data.Semigroup
 import Data.Semigroup.Foldable
 import Foreign.Ptr (castPtr)
@@ -163,6 +164,10 @@ instance Distributive V4 where
                     (fmap (\(V4 _ _ z _) -> z) f)
                     (fmap (\(V4 _ _ _ w) -> w) f)
   {-# INLINE distribute #-}
+
+instance Hashable a => Hashable (V4 a) where
+  hashWithSalt s (V4 a b c d) = s `hashWithSalt` a `hashWithSalt` b `hashWithSalt` c `hashWithSalt` d
+  {-# INLINE hashWithSalt #-}
 
 -- | A space that distinguishes orthogonal basis vectors '_x', '_y', '_z', '_w'. (It may have more.)
 class R3 t => R4 t where

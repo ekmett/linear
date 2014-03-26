@@ -36,6 +36,7 @@ import Control.Lens hiding ((<.>))
 import Data.Data
 import Data.Distributive
 import Data.Foldable
+import Data.Hashable
 import Data.Functor.Bind
 import Data.Functor.Rep
 import Data.Semigroup
@@ -115,6 +116,10 @@ instance Applicative V2 where
   {-# INLINE pure #-}
   V2 a b <*> V2 d e = V2 (a d) (b e)
   {-@ INLINE (<*>) #-}
+
+instance Hashable a => Hashable (V2 a) where
+  hashWithSalt s (V2 a b) = s `hashWithSalt` a `hashWithSalt` b
+  {-# INLINE hashWithSalt #-}
 
 instance Additive V2 where
   zero = pure 0

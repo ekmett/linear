@@ -49,6 +49,7 @@ import Data.Distributive
 import Data.Foldable
 import Data.Functor.Bind
 import Data.Functor.Rep
+import Data.Hashable
 import GHC.Arr (Ix(..))
 import qualified Data.Foldable as F
 import Data.Monoid
@@ -227,6 +228,10 @@ instance RealFloat a => Num (Quaternion a) where
       ij = isInfinite j
       ik = isInfinite k
   {-# INLINE signum #-}
+
+instance Hashable a => Hashable (Quaternion a) where
+  hashWithSalt s (Quaternion a b) = s `hashWithSalt` a `hashWithSalt` b
+  {-# INLINE hashWithSalt #-}
 
 qNaN :: RealFloat a => Quaternion a
 qNaN = Quaternion fNaN (V3 fNaN fNaN fNaN) where fNaN = 0/0
