@@ -1,3 +1,7 @@
+1.10
+----
+* Added `Hashable` instances
+
 1.9.1
 -----
 * Added a role annotation to `V n a` to prevent users from using GHC 7.8's `Coercible` machinery to violate invariants.
