@@ -12,6 +12,7 @@
 ----------------------------------------------------------------------------
 module Linear
   ( module Linear.Algebra
+  , module Linear.Binary
   , module Linear.Conjugate
   , module Linear.Covector
   , module Linear.Epsilon
@@ -28,6 +29,7 @@ module Linear
   )  where
 
 import Linear.Algebra
+import Linear.Binary
 import Linear.Conjugate
 import Linear.Covector
 import Linear.Epsilon
