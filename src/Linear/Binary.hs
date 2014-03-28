@@ -1,6 +1,20 @@
--- | Serialization of statically-sized types with the "Data.Binary"
+-----------------------------------------------------------------------------
+-- |
+-- Copyright   :  (C) 2013-2014 Edward Kmett and Anthony Cowley
+-- License     :  BSD-style (see the file LICENSE)
+--
+-- Maintainer  :  Edward Kmett <ekmett@gmail.com>
+-- Stability   :  experimental
+-- Portability :  non-portable
+--
+-- Serialization of statically-sized types with the "Data.Binary"
 -- library.
-module Linear.Binary where
+------------------------------------------------------------------------------
+module Linear.Binary
+  ( putLinear
+  , getLinear
+  ) where
+
 import Control.Applicative
 import Data.Binary
 import Data.Foldable (Foldable, traverse_)
