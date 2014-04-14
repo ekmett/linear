@@ -26,6 +26,7 @@ module Linear.V2
   , R2(..)
   , ex, ey
   , perp
+  , angle
   ) where
 
 import Control.Applicative
@@ -76,14 +77,15 @@ import Prelude hiding (sum)
 -- >>> sum (V2 1 2)
 -- 3
 
-data V2 a = V2 !a !a deriving (Eq,Ord,Show,Read,Data,Typeable
+data V2 a = V2 !a !a deriving
+  (Eq,Ord,Show,Read,Data,Typeable
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
-                              ,Generic
+  ,Generic
 #endif
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
-                              ,Generic1
+  ,Generic1
 #endif
-                              )
+  )
 
 instance Functor V2 where
   fmap f (V2 a b) = V2 (f a) (f b)
@@ -315,3 +317,6 @@ instance MonadZip V2 where
 instance MonadFix V2 where
   mfix f = V2 (let V2 a _ = f a in a)
               (let V2 _ a = f a in a)
+
+angle :: Floating a => a -> V2 a
+angle a = V2 (cos a) (sin a)
