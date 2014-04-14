@@ -1,6 +1,10 @@
+1.10.1
+------
+* Added `Linear.V2.angle`.
+
 1.10
 ----
-* Added `Hashable` instances
+* Added `Hashable` instances.
 
 1.9.1
 -----
