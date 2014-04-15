@@ -4,7 +4,6 @@ import Data.Binary.Put
 import Data.Binary.Get
 import Linear
 import qualified Data.ByteString.Lazy as BS
-import Linear.Binary
 import Test.HUnit
 
 originalVecs :: (V3 Float, V2 Char)
