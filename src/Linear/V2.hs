@@ -111,13 +111,13 @@ instance Traversable1 V2 where
 
 instance Apply V2 where
   V2 a b <.> V2 d e = V2 (a d) (b e)
-  {-@ INLINE (<.>) #-}
+  {-# INLINE (<.>) #-}
 
 instance Applicative V2 where
   pure a = V2 a a
   {-# INLINE pure #-}
   V2 a b <*> V2 d e = V2 (a d) (b e)
-  {-@ INLINE (<*>) #-}
+  {-# INLINE (<*>) #-}
 
 instance Hashable a => Hashable (V2 a) where
   hashWithSalt s (V2 a b) = s `hashWithSalt` a `hashWithSalt` b
