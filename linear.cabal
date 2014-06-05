@@ -43,7 +43,7 @@ library
     semigroupoids        >= 3     && < 5,
     tagged               >= 0.4.4 && < 1,
     template-haskell     >= 2.7   && < 3.0,
-    transformers         >= 0.2   && < 0.4,
+    transformers         >= 0.2   && < 0.5,
     unordered-containers >= 0.2.3 && < 0.3,
     vector               >= 0.10  && < 0.11,
     void                 >= 0.6   && < 1
