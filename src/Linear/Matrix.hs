@@ -166,9 +166,21 @@ fromQuaternion (Quaternion w (V3 x y z)) =
 -- | Build a transformation matrix from a rotation matrix and a
 -- translation vector.
 mkTransformationMat :: Num a => M33 a -> V3 a -> M44 a
-mkTransformationMat (V3 r1 r2 r3) (V3 tx ty tz) =
-  V4 (snoc3 r1 tx) (snoc3 r2 ty) (snoc3 r3 tz) (V4 0 0 0 1)
-  where snoc3 (V3 x y z) = V4 x y z
+mkTransformationMat (V3 rx ry rz) (V3 tx ty tz) = t4 !*! r4
+  where
+    t4 =
+      V4
+        (V4 1 0 0 tx)
+        (V4 0 1 0 ty)
+        (V4 0 0 1 tz)
+        (V4 0 0 0 1)
+    r4 =
+      V4
+        (fix4 rx)
+        (fix4 ry)
+        (fix4 rz)
+        (V4 0 0 0 1)
+    fix4 (V3 x y z) = V4 x y z 0
 
 -- |Build a transformation matrix from a rotation expressed as a
 -- 'Quaternion' and a translation vector.
