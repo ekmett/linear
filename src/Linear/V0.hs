@@ -90,7 +90,7 @@ instance Traversable V0 where
 
 instance Apply V0 where
   V0 <.> V0 = V0
-  {-@ INLINE (<.>) #-}
+  {-# INLINE (<.>) #-}
 
 instance Applicative V0 where
   pure _ = V0

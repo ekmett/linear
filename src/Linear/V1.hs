@@ -108,13 +108,13 @@ instance Traversable1 V1 where
 
 instance Apply V1 where
   V1 f <.> V1 x = V1 (f x)
-  {-@ INLINE (<.>) #-}
+  {-# INLINE (<.>) #-}
 
 instance Applicative V1 where
   pure = V1
   {-# INLINE pure #-}
   V1 f <*> V1 x = V1 (f x)
-  {-@ INLINE (<*>) #-}
+  {-# INLINE (<*>) #-}
 
 instance Additive V1 where
   zero = pure 0
