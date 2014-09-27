@@ -376,8 +376,8 @@ instance Applicative SetOne where
 
 -- | Produce a default basis for a vector space. If the dimensionality
 -- of the vector space is not statically known, see 'basisFor'.
-basis :: (Applicative t, Traversable t, Num a) => [t a]
-basis = choices $ traverse (\a -> SetOne 0 [a]) (pure 1)
+basis :: (Additive t, Traversable t, Num a) => [t a]
+basis = basisFor (zero :: Additive v => v Int)
 
 -- | Produce a default basis for a vector space from which the
 -- argument is drawn.
@@ -392,8 +392,8 @@ kronecker v = fillFromList (choices $ traverse (\a -> SetOne 0 [a]) v) v
 --
 -- >>> unit _x :: V2 Int
 -- V2 1 0
-unit :: (Applicative t, Num a) => ASetter' (t a) a -> t a
-unit l = set' l 1 (pure 0)
+unit :: (Additive t, Num a) => ASetter' (t a) a -> t a
+unit l = set' l 1 zero
 
 fillFromList :: Traversable t => [a] -> t b -> t a
 fillFromList l = snd . mapAccumL aux l
