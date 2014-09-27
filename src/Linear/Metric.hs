@@ -15,7 +15,7 @@
 -- Free metric spaces
 ----------------------------------------------------------------------------
 module Linear.Metric
-  ( Metric(..), normalize
+  ( Metric(..), normalize, project
   ) where
 
 import Data.Foldable as Foldable
@@ -82,3 +82,8 @@ instance Metric Vector
 normalize :: (Floating a, Metric f, Epsilon a) => f a -> f a
 normalize v = if nearZero l || nearZero (1-l) then v else fmap (/sqrt l) v
   where l = quadrance v
+
+-- | @project u v@ computes the projection of @v@ onto @u@.
+project :: (Metric v, Fractional a) => v a -> v a -> v a
+project u v = ((v `dot` u) / quadrance u) *^ u
+
