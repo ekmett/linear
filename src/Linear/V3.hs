@@ -167,12 +167,12 @@ instance Distributive V3 where
 class R2 t => R3 t where
   -- |
   -- @
-  -- '_z' :: Lens' (t a) a
+  -- '_z' :: 'Lens'' (t a) a
   -- @
   _z :: Functor f => (a -> f a) -> t a -> f (t a)
   -- |
   -- @
-  -- '_xyz' :: Lens' (t a) ('V3' a)
+  -- '_xyz' :: 'Lens'' (t a) ('V3' a)
   -- @
   _xyz :: Functor f => (V3 a -> f (V3 a)) -> t a -> f (t a)
 
