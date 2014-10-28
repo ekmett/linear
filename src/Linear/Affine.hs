@@ -3,6 +3,7 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE RankNTypes #-}
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE DeriveGeneric #-}
@@ -126,6 +127,10 @@ newtype Point f a = P (f a)
 lensP :: Lens' (Point g a) (g a)
 lensP afb (P a) = P <$> afb a
 
+_Point :: Iso' (Point f a) (f a)
+_Point = iso (\(P a) -> a) P
+{-# INLINE _Point #-}
+
 instance Bind f => Bind (Point f) where
   join (P m) = P $ join $ fmap (\(P m')->m') m
 
@@ -163,3 +168,10 @@ instance Additive f => Affine (Point f) where
 -- | Vector spaces have origins.
 origin :: (Additive f, Num a) => Point f a
 origin = P zero
+
+-- | An isomorphism between points and vectors, given a reference
+--   point.
+relative :: (Additive f, Num a) => Point f a -> Iso' (Point f a) (f a)
+relative p0 = iso (.-. p0) (p0 .+^)
+{-# INLINE relative #-}
+
