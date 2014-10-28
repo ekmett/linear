@@ -81,10 +81,12 @@ class Additive (Diff p) => Affine p where
 -- | Compute the quadrance of the difference (the square of the distance)
 qdA :: (Affine p, Foldable (Diff p), Num a) => p a -> p a -> a
 qdA a b = Foldable.sum (fmap (join (*)) (a .-. b))
+{-# INLINE qdA #-}
 
 -- | Distance between two points in an affine space
 distanceA :: (Floating a, Foldable (Diff p), Affine p) => p a -> p a -> a
 distanceA a b = sqrt (qdA a b)
+{-# INLINE distanceA #-}
 
 #define ADDITIVEC(CTX,T) instance CTX => Affine T where type Diff T = T ; \
   (.-.) = (^-^) ; {-# INLINE (.-.) #-} ; (.+^) = (^+^) ; {-# INLINE (.+^) #-} ; \
@@ -126,6 +128,7 @@ newtype Point f a = P (f a)
 
 lensP :: Lens' (Point g a) (g a)
 lensP afb (P a) = P <$> afb a
+{-# INLINE lensP #-}
 
 _Point :: Iso' (Point f a) (f a)
 _Point = iso (\(P a) -> a) P
@@ -146,24 +149,34 @@ instance Representable f => Representable (Point f) where
 
 instance R1 f => R1 (Point f) where
   _x = lensP . _x
+  {-# INLINE _x #-}
 
 instance R2 f => R2 (Point f) where
   _y = lensP . _y
+  {-# INLINE _y #-}
   _xy = lensP . _xy
+  {-# INLINE _xy #-}
 
 instance R3 f => R3 (Point f) where
   _z = lensP . _z
+  {-# INLINE _z #-}
   _xyz = lensP . _xyz
+  {-# INLINE _xyz #-}
 
 instance R4 f => R4 (Point f) where
   _w = lensP . _w
+  {-# INLINE _w #-}
   _xyzw = lensP . _xyzw
+  {-# INLINE _xyzw #-}
 
 instance Additive f => Affine (Point f) where
   type Diff (Point f) = f
   P x .-. P y = x ^-^ y
+  {-# INLINE (.-.) #-}
   P x .+^ v = P (x ^+^ v)
+  {-# INLINE (.+^) #-}
   P x .-^ v = P (x ^-^ v)
+  {-# INLINE (.-^) #-}
 
 -- | Vector spaces have origins.
 origin :: (Additive f, Num a) => Point f a
