@@ -1,7 +1,9 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE DeriveTraversable #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE RankNTypes #-}
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
@@ -118,6 +120,7 @@ newtype Point f a = P (f a)
   deriving ( Eq, Ord, Show, Read, Monad, Functor, Applicative, Foldable
            , Traversable, Apply, Additive, Metric
            , Fractional , Num, Ix, Storable, Epsilon
+           , Hashable
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
            , Generic
 #endif
@@ -134,6 +137,12 @@ _Point :: Iso' (Point f a) (f a)
 _Point = iso (\(P a) -> a) P
 {-# INLINE _Point #-}
 
+instance (t ~ Point g b) => Rewrapped (Point f a) t
+instance Wrapped (Point f a) where
+  type Unwrapped (Point f a) = f a
+  _Wrapped' = _Point
+  {-# INLINE _Wrapped' #-}
+
 instance Bind f => Bind (Point f) where
   join (P m) = P $ join $ fmap (\(P m')->m') m
 
@@ -146,6 +155,17 @@ instance Representable f => Representable (Point f) where
   {-# INLINE tabulate #-}
   index (P xs) = Rep.index xs
   {-# INLINE index #-}
+
+type instance Index (Point f a) = Index (f a)
+type instance IxValue (Point f a) = IxValue (f a)
+
+instance Ixed (f a) => Ixed (Point f a) where
+  ix l = lensP . ix l
+  {-# INLINE ix #-}
+  
+instance Traversable f => Each (Point f a) (Point f b) a b where
+  each = traverse
+  {-# INLINE each #-}
 
 instance R1 f => R1 (Point f) where
   _x = lensP . _x
