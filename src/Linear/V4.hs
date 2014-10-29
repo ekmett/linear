@@ -173,12 +173,12 @@ instance Hashable a => Hashable (V4 a) where
 class R3 t => R4 t where
   -- |
   -- @
-  -- '_w' :: Lens' (t a) a
+  -- '_w' :: 'Lens'' (t a) a
   -- @
   _w :: Functor f => (a -> f a) -> t a -> f (t a)
   -- |
   -- @
-  -- '_xyzw' :: Lens' (t a) ('V4' a)
+  -- '_xyzw' :: 'Lens'' (t a) ('V4' a)
   -- @
   _xyzw :: Functor f => (V4 a -> f (V4 a)) -> t a -> f (t a)
 
