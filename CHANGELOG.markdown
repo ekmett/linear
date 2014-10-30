@@ -1,3 +1,11 @@
+1.11.1
+------
+* Added `_Point`, `relative` and a few instances for `Point`.
+
+1.11
+----
+* Changed the 'representation' of `V n` from `E (V n)`, which was hard to use, to `Int`, which is a bit too permissive, but is easy to use.
+
 1.10.1
 ------
 * Added `Linear.V2.angle`.
