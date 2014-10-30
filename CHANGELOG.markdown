@@ -1,3 +1,7 @@
+1.11.2
+------
+* Added `Linear.Perspective`.
+
 1.11.1
 ------
 * Added `_Point`, `relative` and a few instances for `Point`.
