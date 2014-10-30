@@ -34,7 +34,7 @@
 ----------------------------------------------------------------------------
 
 module Linear.V
-  ( V(toVector)
+  ( V(V,toVector)
   , int
   , dim
   , Dim(..)
@@ -269,11 +269,10 @@ int n = case quotRem n 2 of
 #endif
 
 instance Dim n => Representable (V n) where
-  type Rep (V n) = E (V n)
-  tabulate f = V $ generate (reflectDim (Proxy :: Proxy n)) $ \i -> f $ E $ \g (V v) ->
-    (\a -> V $ v V.// [(i,a)]) <$> g (unsafeIndex v i)
+  type Rep (V n) = Int
+  tabulate = V . generate (reflectDim (Proxy :: Proxy n))
   {-# INLINE tabulate #-}
-  index xs (E l) = view l xs
+  index (V xs) i = xs V.! i
   {-# INLINE index #-}
 
 type instance Index (V n a) = E (V n)
