@@ -18,6 +18,7 @@ module Linear
   , module Linear.Epsilon
   , module Linear.Matrix
   , module Linear.Metric
+  , module Linear.Perspective
   , module Linear.Quaternion
   , module Linear.Trace
   , module Linear.V0
@@ -36,6 +37,7 @@ import Linear.Epsilon
 import Linear.Instances ()
 import Linear.Matrix
 import Linear.Metric
+import Linear.Perspective
 import Linear.Quaternion
 import Linear.Trace
 import Linear.V0

@@ -59,6 +59,7 @@ library
     Linear.Instances
     Linear.Matrix
     Linear.Metric
+    Linear.Perspective
     Linear.Plucker
     Linear.Quaternion
     Linear.Trace
