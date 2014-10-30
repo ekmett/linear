@@ -13,6 +13,7 @@ module Linear.Perspective
   ( lookAt
   , perspective
   , infinitePerspective
+  , ortho
   ) where
 
 import Control.Lens hiding (index)
@@ -64,3 +65,22 @@ infinitePerspective fovy aspect near =
         x = (2 * near) / (right - left)
         y = (2 * near) / (top - bottom)
         w = -2 * near
+
+-- | Build an orthographic perspective matrix from 6 clipping planes
+ortho
+  :: Floating a
+  => a -- ^ Left
+  -> a -- ^ Right
+  -> a -- ^ Bottom
+  -> a -- ^ Top
+  -> a -- ^ Near
+  -> a -- ^ Far
+  -> M44 a
+ortho left right bottom top near far =
+  V4 (V4 (2 / a) 0       0        (negate ((right + left) / a)))
+     (V4 0       (2 / b) 0        (negate ((top + bottom) / b)))
+     (V4 0       0       (-2 / c) ((far + near) / c))
+     (V4 0       0       0        1)
+  where a = right - left
+        b = top - bottom
+        c = far - near
