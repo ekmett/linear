@@ -24,7 +24,12 @@ import Linear.Epsilon
 import Linear.Metric
 
 -- | Build a look at view matrix
-lookAt :: (Epsilon a, Floating a) => V3 a -> V3 a -> V3 a -> M44 a
+lookAt
+  :: (Epsilon a, Floating a)
+  => V3 a -- ^ Eye
+  -> V3 a -- ^ Center
+  -> V3 a -- ^ Up
+  -> M44 a
 lookAt eye center up =
   V4 (V4 (xa^._x)  (xa^._y)  (xa^._z)  xd)
      (V4 (ya^._x)  (ya^._y)  (ya^._z)  yd)
@@ -38,7 +43,13 @@ lookAt eye center up =
         zd = dot za eye
 
 -- | Build a matrix for a symmetric perspective-view frustum
-perspective :: Floating a => a -> a -> a -> a -> M44 a
+perspective
+  :: Floating a
+  => a -- ^ FOV
+  -> a -- ^ Aspect ratio
+  -> a -- ^ Near plane
+  -> a -- ^ Far plane
+  -> M44 a
 perspective fovy aspect near far =
   V4 (V4 x 0 0    0)
      (V4 0 y 0    0)
@@ -51,7 +62,12 @@ perspective fovy aspect near far =
         w = -(2 * far * near) / (far - near)
 
 -- | Build a matrix for a symmetric perspective-view frustum with a far plane at infinite
-infinitePerspective :: Floating a => a -> a -> a -> M44 a
+infinitePerspective
+  :: Floating a
+  => a -- ^ FOV
+  -> a -- ^ Aspect Ratio
+  -> a -- ^ Near plane
+  -> M44 a
 infinitePerspective fovy aspect near =
   V4 (V4 x 0 0    0)
      (V4 0 y 0    0)
