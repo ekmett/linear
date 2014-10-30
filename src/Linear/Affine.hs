@@ -1,8 +1,11 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE DeriveTraversable #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE RankNTypes #-}
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE DeriveGeneric #-}
@@ -80,10 +83,12 @@ class Additive (Diff p) => Affine p where
 -- | Compute the quadrance of the difference (the square of the distance)
 qdA :: (Affine p, Foldable (Diff p), Num a) => p a -> p a -> a
 qdA a b = Foldable.sum (fmap (join (*)) (a .-. b))
+{-# INLINE qdA #-}
 
 -- | Distance between two points in an affine space
 distanceA :: (Floating a, Foldable (Diff p), Affine p) => p a -> p a -> a
 distanceA a b = sqrt (qdA a b)
+{-# INLINE distanceA #-}
 
 #define ADDITIVEC(CTX,T) instance CTX => Affine T where type Diff T = T ; \
   (.-.) = (^-^) ; {-# INLINE (.-.) #-} ; (.+^) = (^+^) ; {-# INLINE (.+^) #-} ; \
@@ -115,6 +120,7 @@ newtype Point f a = P (f a)
   deriving ( Eq, Ord, Show, Read, Monad, Functor, Applicative, Foldable
            , Traversable, Apply, Additive, Metric
            , Fractional , Num, Ix, Storable, Epsilon
+           , Hashable
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
            , Generic
 #endif
@@ -125,6 +131,17 @@ newtype Point f a = P (f a)
 
 lensP :: Lens' (Point g a) (g a)
 lensP afb (P a) = P <$> afb a
+{-# INLINE lensP #-}
+
+_Point :: Iso' (Point f a) (f a)
+_Point = iso (\(P a) -> a) P
+{-# INLINE _Point #-}
+
+instance (t ~ Point g b) => Rewrapped (Point f a) t
+instance Wrapped (Point f a) where
+  type Unwrapped (Point f a) = f a
+  _Wrapped' = _Point
+  {-# INLINE _Wrapped' #-}
 
 instance Bind f => Bind (Point f) where
   join (P m) = P $ join $ fmap (\(P m')->m') m
@@ -139,27 +156,55 @@ instance Representable f => Representable (Point f) where
   index (P xs) = Rep.index xs
   {-# INLINE index #-}
 
+type instance Index (Point f a) = Index (f a)
+type instance IxValue (Point f a) = IxValue (f a)
+
+instance Ixed (f a) => Ixed (Point f a) where
+  ix l = lensP . ix l
+  {-# INLINE ix #-}
+  
+instance Traversable f => Each (Point f a) (Point f b) a b where
+  each = traverse
+  {-# INLINE each #-}
+
 instance R1 f => R1 (Point f) where
   _x = lensP . _x
+  {-# INLINE _x #-}
 
 instance R2 f => R2 (Point f) where
   _y = lensP . _y
+  {-# INLINE _y #-}
   _xy = lensP . _xy
+  {-# INLINE _xy #-}
 
 instance R3 f => R3 (Point f) where
   _z = lensP . _z
+  {-# INLINE _z #-}
   _xyz = lensP . _xyz
+  {-# INLINE _xyz #-}
 
 instance R4 f => R4 (Point f) where
   _w = lensP . _w
+  {-# INLINE _w #-}
   _xyzw = lensP . _xyzw
+  {-# INLINE _xyzw #-}
 
 instance Additive f => Affine (Point f) where
   type Diff (Point f) = f
   P x .-. P y = x ^-^ y
+  {-# INLINE (.-.) #-}
   P x .+^ v = P (x ^+^ v)
+  {-# INLINE (.+^) #-}
   P x .-^ v = P (x ^-^ v)
+  {-# INLINE (.-^) #-}
 
 -- | Vector spaces have origins.
 origin :: (Additive f, Num a) => Point f a
 origin = P zero
+
+-- | An isomorphism between points and vectors, given a reference
+--   point.
+relative :: (Additive f, Num a) => Point f a -> Iso' (Point f a) (f a)
+relative p0 = iso (.-. p0) (p0 .+^)
+{-# INLINE relative #-}
+
