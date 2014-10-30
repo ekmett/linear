@@ -263,3 +263,9 @@ instance MonadZip V1 where
 
 instance MonadFix V1 where
   mfix f = V1 (let V1 a = f a in a)
+
+instance Bounded a => Bounded (V1 a) where
+  minBound = pure minBound
+  {-# INLINE minBound #-}
+  maxBound = pure maxBound
+  {-# INLINE maxBound #-}

@@ -314,3 +314,9 @@ instance MonadFix V3 where
   mfix f = V3 (let V3 a _ _ = f a in a)
               (let V3 _ a _ = f a in a)
               (let V3 _ _ a = f a in a)
+
+instance Bounded a => Bounded (V3 a) where
+  minBound = pure minBound
+  {-# INLINE minBound #-}
+  maxBound = pure maxBound
+  {-# INLINE maxBound #-}

@@ -320,3 +320,9 @@ instance MonadFix V2 where
 
 angle :: Floating a => a -> V2 a
 angle a = V2 (cos a) (sin a)
+
+instance Bounded a => Bounded (V2 a) where
+  minBound = pure minBound
+  {-# INLINE minBound #-}
+  maxBound = pure maxBound
+  {-# INLINE maxBound #-}

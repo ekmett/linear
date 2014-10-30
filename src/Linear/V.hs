@@ -292,3 +292,9 @@ instance Dim n => MonadFix (V n) where
 instance Each (V n a) (V n b) a b where
   each = traverse
   {-# INLINE each #-}
+
+instance (Bounded a, Dim n) => Bounded (V n a) where
+  minBound = pure minBound
+  {-# INLINE minBound #-}
+  maxBound = pure maxBound
+  {-# INLINE maxBound #-}
