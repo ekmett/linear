@@ -12,6 +12,7 @@
 module Linear.Perspective
   ( lookAt
   , perspective
+  , infinitePerspective
   ) where
 
 import Control.Lens hiding (index)
@@ -35,8 +36,8 @@ lookAt eye center up =
         yd = -(dot ya eye)
         zd = (dot za eye)
 
--- | Build a matrix for a symetric perspective-view frustum
-perspective :: (Epsilon a, Floating a) => a -> a -> a -> a -> M44 a
+-- | Build a matrix for a symmetric perspective-view frustum
+perspective :: Floating a => a -> a -> a -> a -> M44 a
 perspective fovy aspect near far =
   V4 (V4 x 0 0    0)
      (V4 0 y 0    0)
@@ -47,3 +48,20 @@ perspective fovy aspect near far =
         y = 1 / tanHalfFovy
         z = -(far + near) / (far - near)
         w = -(2 * far * near) / (far - near)
+
+-- | Build a matrix for a symmetric perspective-view frustum with a far plane at infinite
+infinitePerspective :: Floating a => a -> a -> a -> M44 a
+infinitePerspective fovy aspect near =
+  V4 (V4 x 0 0    0)
+     (V4 0 y 0    0)
+     (V4 0 0 (-1) w)
+     (V4 0 0 (-1) 0)
+  where range  = (tan (fovy / 2)) * near
+        left   = (-range) * aspect
+        right  = range * aspect
+        bottom = -range
+        top    = range
+        x = (2 * near) / (right - left)
+        y = (2 * near) / (top - bottom)
+        w = (-2) * near
+
