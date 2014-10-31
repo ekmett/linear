@@ -11,6 +11,7 @@
 ---------------------------------------------------------------------------
 module Linear.Perspective
   ( lookAt
+  , perspective
   ) where
 
 import Control.Lens hiding (index)
@@ -33,3 +34,16 @@ lookAt eye center up =
         xd = -(dot xa eye)
         yd = -(dot ya eye)
         zd = (dot za eye)
+
+-- | Build a matrix for a symetric perspective-view frustum
+perspective :: (Epsilon a, Floating a) => a -> a -> a -> a -> M44 a
+perspective fovy aspect near far =
+  V4 (V4 x 0 0    0)
+     (V4 0 y 0    0)
+     (V4 0 0 z    w)
+     (V4 0 0 (-1) 0)
+  where tanHalfFovy = tan $ fovy / 2
+        x = 1 / (aspect * tanHalfFovy)
+        y = 1 / tanHalfFovy
+        z = -(far + near) / (far - near)
+        w = -(2 * far * near) / (far - near)
