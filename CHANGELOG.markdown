@@ -1,3 +1,7 @@
+1.11.3
+------
+* Fixed an issue with `UndecidableInstances` on GHC 7.6.3
+
 1.11.2
 ------
 * Added `Linear.Perspective`.
