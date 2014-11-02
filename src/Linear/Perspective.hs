@@ -73,7 +73,7 @@ infinitePerspective fovy aspect near =
      (V4 0 y 0    0)
      (V4 0 0 (-1) w)
      (V4 0 0 (-1) 0)
-  where range  = (tan (fovy / 2)) * near
+  where range  = tan (fovy / 2) * near
         left   = -range * aspect
         right  = range * aspect
         bottom = -range
