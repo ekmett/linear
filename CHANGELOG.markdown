@@ -1,6 +1,7 @@
-1.11.4
+1.12
 ------
 * Added 'transpose'
+* Added missing 'Mxy' matrices up to 4 dimensions -- they were commonly reimplemented by users.
 
 1.11.3
 ------
