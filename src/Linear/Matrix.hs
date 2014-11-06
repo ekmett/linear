@@ -18,11 +18,13 @@ module Linear.Matrix
   ( (!*!), (!+!), (!-!), (!*) , (*!), (!!*), (*!!)
   , column
   , adjoint
-  , M22, M33, M44, M43, m33_to_m44, m43_to_m44
+  , M22, M23, M24, M32, M33, M34, M42, M43, M44
+  , m33_to_m44, m43_to_m44
   , det22, det33, inv22, inv33
   , eye2, eye3, eye4
   , Trace(..)
   , translation
+  , transpose
   , fromQuaternion
   , mkTransformation
   , mkTransformationMat
@@ -146,12 +148,22 @@ adjoint = collect (fmap conjugate)
 
 -- | A 2x2 matrix with row-major representation
 type M22 a = V2 (V2 a)
+-- | A 2x3 matrix with row-major representation
+type M23 a = V2 (V3 a)
+-- | A 2x3 matrix with row-major representation
+type M24 a = V2 (V4 a)
+-- | A 3x2 matrix with row-major representation
+type M32 a = V3 (V2 a)
 -- | A 3x3 matrix with row-major representation
 type M33 a = V3 (V3 a)
--- | A 4x4 matrix with row-major representation
-type M44 a = V4 (V4 a)
+-- | A 3x4 matrix with row-major representation
+type M34 a = V3 (V4 a)
+-- | A 4x2 matrix with row-major representation
+type M42 a = V4 (V2 a)
 -- | A 4x3 matrix with row-major representation
 type M43 a = V4 (V3 a)
+-- | A 4x4 matrix with row-major representation
+type M44 a = V4 (V4 a)
 
 -- | Build a rotation matrix from a unit 'Quaternion'.
 fromQuaternion :: Num a => Quaternion a -> M33 a
@@ -287,3 +299,10 @@ inv33 m@(V3 (V3 a b c)
         det = det33 m
 {-# INLINE inv33 #-}
 
+
+-- | 'transpose' is just an alias for 'distribute'
+--
+-- > transpose (V3 (V2 1 2) (V2 3 4) (V2 5 6))
+-- V2 (V3 1 3 5) (V3 2 4 6)
+transpose :: (Distributive g, Functor f) => f (g a) -> g (f a)
+transpose = distribute
