@@ -2,6 +2,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE CPP #-}
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
@@ -169,85 +170,40 @@ instance Distributive V3 where
 -- | A space that distinguishes 3 orthogonal basis vectors: '_x', '_y', and '_z'. (It may have more)
 class R2 t => R3 t where
   -- |
-  -- @
-  -- '_z' :: 'Lens'' (t a) a
-  -- @
-  _z :: Functor f => (a -> f a) -> t a -> f (t a)
-  -- |
-  -- @
-  -- '_xyz' :: 'Lens'' (t a) ('V3' a)
-  -- @
-  _xyz :: Functor f => (V3 a -> f (V3 a)) -> t a -> f (t a)
+  -- >>> V3 1 2 3 ^. _z
+  -- 3
+  _z :: Lens' (t a) a
 
--- |
--- @
--- '_xz' :: 'R3' t => 'Lens'' (t a) ('V2' a)
--- @
-_xz :: (R3 t, Functor f) => (V2 a -> f (V2 a)) -> t a -> f (t a)
+  _xyz :: Lens' (t a) (V3 a)
+
+_xz, _yz, _zx, _zy :: R3 t => Lens' (t a) (V2 a)
+
 _xz f = _xyz $ \(V3 a b c) -> f (V2 a c) <&> \(V2 a' c') -> V3 a' b c'
 {-# INLINE _xz #-}
 
--- |
--- @
--- '_yz' :: 'R3' t => 'Lens'' (t a) ('V2' a)
--- @
-_yz :: (R3 t, Functor f) => (V2 a -> f (V2 a)) -> t a -> f (t a)
 _yz f = _xyz $ \(V3 a b c) -> f (V2 b c) <&> \(V2 b' c') -> V3 a b' c'
 {-# INLINE _yz #-}
 
--- |
--- @
--- '_zx' :: 'R3' t => 'Lens'' (t a) ('V2' a)
--- @
-_zx :: (R3 t, Functor f) => (V2 a -> f (V2 a)) -> t a -> f (t a)
 _zx f = _xyz $ \(V3 a b c) -> f (V2 c a) <&> \(V2 c' a') -> V3 a' b c'
 {-# INLINE _zx #-}
 
--- |
--- @
--- '_zy' :: 'R3' t => 'Lens'' (t a) ('V2' a)
--- @
-_zy :: (R3 t, Functor f) => (V2 a -> f (V2 a)) -> t a -> f (t a)
 _zy f = _xyz $ \(V3 a b c) -> f (V2 c b) <&> \(V2 c' b') -> V3 a b' c'
 {-# INLINE _zy #-}
 
--- |
--- @
--- '_xzy' :: 'R3' t => 'Lens'' (t a) ('V3' a)
--- @
-_xzy :: (R3 t, Functor f) => (V3 a -> f (V3 a)) -> t a -> f (t a)
+_xzy, _yxz, _yzx, _zxy, _zyx :: R3 t => Lens' (t a) (V3 a)
+
 _xzy f = _xyz $ \(V3 a b c) -> f (V3 a c b) <&> \(V3 a' c' b') -> V3 a' b' c'
 {-# INLINE _xzy #-}
 
--- |
--- @
--- '_yxz' :: 'R3' t => 'Lens'' (t a) ('V3' a)
--- @
-_yxz :: (R3 t, Functor f) => (V3 a -> f (V3 a)) -> t a -> f (t a)
 _yxz f = _xyz $ \(V3 a b c) -> f (V3 b a c) <&> \(V3 b' a' c') -> V3 a' b' c'
 {-# INLINE _yxz #-}
 
--- |
--- @
--- '_yzx' :: 'R3' t => 'Lens'' (t a) ('V3' a)
--- @
-_yzx :: (R3 t, Functor f) => (V3 a -> f (V3 a)) -> t a -> f (t a)
 _yzx f = _xyz $ \(V3 a b c) -> f (V3 b c a) <&> \(V3 b' c' a') -> V3 a' b' c'
 {-# INLINE _yzx #-}
 
--- |
--- @
--- '_zxy' :: 'R3' t => 'Lens'' (t a) ('V3' a)
--- @
-_zxy :: (R3 t, Functor f) => (V3 a -> f (V3 a)) -> t a -> f (t a)
 _zxy f = _xyz $ \(V3 a b c) -> f (V3 c a b) <&> \(V3 c' a' b') -> V3 a' b' c'
 {-# INLINE _zxy #-}
 
--- |
--- @
--- '_zyx' :: 'R3' t => 'Lens'' (t a) ('V3' a)
--- @
-_zyx :: (R3 t, Functor f) => (V3 a -> f (V3 a)) -> t a -> f (t a)
 _zyx f = _xyz $ \(V3 a b c) -> f (V3 c b a) <&> \(V3 c' b' a') -> V3 a' b' c'
 {-# INLINE _zyx #-}
 

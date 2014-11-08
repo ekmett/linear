@@ -2,6 +2,7 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 -- {-# OPTIONS_GHC -fno-warn-name-shadowing #-}
 {-# LANGUAGE CPP #-}
@@ -183,24 +184,16 @@ class R1 t => R2 t where
   -- >>> V2 1 2 & _y .~ 3
   -- V2 1 3
   --
-  -- @
-  -- '_y' :: 'Lens'' (t a) a
-  -- @
-  _y :: Functor f => (a -> f a) -> t a -> f (t a)
+  _y :: Lens' (t a) a
   _y = _xy._y
   {-# INLINE _y #-}
 
-  -- |
-  -- @
-  -- '_xy' :: 'Lens'' (t a) ('V2' a)
-  -- @
-  _xy :: Functor f => (V2 a -> f (V2 a)) -> t a -> f (t a)
+  _xy :: Lens' (t a) (V2 a)
 
 -- |
--- @
--- '_yx' :: 'R2' t => 'Lens'' (t a) ('V2' a)
--- @
-_yx :: (R2 t, Functor f) => (V2 a -> f (V2 a)) -> t a -> f (t a)
+-- >>> V2 1 2 ^. _yx
+-- V2 2 1
+_yx :: R2 t => Lens' (t a) (V2 a)
 _yx f = _xy $ \(V2 a b) -> f (V2 b a) <&> \(V2 b' a') -> V2 a' b'
 {-# INLINE _yx #-}
 
