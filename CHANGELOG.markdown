@@ -1,3 +1,7 @@
+1.12.1
+------
+* Added "swizzle" lenses **e.g.** `_yzx`, which are useful for working with libraries like `gl`.
+
 1.12
 ------
 * Added 'transpose'
