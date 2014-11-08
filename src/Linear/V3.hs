@@ -24,7 +24,10 @@ module Linear.V3
   , cross, triple
   , R1(..)
   , R2(..)
+  , _yx
   , R3(..)
+  , _xz, _yz, _zx, _zy
+  , _xzy, _yxz, _yzx, _zxy, _zyx
   , ex, ey, ez
   ) where
 
@@ -175,6 +178,78 @@ class R2 t => R3 t where
   -- '_xyz' :: 'Lens'' (t a) ('V3' a)
   -- @
   _xyz :: Functor f => (V3 a -> f (V3 a)) -> t a -> f (t a)
+
+-- |
+-- @
+-- '_xz' :: 'R3' t => 'Lens'' (t a) ('V2' a)
+-- @
+_xz :: (R3 t, Functor f) => (V2 a -> f (V2 a)) -> t a -> f (t a)
+_xz f = _xyz $ \(V3 a b c) -> f (V2 a c) <&> \(V2 a' c') -> V3 a' b c'
+{-# INLINE _xz #-}
+
+-- |
+-- @
+-- '_yz' :: 'R3' t => 'Lens'' (t a) ('V2' a)
+-- @
+_yz :: (R3 t, Functor f) => (V2 a -> f (V2 a)) -> t a -> f (t a)
+_yz f = _xyz $ \(V3 a b c) -> f (V2 b c) <&> \(V2 b' c') -> V3 a b' c'
+{-# INLINE _yz #-}
+
+-- |
+-- @
+-- '_zx' :: 'R3' t => 'Lens'' (t a) ('V2' a)
+-- @
+_zx :: (R3 t, Functor f) => (V2 a -> f (V2 a)) -> t a -> f (t a)
+_zx f = _xyz $ \(V3 a b c) -> f (V2 c a) <&> \(V2 c' a') -> V3 a' b c'
+{-# INLINE _zx #-}
+
+-- |
+-- @
+-- '_zy' :: 'R3' t => 'Lens'' (t a) ('V2' a)
+-- @
+_zy :: (R3 t, Functor f) => (V2 a -> f (V2 a)) -> t a -> f (t a)
+_zy f = _xyz $ \(V3 a b c) -> f (V2 c b) <&> \(V2 c' b') -> V3 a b' c'
+{-# INLINE _zy #-}
+
+-- |
+-- @
+-- '_xzy' :: 'R3' t => 'Lens'' (t a) ('V3' a)
+-- @
+_xzy :: (R3 t, Functor f) => (V3 a -> f (V3 a)) -> t a -> f (t a)
+_xzy f = _xyz $ \(V3 a b c) -> f (V3 a c b) <&> \(V3 a' c' b') -> V3 a' b' c'
+{-# INLINE _xzy #-}
+
+-- |
+-- @
+-- '_yxz' :: 'R3' t => 'Lens'' (t a) ('V3' a)
+-- @
+_yxz :: (R3 t, Functor f) => (V3 a -> f (V3 a)) -> t a -> f (t a)
+_yxz f = _xyz $ \(V3 a b c) -> f (V3 b a c) <&> \(V3 b' a' c') -> V3 a' b' c'
+{-# INLINE _yxz #-}
+
+-- |
+-- @
+-- '_yzx' :: 'R3' t => 'Lens'' (t a) ('V3' a)
+-- @
+_yzx :: (R3 t, Functor f) => (V3 a -> f (V3 a)) -> t a -> f (t a)
+_yzx f = _xyz $ \(V3 a b c) -> f (V3 b c a) <&> \(V3 b' c' a') -> V3 a' b' c'
+{-# INLINE _yzx #-}
+
+-- |
+-- @
+-- '_zxy' :: 'R3' t => 'Lens'' (t a) ('V3' a)
+-- @
+_zxy :: (R3 t, Functor f) => (V3 a -> f (V3 a)) -> t a -> f (t a)
+_zxy f = _xyz $ \(V3 a b c) -> f (V3 c a b) <&> \(V3 c' a' b') -> V3 a' b' c'
+{-# INLINE _zxy #-}
+
+-- |
+-- @
+-- '_zyx' :: 'R3' t => 'Lens'' (t a) ('V3' a)
+-- @
+_zyx :: (R3 t, Functor f) => (V3 a -> f (V3 a)) -> t a -> f (t a)
+_zyx f = _xyz $ \(V3 a b c) -> f (V3 c b a) <&> \(V3 c' b' a') -> V3 a' b' c'
+{-# INLINE _zyx #-}
 
 ez :: R3 t => E t
 ez = E _z

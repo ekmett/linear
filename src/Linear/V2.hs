@@ -24,6 +24,7 @@ module Linear.V2
   ( V2(..)
   , R1(..)
   , R2(..)
+  , _yx
   , ex, ey
   , perp
   , angle
@@ -194,6 +195,14 @@ class R1 t => R2 t where
   -- '_xy' :: 'Lens'' (t a) ('V2' a)
   -- @
   _xy :: Functor f => (V2 a -> f (V2 a)) -> t a -> f (t a)
+
+-- |
+-- @
+-- '_yx' :: 'R2' t => 'Lens'' (t a) ('V2' a)
+-- @
+_yx :: (R2 t, Functor f) => (V2 a -> f (V2 a)) -> t a -> f (t a)
+_yx f = _xy $ \(V2 a b) -> f (V2 b a) <&> \(V2 b' a') -> V2 a' b'
+{-# INLINE _yx #-}
 
 ey :: R2 t => E t
 ey = E _y

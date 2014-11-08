@@ -24,8 +24,17 @@ module Linear.V4
   , vector, point, normalizePoint
   , R1(..)
   , R2(..)
+  , _yx
   , R3(..)
+  , _xz, _yz, _zx, _zy
+  , _xzy, _yxz, _yzx, _zxy, _zyx
   , R4(..)
+  , _xw, _yw, _zw, _wx, _wy, _wz
+  , _xyw, _xzw, _xwy, _xwz, _yxw, _yzw, _ywx, _ywz, _zxw, _zyw, _zwx, _zwy
+  , _wxy, _wxz, _wyx, _wyz, _wzx, _wzy
+  , _xywz, _xzyw, _xzwy, _xwyz, _xwzy, _yxzw , _yxwz, _yzxw, _yzwx, _ywxz
+  , _ywzx, _zxyw, _zxwy, _zyxw, _zywx, _zwxy, _zwyx, _wxyz, _wxzy, _wyxz
+  , _wyzx, _wzxy, _wzyx
   , ex, ey, ez, ew
   ) where
 
@@ -181,6 +190,382 @@ class R3 t => R4 t where
   -- '_xyzw' :: 'Lens'' (t a) ('V4' a)
   -- @
   _xyzw :: Functor f => (V4 a -> f (V4 a)) -> t a -> f (t a)
+
+-- |
+-- @
+-- '_xw' :: 'R4' t => 'Lens'' (t a) ('V2' a)
+-- @
+_xw :: (R4 t, Functor f) => (V2 a -> f (V2 a)) -> t a -> f (t a)
+_xw f = _xyzw $ \(V4 a b c d) -> f (V2 a d) <&> \(V2 a' d') -> V4 a' b c d'
+{-# INLINE _xw #-}
+
+-- |
+-- @
+-- '_yw' :: 'R4' t => 'Lens'' (t a) ('V2' a)
+-- @
+_yw :: (R4 t, Functor f) => (V2 a -> f (V2 a)) -> t a -> f (t a)
+_yw f = _xyzw $ \(V4 a b c d) -> f (V2 b d) <&> \(V2 b' d') -> V4 a b' c d'
+{-# INLINE _yw #-}
+
+-- |
+-- @
+-- '_zw' :: 'R4' t => 'Lens'' (t a) ('V2' a)
+-- @
+_zw :: (R4 t, Functor f) => (V2 a -> f (V2 a)) -> t a -> f (t a)
+_zw f = _xyzw $ \(V4 a b c d) -> f (V2 c d) <&> \(V2 c' d') -> V4 a b c' d'
+{-# INLINE _zw #-}
+
+-- |
+-- @
+-- '_wx' :: 'R4' t => 'Lens'' (t a) ('V2' a)
+-- @
+_wx :: (R4 t, Functor f) => (V2 a -> f (V2 a)) -> t a -> f (t a)
+_wx f = _xyzw $ \(V4 a b c d) -> f (V2 d a) <&> \(V2 d' a') -> V4 a' b c d'
+{-# INLINE _wx #-}
+
+-- |
+-- @
+-- '_wy' :: 'R4' t => 'Lens'' (t a) ('V2' a)
+-- @
+_wy :: (R4 t, Functor f) => (V2 a -> f (V2 a)) -> t a -> f (t a)
+_wy f = _xyzw $ \(V4 a b c d) -> f (V2 d b) <&> \(V2 d' b') -> V4 a b' c d'
+{-# INLINE _wy #-}
+
+-- |
+-- @
+-- '_wz' :: 'R4' t => 'Lens'' (t a) ('V2' a)
+-- @
+_wz :: (R4 t, Functor f) => (V2 a -> f (V2 a)) -> t a -> f (t a)
+_wz f = _xyzw $ \(V4 a b c d) -> f (V2 d c) <&> \(V2 d' c') -> V4 a b c' d'
+{-# INLINE _wz #-}
+
+-- |
+-- @
+-- '_xyw' :: 'R4' t => 'Lens'' (t a) ('V3' a)
+-- @
+_xyw :: (R4 t, Functor f) => (V3 a -> f (V3 a)) -> t a -> f (t a)
+_xyw f = _xyzw $ \(V4 a b c d) -> f (V3 a b d) <&> \(V3 a' b' d') -> V4 a' b' c d'
+{-# INLINE _xyw #-}
+
+-- |
+-- @
+-- '_xzw' :: 'R4' t => 'Lens'' (t a) ('V3' a)
+-- @
+_xzw :: (R4 t, Functor f) => (V3 a -> f (V3 a)) -> t a -> f (t a)
+_xzw f = _xyzw $ \(V4 a b c d) -> f (V3 a c d) <&> \(V3 a' c' d') -> V4 a' b c' d'
+{-# INLINE _xzw #-}
+
+-- |
+-- @
+-- '_xwy' :: 'R4' t => 'Lens'' (t a) ('V3' a)
+-- @
+_xwy :: (R4 t, Functor f) => (V3 a -> f (V3 a)) -> t a -> f (t a)
+_xwy f = _xyzw $ \(V4 a b c d) -> f (V3 a d b) <&> \(V3 a' d' b') -> V4 a' b' c d'
+{-# INLINE _xwy #-}
+
+-- |
+-- @
+-- '_xwz' :: 'R4' t => 'Lens'' (t a) ('V3' a)
+-- @
+_xwz :: (R4 t, Functor f) => (V3 a -> f (V3 a)) -> t a -> f (t a)
+_xwz f = _xyzw $ \(V4 a b c d) -> f (V3 a d c) <&> \(V3 a' d' c') -> V4 a' b c' d'
+{-# INLINE _xwz #-}
+
+-- |
+-- @
+-- '_yxw' :: 'R4' t => 'Lens'' (t a) ('V3' a)
+-- @
+_yxw :: (R4 t, Functor f) => (V3 a -> f (V3 a)) -> t a -> f (t a)
+_yxw f = _xyzw $ \(V4 a b c d) -> f (V3 b a d) <&> \(V3 b' a' d') -> V4 a' b' c d'
+{-# INLINE _yxw #-}
+
+-- |
+-- @
+-- '_yzw' :: 'R4' t => 'Lens'' (t a) ('V3' a)
+-- @
+_yzw :: (R4 t, Functor f) => (V3 a -> f (V3 a)) -> t a -> f (t a)
+_yzw f = _xyzw $ \(V4 a b c d) -> f (V3 b c d) <&> \(V3 b' c' d') -> V4 a b' c' d'
+{-# INLINE _yzw #-}
+
+-- |
+-- @
+-- '_ywx' :: 'R4' t => 'Lens'' (t a) ('V3' a)
+-- @
+_ywx :: (R4 t, Functor f) => (V3 a -> f (V3 a)) -> t a -> f (t a)
+_ywx f = _xyzw $ \(V4 a b c d) -> f (V3 b d a) <&> \(V3 b' d' a') -> V4 a' b' c d'
+{-# INLINE _ywx #-}
+
+-- |
+-- @
+-- '_ywz' :: 'R4' t => 'Lens'' (t a) ('V3' a)
+-- @
+_ywz :: (R4 t, Functor f) => (V3 a -> f (V3 a)) -> t a -> f (t a)
+_ywz f = _xyzw $ \(V4 a b c d) -> f (V3 b d c) <&> \(V3 b' d' c') -> V4 a b' c' d'
+{-# INLINE _ywz #-}
+
+-- |
+-- @
+-- '_zxw' :: 'R4' t => 'Lens'' (t a) ('V3' a)
+-- @
+_zxw :: (R4 t, Functor f) => (V3 a -> f (V3 a)) -> t a -> f (t a)
+_zxw f = _xyzw $ \(V4 a b c d) -> f (V3 c a d) <&> \(V3 c' a' d') -> V4 a' b c' d'
+{-# INLINE _zxw #-}
+
+-- |
+-- @
+-- '_zyw' :: 'R4' t => 'Lens'' (t a) ('V3' a)
+-- @
+_zyw :: (R4 t, Functor f) => (V3 a -> f (V3 a)) -> t a -> f (t a)
+_zyw f = _xyzw $ \(V4 a b c d) -> f (V3 c b d) <&> \(V3 c' b' d') -> V4 a b' c' d'
+{-# INLINE _zyw #-}
+
+-- |
+-- @
+-- '_zwx' :: 'R4' t => 'Lens'' (t a) ('V3' a)
+-- @
+_zwx :: (R4 t, Functor f) => (V3 a -> f (V3 a)) -> t a -> f (t a)
+_zwx f = _xyzw $ \(V4 a b c d) -> f (V3 c d a) <&> \(V3 c' d' a') -> V4 a' b c' d'
+{-# INLINE _zwx #-}
+
+-- |
+-- @
+-- '_zwy' :: 'R4' t => 'Lens'' (t a) ('V3' a)
+-- @
+_zwy :: (R4 t, Functor f) => (V3 a -> f (V3 a)) -> t a -> f (t a)
+_zwy f = _xyzw $ \(V4 a b c d) -> f (V3 c d b) <&> \(V3 c' d' b') -> V4 a b' c' d'
+{-# INLINE _zwy #-}
+
+-- |
+-- @
+-- '_wxy' :: 'R4' t => 'Lens'' (t a) ('V3' a)
+-- @
+_wxy :: (R4 t, Functor f) => (V3 a -> f (V3 a)) -> t a -> f (t a)
+_wxy f = _xyzw $ \(V4 a b c d) -> f (V3 d a b) <&> \(V3 d' a' b') -> V4 a' b' c d'
+{-# INLINE _wxy #-}
+
+-- |
+-- @
+-- '_wxz' :: 'R4' t => 'Lens'' (t a) ('V3' a)
+-- @
+_wxz :: (R4 t, Functor f) => (V3 a -> f (V3 a)) -> t a -> f (t a)
+_wxz f = _xyzw $ \(V4 a b c d) -> f (V3 d a c) <&> \(V3 d' a' c') -> V4 a' b c' d'
+{-# INLINE _wxz #-}
+
+-- |
+-- @
+-- '_wyx' :: 'R4' t => 'Lens'' (t a) ('V3' a)
+-- @
+_wyx :: (R4 t, Functor f) => (V3 a -> f (V3 a)) -> t a -> f (t a)
+_wyx f = _xyzw $ \(V4 a b c d) -> f (V3 d b a) <&> \(V3 d' b' a') -> V4 a' b' c d'
+{-# INLINE _wyx #-}
+
+-- |
+-- @
+-- '_wyz' :: 'R4' t => 'Lens'' (t a) ('V3' a)
+-- @
+_wyz :: (R4 t, Functor f) => (V3 a -> f (V3 a)) -> t a -> f (t a)
+_wyz f = _xyzw $ \(V4 a b c d) -> f (V3 d b c) <&> \(V3 d' b' c') -> V4 a b' c' d'
+{-# INLINE _wyz #-}
+
+-- |
+-- @
+-- '_wzx' :: 'R4' t => 'Lens'' (t a) ('V3' a)
+-- @
+_wzx :: (R4 t, Functor f) => (V3 a -> f (V3 a)) -> t a -> f (t a)
+_wzx f = _xyzw $ \(V4 a b c d) -> f (V3 d c a) <&> \(V3 d' c' a') -> V4 a' b c' d'
+{-# INLINE _wzx #-}
+
+-- |
+-- @
+-- '_wzy' :: 'R4' t => 'Lens'' (t a) ('V3' a)
+-- @
+_wzy :: (R4 t, Functor f) => (V3 a -> f (V3 a)) -> t a -> f (t a)
+_wzy f = _xyzw $ \(V4 a b c d) -> f (V3 d c b) <&> \(V3 d' c' b') -> V4 a b' c' d'
+{-# INLINE _wzy #-}
+
+-- |
+-- @
+-- '_xywz' :: 'R4' t => 'Lens'' (t a) ('V4' a)
+-- @
+_xywz :: (R4 t, Functor f) => (V4 a -> f (V4 a)) -> t a -> f (t a)
+_xywz f = _xyzw $ \(V4 a b c d) -> f (V4 a b d c) <&> \(V4 a' b' d' c') -> V4 a' b' c' d'
+{-# INLINE _xywz #-}
+
+-- |
+-- @
+-- '_xzyw' :: 'R4' t => 'Lens'' (t a) ('V4' a)
+-- @
+_xzyw :: (R4 t, Functor f) => (V4 a -> f (V4 a)) -> t a -> f (t a)
+_xzyw f = _xyzw $ \(V4 a b c d) -> f (V4 a c b d) <&> \(V4 a' c' b' d') -> V4 a' b' c' d'
+{-# INLINE _xzyw #-}
+
+-- |
+-- @
+-- '_xzwy' :: 'R4' t => 'Lens'' (t a) ('V4' a)
+-- @
+_xzwy :: (R4 t, Functor f) => (V4 a -> f (V4 a)) -> t a -> f (t a)
+_xzwy f = _xyzw $ \(V4 a b c d) -> f (V4 a c d b) <&> \(V4 a' c' d' b') -> V4 a' b' c' d'
+{-# INLINE _xzwy #-}
+
+-- |
+-- @
+-- '_xwyz' :: 'R4' t => 'Lens'' (t a) ('V4' a)
+-- @
+_xwyz :: (R4 t, Functor f) => (V4 a -> f (V4 a)) -> t a -> f (t a)
+_xwyz f = _xyzw $ \(V4 a b c d) -> f (V4 a d b c) <&> \(V4 a' d' b' c') -> V4 a' b' c' d'
+{-# INLINE _xwyz #-}
+
+-- |
+-- @
+-- '_xwzy' :: 'R4' t => 'Lens'' (t a) ('V4' a)
+-- @
+_xwzy :: (R4 t, Functor f) => (V4 a -> f (V4 a)) -> t a -> f (t a)
+_xwzy f = _xyzw $ \(V4 a b c d) -> f (V4 a d c b) <&> \(V4 a' d' c' b') -> V4 a' b' c' d'
+{-# INLINE _xwzy #-}
+
+-- |
+-- @
+-- '_yxzw' :: 'R4' t => 'Lens'' (t a) ('V4' a)
+-- @
+_yxzw :: (R4 t, Functor f) => (V4 a -> f (V4 a)) -> t a -> f (t a)
+_yxzw f = _xyzw $ \(V4 a b c d) -> f (V4 b a c d) <&> \(V4 b' a' c' d') -> V4 a' b' c' d'
+{-# INLINE _yxzw #-}
+
+-- |
+-- @
+-- '_yxwz' :: 'R4' t => 'Lens'' (t a) ('V4' a)
+-- @
+_yxwz :: (R4 t, Functor f) => (V4 a -> f (V4 a)) -> t a -> f (t a)
+_yxwz f = _xyzw $ \(V4 a b c d) -> f (V4 b a d c) <&> \(V4 b' a' d' c') -> V4 a' b' c' d'
+{-# INLINE _yxwz #-}
+
+-- |
+-- @
+-- '_yzxw' :: 'R4' t => 'Lens'' (t a) ('V4' a)
+-- @
+_yzxw :: (R4 t, Functor f) => (V4 a -> f (V4 a)) -> t a -> f (t a)
+_yzxw f = _xyzw $ \(V4 a b c d) -> f (V4 b c a d) <&> \(V4 b' c' a' d') -> V4 a' b' c' d'
+{-# INLINE _yzxw #-}
+
+-- |
+-- @
+-- '_yzwx' :: 'R4' t => 'Lens'' (t a) ('V4' a)
+-- @
+_yzwx :: (R4 t, Functor f) => (V4 a -> f (V4 a)) -> t a -> f (t a)
+_yzwx f = _xyzw $ \(V4 a b c d) -> f (V4 b c d a) <&> \(V4 b' c' d' a') -> V4 a' b' c' d'
+{-# INLINE _yzwx #-}
+
+-- |
+-- @
+-- '_ywxz' :: 'R4' t => 'Lens'' (t a) ('V4' a)
+-- @
+_ywxz :: (R4 t, Functor f) => (V4 a -> f (V4 a)) -> t a -> f (t a)
+_ywxz f = _xyzw $ \(V4 a b c d) -> f (V4 b d a c) <&> \(V4 b' d' a' c') -> V4 a' b' c' d'
+{-# INLINE _ywxz #-}
+
+-- |
+-- @
+-- '_ywzx' :: 'R4' t => 'Lens'' (t a) ('V4' a)
+-- @
+_ywzx :: (R4 t, Functor f) => (V4 a -> f (V4 a)) -> t a -> f (t a)
+_ywzx f = _xyzw $ \(V4 a b c d) -> f (V4 b d c a) <&> \(V4 b' d' c' a') -> V4 a' b' c' d'
+{-# INLINE _ywzx #-}
+
+-- |
+-- @
+-- '_zxyw' :: 'R4' t => 'Lens'' (t a) ('V4' a)
+-- @
+_zxyw :: (R4 t, Functor f) => (V4 a -> f (V4 a)) -> t a -> f (t a)
+_zxyw f = _xyzw $ \(V4 a b c d) -> f (V4 c a b d) <&> \(V4 c' a' b' d') -> V4 a' b' c' d'
+{-# INLINE _zxyw #-}
+
+-- |
+-- @
+-- '_zxwy' :: 'R4' t => 'Lens'' (t a) ('V4' a)
+-- @
+_zxwy :: (R4 t, Functor f) => (V4 a -> f (V4 a)) -> t a -> f (t a)
+_zxwy f = _xyzw $ \(V4 a b c d) -> f (V4 c a d b) <&> \(V4 c' a' d' b') -> V4 a' b' c' d'
+{-# INLINE _zxwy #-}
+
+-- |
+-- @
+-- '_zyxw' :: 'R4' t => 'Lens'' (t a) ('V4' a)
+-- @
+_zyxw :: (R4 t, Functor f) => (V4 a -> f (V4 a)) -> t a -> f (t a)
+_zyxw f = _xyzw $ \(V4 a b c d) -> f (V4 c b a d) <&> \(V4 c' b' a' d') -> V4 a' b' c' d'
+{-# INLINE _zyxw #-}
+
+-- |
+-- @
+-- '_zywx' :: 'R4' t => 'Lens'' (t a) ('V4' a)
+-- @
+_zywx :: (R4 t, Functor f) => (V4 a -> f (V4 a)) -> t a -> f (t a)
+_zywx f = _xyzw $ \(V4 a b c d) -> f (V4 c b d a) <&> \(V4 c' b' d' a') -> V4 a' b' c' d'
+{-# INLINE _zywx #-}
+
+-- |
+-- @
+-- '_zwxy' :: 'R4' t => 'Lens'' (t a) ('V4' a)
+-- @
+_zwxy :: (R4 t, Functor f) => (V4 a -> f (V4 a)) -> t a -> f (t a)
+_zwxy f = _xyzw $ \(V4 a b c d) -> f (V4 c d a b) <&> \(V4 c' d' a' b') -> V4 a' b' c' d'
+{-# INLINE _zwxy #-}
+
+-- |
+-- @
+-- '_zwyx' :: 'R4' t => 'Lens'' (t a) ('V4' a)
+-- @
+_zwyx :: (R4 t, Functor f) => (V4 a -> f (V4 a)) -> t a -> f (t a)
+_zwyx f = _xyzw $ \(V4 a b c d) -> f (V4 c d b a) <&> \(V4 c' d' b' a') -> V4 a' b' c' d'
+{-# INLINE _zwyx #-}
+
+-- |
+-- @
+-- '_wxyz' :: 'R4' t => 'Lens'' (t a) ('V4' a)
+-- @
+_wxyz :: (R4 t, Functor f) => (V4 a -> f (V4 a)) -> t a -> f (t a)
+_wxyz f = _xyzw $ \(V4 a b c d) -> f (V4 d a b c) <&> \(V4 d' a' b' c') -> V4 a' b' c' d'
+{-# INLINE _wxyz #-}
+
+-- |
+-- @
+-- '_wxzy' :: 'R4' t => 'Lens'' (t a) ('V4' a)
+-- @
+_wxzy :: (R4 t, Functor f) => (V4 a -> f (V4 a)) -> t a -> f (t a)
+_wxzy f = _xyzw $ \(V4 a b c d) -> f (V4 d a c b) <&> \(V4 d' a' c' b') -> V4 a' b' c' d'
+{-# INLINE _wxzy #-}
+
+-- |
+-- @
+-- '_wyxz' :: 'R4' t => 'Lens'' (t a) ('V4' a)
+-- @
+_wyxz :: (R4 t, Functor f) => (V4 a -> f (V4 a)) -> t a -> f (t a)
+_wyxz f = _xyzw $ \(V4 a b c d) -> f (V4 d b a c) <&> \(V4 d' b' a' c') -> V4 a' b' c' d'
+{-# INLINE _wyxz #-}
+
+-- |
+-- @
+-- '_wyzx' :: 'R4' t => 'Lens'' (t a) ('V4' a)
+-- @
+_wyzx :: (R4 t, Functor f) => (V4 a -> f (V4 a)) -> t a -> f (t a)
+_wyzx f = _xyzw $ \(V4 a b c d) -> f (V4 d b c a) <&> \(V4 d' b' c' a') -> V4 a' b' c' d'
+{-# INLINE _wyzx #-}
+
+-- |
+-- @
+-- '_wzxy' :: 'R4' t => 'Lens'' (t a) ('V4' a)
+-- @
+_wzxy :: (R4 t, Functor f) => (V4 a -> f (V4 a)) -> t a -> f (t a)
+_wzxy f = _xyzw $ \(V4 a b c d) -> f (V4 d c a b) <&> \(V4 d' c' a' b') -> V4 a' b' c' d'
+{-# INLINE _wzxy #-}
+
+-- |
+-- @
+-- '_wzyx' :: 'R4' t => 'Lens'' (t a) ('V4' a)
+-- @
+_wzyx :: (R4 t, Functor f) => (V4 a -> f (V4 a)) -> t a -> f (t a)
+_wzyx f = _xyzw $ \(V4 a b c d) -> f (V4 d c b a) <&> \(V4 d' c' b' a') -> V4 a' b' c' d'
+{-# INLINE _wzyx #-}
 
 ew :: R4 t => E t
 ew = E _w
