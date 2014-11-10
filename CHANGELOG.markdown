@@ -1,3 +1,7 @@
+1.13
+----
+* Switched 'ortho' to follow the OpenGL handedness.
+
 1.12.1
 ------
 * Added "swizzle" lenses **e.g.** `_yzx`, which are useful for working with libraries like `gl`.

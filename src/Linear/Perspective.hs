@@ -93,9 +93,9 @@ ortho
   -> a -- ^ Far
   -> M44 a
 ortho left right bottom top near far =
-  V4 (V4 (2 / a) 0       0        (negate ((right + left) / a)))
-     (V4 0       (2 / b) 0        (negate ((top + bottom) / b)))
-     (V4 0       0       (-2 / c) ((far + near) / c))
+  V4 (V4 (2 / a) 0       0        (negate (right + left) / a))
+     (V4 0       (2 / b) 0        (negate (top + bottom) / b))
+     (V4 0       0       (-2 / c) (negate (far + near) / c))
      (V4 0       0       0        1)
   where a = right - left
         b = top - bottom
