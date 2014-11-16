@@ -1,3 +1,7 @@
+1.14.0.1
+--------
+* Fixed test failures caused by 1.14
+
 1.14
 ----
 * Moved `Coincides` to `Linear.Plucker.Coincides`. The constructors `Line` and `Ray` oft collided with user code.
