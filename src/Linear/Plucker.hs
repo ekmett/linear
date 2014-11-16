@@ -34,7 +34,8 @@ module Linear.Plucker
   , quadranceToOrigin
   , closestToOrigin
   , isLine
-  , Coincides(..)
+  , coincides
+  , coincides'
   -- * Basis elements
   ,      p01, p02, p03
   , p10,      p12, p13
@@ -442,26 +443,6 @@ coincides' p1 p2 = Foldable.all nearZero ((s *^ p2) - p1) && s > 0
         saveDiv x y | nearZero y = Option Nothing
                     | otherwise  = Option . Just $ First (x / y)
 {-# INLINABLE coincides' #-}
-
--- | When lines are represented as Plücker coordinates, we have the
--- ability to check for both directed and undirected
--- equality. Undirected equality between 'Line's (or a 'Line' and a
--- 'Ray') checks that the two lines coincide in 3D space. Directed
--- equality, between two 'Ray's, checks that two lines coincide in 3D,
--- and have the same direction. To accomodate these two notions of
--- equality, we use an 'Eq' instance on the 'Coincides' data type.
---
--- For example, to check the /directed/ equality between two lines,
--- @p1@ and @p2@, we write, @Ray p1 == Ray p2@.
-data Coincides a where
-  Line :: (Epsilon a, Fractional a) => Plucker a -> Coincides a
-  Ray  :: (Epsilon a, Fractional a, Ord a) => Plucker a -> Coincides a
-
-instance Eq (Coincides a) where
-  Line a == Line b  = coincides a b
-  Line a == Ray b   = coincides a b
-  Ray a  == Line b  = coincides a b
-  Ray a  == Ray b   = coincides' a b
 
 -- | The minimum squared distance of a line from the origin.
 quadranceToOrigin :: Fractional a => Plucker a -> a

@@ -1,6 +1,6 @@
 name:          linear
 category:      Math, Algebra
-version:       1.13
+version:       1.14
 license:       BSD3
 cabal-version: >= 1.8
 license-file:  LICENSE
@@ -61,6 +61,7 @@ library
     Linear.Metric
     Linear.Perspective
     Linear.Plucker
+    Linear.Plucker.Coincides
     Linear.Quaternion
     Linear.Trace
     Linear.V

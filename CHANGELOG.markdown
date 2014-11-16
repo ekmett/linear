@@ -1,3 +1,7 @@
+1.14
+----
+* Moved `Coincides` to `Linear.Plucker.Coincides`. The constructors `Line` and `Ray` oft collided with user code.
+
 1.13
 ----
 * Switched 'ortho' to follow the OpenGL handedness.
