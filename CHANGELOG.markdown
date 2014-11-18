@@ -1,3 +1,7 @@
+1.15
+----
+* Renamed `Linear.Perspective` to `Linear.Projection`.
+
 1.14.0.1
 --------
 * Fixed test failures caused by 1.14

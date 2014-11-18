@@ -7,9 +7,10 @@
 -- Stability   :  experimental
 -- Portability :  non-portable
 --
--- Common perspective transformation matrices.
+-- Common projection matrices: e.g. perspective/orthographic transformation
+-- matrices.
 ---------------------------------------------------------------------------
-module Linear.Perspective
+module Linear.Projection
   ( lookAt
   , perspective
   , infinitePerspective
