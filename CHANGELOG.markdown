@@ -1,6 +1,7 @@
 1.15
 ----
 * Renamed `Linear.Perspective` to `Linear.Projection`.
+* Fixed a build issue with GHC HEAD.
 
 1.14.0.1
 --------
