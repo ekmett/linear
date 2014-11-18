@@ -1,3 +1,7 @@
+1.15.0.1
+--------
+* Fixed build failures caused by `Linear` re-exporting the old name.
+
 1.15
 ----
 * Renamed `Linear.Perspective` to `Linear.Projection`.
