@@ -13,6 +13,7 @@
 module Linear.Projection
   ( lookAt
   , perspective
+  , inversePerspective
   , infinitePerspective
   , ortho
   ) where
@@ -62,6 +63,25 @@ perspective fovy aspect near far =
         z = -(far + near) / (far - near)
         w = -(2 * far * near) / (far - near)
 
+-- | Build an inverse perspective matrix
+inversePerspective
+  :: Floating a
+  => a -- ^ FOV
+  -> a -- ^ Aspect ratio
+  -> a -- ^ Near plane
+  -> a -- ^ Far plane
+  -> M44 a
+inversePerspective fovy aspect near far =
+  V4 (V4 a 0 0 0   )
+     (V4 0 b 0 0   )
+     (V4 0 0 0 (-1))
+     (V4 0 0 c d   )
+  where tanHalfFovy = tan $ fovy / 2
+        a = aspect * tanHalfFovy
+        b = tanHalfFovy
+        c = -(far - near) / (2 * far * near)
+        d = (far + near) / (2 * far * near)
+ 
 -- | Build a matrix for a symmetric perspective-view frustum with a far plane at infinite
 infinitePerspective
   :: Floating a
