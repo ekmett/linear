@@ -9,6 +9,10 @@
 --
 -- Common projection matrices: e.g. perspective/orthographic transformation
 -- matrices.
+--
+-- Analytically derived inverses are also supplied, because they can be
+-- much more accurate in practice than computing them through general
+-- purpose means
 ---------------------------------------------------------------------------
 module Linear.Projection
   ( lookAt
