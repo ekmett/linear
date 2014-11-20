@@ -56,7 +56,7 @@
 <a name="line-47"></a><a name="perspective"></a><span class='hs-comment'>-- | Build a matrix for a symmetric perspective-view frustum</span>
 <a name="line-48"></a><span class='hs-definition'>perspective</span>
 <a name="line-49"></a>  <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Floating</span> <span class='hs-varid'>a</span>
-<a name="line-50"></a>  <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ FOV</span>
+<a name="line-50"></a>  <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ FOV (y direction, in radians)</span>
 <a name="line-51"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Aspect ratio</span>
 <a name="line-52"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Near plane</span>
 <a name="line-53"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Far plane</span>
@@ -75,7 +75,7 @@
 <a name="line-66"></a><a name="inversePerspective"></a><span class='hs-comment'>-- | Build an inverse perspective matrix</span>
 <a name="line-67"></a><span class='hs-definition'>inversePerspective</span>
 <a name="line-68"></a>  <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Floating</span> <span class='hs-varid'>a</span>
-<a name="line-69"></a>  <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ FOV</span>
+<a name="line-69"></a>  <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ FOV (y direction, in radians)</span>
 <a name="line-70"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Aspect ratio</span>
 <a name="line-71"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Near plane</span>
 <a name="line-72"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Far plane</span>
@@ -95,12 +95,12 @@
 <a name="line-86"></a><a name="frustum"></a><span class='hs-comment'>-- | Build a perspective matrix per the classic @glFrustum@ arguments.</span>
 <a name="line-87"></a><span class='hs-definition'>frustum</span>
 <a name="line-88"></a>  <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Floating</span> <span class='hs-varid'>a</span>
-<a name="line-89"></a>  <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ left</span>
-<a name="line-90"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ right</span>
-<a name="line-91"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ bottom</span>
-<a name="line-92"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ top</span>
-<a name="line-93"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ near</span>
-<a name="line-94"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ far</span>
+<a name="line-89"></a>  <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Left</span>
+<a name="line-90"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Right</span>
+<a name="line-91"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Bottom</span>
+<a name="line-92"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Top</span>
+<a name="line-93"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Near</span>
+<a name="line-94"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Far</span>
 <a name="line-95"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>M44</span> <span class='hs-varid'>a</span>
 <a name="line-96"></a><span class='hs-definition'>frustum</span> <span class='hs-varid'>l</span> <span class='hs-varid'>r</span> <span class='hs-varid'>b</span> <span class='hs-varid'>t</span> <span class='hs-varid'>n</span> <span class='hs-varid'>f</span> <span class='hs-keyglyph'>=</span> 
 <a name="line-97"></a>  <span class='hs-conid'>V4</span> <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-varid'>x</span> <span class='hs-num'>0</span> <span class='hs-varid'>a</span>    <span class='hs-num'>0</span><span class='hs-layout'>)</span>
@@ -120,12 +120,12 @@
 <a name="line-111"></a>
 <a name="line-112"></a><a name="inverseFrustum"></a><span class='hs-definition'>inverseFrustum</span>
 <a name="line-113"></a>  <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Floating</span> <span class='hs-varid'>a</span>
-<a name="line-114"></a>  <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ left</span>
-<a name="line-115"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ right</span>
-<a name="line-116"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ bottom</span>
-<a name="line-117"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ top</span>
-<a name="line-118"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ near</span>
-<a name="line-119"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ far</span>
+<a name="line-114"></a>  <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Left</span>
+<a name="line-115"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Right</span>
+<a name="line-116"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Bottom</span>
+<a name="line-117"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Top</span>
+<a name="line-118"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Near</span>
+<a name="line-119"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Far</span>
 <a name="line-120"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>M44</span> <span class='hs-varid'>a</span>
 <a name="line-121"></a><span class='hs-definition'>inverseFrustum</span> <span class='hs-varid'>l</span> <span class='hs-varid'>r</span> <span class='hs-varid'>b</span> <span class='hs-varid'>t</span> <span class='hs-varid'>n</span> <span class='hs-varid'>f</span> <span class='hs-keyglyph'>=</span> 
 <a name="line-122"></a>  <span class='hs-conid'>V4</span> <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-varid'>rx</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-varid'>ax</span><span class='hs-layout'>)</span>
@@ -145,7 +145,7 @@
 <a name="line-136"></a><a name="infinitePerspective"></a><span class='hs-comment'>-- | Build a matrix for a symmetric perspective-view frustum with a far plane at infinite</span>
 <a name="line-137"></a><span class='hs-definition'>infinitePerspective</span>
 <a name="line-138"></a>  <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Floating</span> <span class='hs-varid'>a</span>
-<a name="line-139"></a>  <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ FOV</span>
+<a name="line-139"></a>  <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ FOV (y direction, in radians)</span>
 <a name="line-140"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Aspect Ratio</span>
 <a name="line-141"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Near plane</span>
 <a name="line-142"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>M44</span> <span class='hs-varid'>a</span>
@@ -165,7 +165,7 @@
 <a name="line-156"></a>
 <a name="line-157"></a><a name="inverseInfinitePerspective"></a><span class='hs-definition'>inverseInfinitePerspective</span>
 <a name="line-158"></a>  <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Floating</span> <span class='hs-varid'>a</span>
-<a name="line-159"></a>  <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ FOV</span>
+<a name="line-159"></a>  <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ FOV (y direction, in radians)</span>
 <a name="line-160"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Aspect Ratio</span>
 <a name="line-161"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Near plane</span>
 <a name="line-162"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>M44</span> <span class='hs-varid'>a</span>
