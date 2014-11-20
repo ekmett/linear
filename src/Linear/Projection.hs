@@ -161,19 +161,19 @@ inverseInfinitePerspective
   -> a -- ^ Near plane
   -> M44 a
 inverseInfinitePerspective fovy a n =
-  V4 (V4 ix 0 0  0)
-     (V4 0 iy 0  0)
+  V4 (V4 rx 0 0  0)
+     (V4 0 ry 0  0)
      (V4 0 0  0  (-1))
-     (V4 0 0  iw (-iw))
+     (V4 0 0  rw (-rw))
   where
     t = n*tan(fovy/2)
     b = -t
     l = b*a
     r = t*a
     hrn = 0.5/n
-    ix = (r-l)*hrn
-    iy = (t-b)*hrn
-    iw = -hrn
+    rx = (r-l)*hrn
+    ry = (t-b)*hrn
+    rw = -hrn
 
 -- | Build an orthographic perspective matrix from 6 clipping planes
 ortho
