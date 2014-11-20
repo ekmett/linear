@@ -47,7 +47,7 @@ lookAt eye center up =
 -- | Build a matrix for a symmetric perspective-view frustum
 perspective
   :: Floating a
-  => a -- ^ FOV
+  => a -- ^ FOV (y direction, in radians)
   -> a -- ^ Aspect ratio
   -> a -- ^ Near plane
   -> a -- ^ Far plane
@@ -66,7 +66,7 @@ perspective fovy aspect near far =
 -- | Build an inverse perspective matrix
 inversePerspective
   :: Floating a
-  => a -- ^ FOV
+  => a -- ^ FOV (y direction, in radians)
   -> a -- ^ Aspect ratio
   -> a -- ^ Near plane
   -> a -- ^ Far plane
@@ -86,12 +86,12 @@ inversePerspective fovy aspect near far =
 -- | Build a perspective matrix per the classic @glFrustum@ arguments.
 frustum
   :: Floating a
-  => a -- ^ left
-  -> a -- ^ right
-  -> a -- ^ bottom
-  -> a -- ^ top
-  -> a -- ^ near
-  -> a -- ^ far
+  => a -- ^ Left
+  -> a -- ^ Right
+  -> a -- ^ Bottom
+  -> a -- ^ Top
+  -> a -- ^ Near
+  -> a -- ^ Far
   -> M44 a
 frustum l r b t n f = 
   V4 (V4 x 0 a    0)
@@ -111,12 +111,12 @@ frustum l r b t n f =
 
 inverseFrustum
   :: Floating a
-  => a -- ^ left
-  -> a -- ^ right
-  -> a -- ^ bottom
-  -> a -- ^ top
-  -> a -- ^ near
-  -> a -- ^ far
+  => a -- ^ Left
+  -> a -- ^ Right
+  -> a -- ^ Bottom
+  -> a -- ^ Top
+  -> a -- ^ Near
+  -> a -- ^ Far
   -> M44 a
 inverseFrustum l r b t n f = 
   V4 (V4 rx 0 0 ax)
@@ -136,7 +136,7 @@ inverseFrustum l r b t n f =
 -- | Build a matrix for a symmetric perspective-view frustum with a far plane at infinite
 infinitePerspective
   :: Floating a
-  => a -- ^ FOV
+  => a -- ^ FOV (y direction, in radians)
   -> a -- ^ Aspect Ratio
   -> a -- ^ Near plane
   -> M44 a
@@ -156,7 +156,7 @@ infinitePerspective fovy a n =
 
 inverseInfinitePerspective
   :: Floating a
-  => a -- ^ FOV
+  => a -- ^ FOV (y direction, in radians)
   -> a -- ^ Aspect Ratio
   -> a -- ^ Near plane
   -> M44 a
