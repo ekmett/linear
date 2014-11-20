@@ -12,13 +12,10 @@
 ---------------------------------------------------------------------------
 module Linear.Projection
   ( lookAt
-  , perspective
-  , inversePerspective
-  , infinitePerspective
-  , inverseInfinitePerspective
-  , frustum
-  , inverseFrustum
-  , ortho
+  , perspective, inversePerspective
+  , infinitePerspective, inverseInfinitePerspective
+  , frustum, inverseFrustum
+  , ortho, inverseOrtho
   ) where
 
 import Control.Lens hiding (index)
@@ -188,11 +185,33 @@ ortho
   -> a -- ^ Near
   -> a -- ^ Far
   -> M44 a
-ortho left right bottom top near far =
-  V4 (V4 (2 / a) 0       0        (negate (right + left) / a))
-     (V4 0       (2 / b) 0        (negate (top + bottom) / b))
-     (V4 0       0       (-2 / c) (negate (far + near) / c))
-     (V4 0       0       0        1)
-  where a = right - left
-        b = top - bottom
-        c = far - near
+ortho l r b t n f =
+  V4 (V4 (-2*x) 0      0     ((r+l)*x))
+     (V4 0      (-2*y) 0     ((t+b)*y))
+     (V4 0      0      (2*z) ((f+n)*z))
+     (V4 0      0      0     1)
+  where x = recip(l-r)
+        y = recip(b-t)
+        z = recip(n-f)
+
+-- | Build an inverse orthographic perspective matrix from 6 clipping planes
+inverseOrtho
+  :: Floating a
+  => a -- ^ Left
+  -> a -- ^ Right
+  -> a -- ^ Bottom
+  -> a -- ^ Top
+  -> a -- ^ Near
+  -> a -- ^ Far
+  -> M44 a
+inverseOrtho l r b t n f =
+  V4 (V4 x 0 0 c)
+     (V4 0 y 0 d)
+     (V4 0 0 z e)
+     (V4 0 0 0 1)
+  where x = 0.5*(r-l)
+        y = 0.5*(t-b)
+        z = 0.5*(n-f)
+        c = 0.5*(l+r)
+        d = 0.5*(b+t)
+        e = -0.5*(n+f)
