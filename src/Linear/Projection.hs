@@ -15,6 +15,9 @@ module Linear.Projection
   , perspective
   , inversePerspective
   , infinitePerspective
+  , inverseInfinitePerspective
+  , frustum
+  , inverseFrustum
   , ortho
   ) where
 
@@ -82,6 +85,57 @@ inversePerspective fovy aspect near far =
         c = -(far - near) / (2 * far * near)
         d = (far + near) / (2 * far * near)
  
+
+-- | Build a perspective matrix per the classic @glFrustum@ arguments.
+frustum
+  :: Floating a
+  => a -- ^ left
+  -> a -- ^ right
+  -> a -- ^ bottom
+  -> a -- ^ top
+  -> a -- ^ near
+  -> a -- ^ far
+  -> M44 a
+frustum l r b t n f = 
+  V4 (V4 x 0 a    0)
+     (V4 0 y e    0)
+     (V4 0 0 c    d)
+     (V4 0 0 (-1) 0)
+  where
+    rml = r-l 
+    tmb = t-b
+    fmn = f-n
+    x = 2*n/rml
+    y = 2*n/tmb
+    a = (r+l)/rml
+    e = (t+b)/tmb
+    c = negate (f+n)/fmn
+    d = (-2*f*n)/fmn
+
+inverseFrustum
+  :: Floating a
+  => a -- ^ left
+  -> a -- ^ right
+  -> a -- ^ bottom
+  -> a -- ^ top
+  -> a -- ^ near
+  -> a -- ^ far
+  -> M44 a
+inverseFrustum l r b t n f = 
+  V4 (V4 rx 0 0 ax)
+     (V4 0 ry 0 by)
+     (V4 0 0 0 (-1))
+     (V4 0 0 rd cd)
+  where
+    hrn  = 0.5/n
+    hrnf = 0.5/(n*f)
+    rx = (r-l)*hrn
+    ry = (t-b)*hrn
+    ax = (r+l)*hrn
+    by = (t+b)*hrn
+    cd = (f+n)*hrnf
+    rd = (n-f)*hrnf
+
 -- | Build a matrix for a symmetric perspective-view frustum with a far plane at infinite
 infinitePerspective
   :: Floating a
@@ -89,19 +143,40 @@ infinitePerspective
   -> a -- ^ Aspect Ratio
   -> a -- ^ Near plane
   -> M44 a
-infinitePerspective fovy aspect near =
+infinitePerspective fovy a n =
   V4 (V4 x 0 0    0)
      (V4 0 y 0    0)
      (V4 0 0 (-1) w)
      (V4 0 0 (-1) 0)
-  where range  = tan (fovy / 2) * near
-        left   = -range * aspect
-        right  = range * aspect
-        bottom = -range
-        top    = range
-        x = (2 * near) / (right - left)
-        y = (2 * near) / (top - bottom)
-        w = -2 * near
+  where
+    t = n*tan(fovy/2)
+    b = -t
+    l = b*a
+    r = t*a
+    x = (2*n)/(r-l)
+    y = (2*n)/(t-b)
+    w = -2*n
+
+inverseInfinitePerspective
+  :: Floating a
+  => a -- ^ FOV
+  -> a -- ^ Aspect Ratio
+  -> a -- ^ Near plane
+  -> M44 a
+inverseInfinitePerspective fovy a n =
+  V4 (V4 ix 0 0  0)
+     (V4 0 iy 0  0)
+     (V4 0 0  0  (-1))
+     (V4 0 0  iw (-iw))
+  where
+    t = n*tan(fovy/2)
+    b = -t
+    l = b*a
+    r = t*a
+    hrn = 0.5/n
+    ix = (r-l)*hrn
+    iy = (t-b)*hrn
+    iw = -hrn
 
 -- | Build an orthographic perspective matrix from 6 clipping planes
 ortho
