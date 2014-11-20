@@ -1,3 +1,8 @@
+1.15.2
+------
+* Added `frustum`, analogous to the old `glFrustum` call.
+* Added `inverseInfinitePerspective`, `inverseOrtho`, `inverseFrustum`.
+
 1.15.1
 ------
 * Added `inversePerspective`. It is much more accurate to compute it directly than to compute an inverse.
