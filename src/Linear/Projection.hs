@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 ---------------------------------------------------------------------------
 -- |
 -- Copyright   :  (C) 2014 Edward Kmett
@@ -28,6 +29,10 @@ import Linear.V4
 import Linear.Matrix
 import Linear.Epsilon
 import Linear.Metric
+
+#ifdef HLINT
+{-# ANN module "HLint: ignore Reduce Duplication" #-}
+#endif
 
 -- | Build a look at view matrix
 lookAt
