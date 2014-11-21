@@ -31,7 +31,7 @@ import Linear.Epsilon
 import Linear.Metric
 
 #ifdef HLINT
-{-# ANN module "HLint: ignore Reduce Duplication" #-}
+{-# ANN module "HLint: ignore Reduce duplication" #-}
 #endif
 
 -- | Build a look at view matrix
