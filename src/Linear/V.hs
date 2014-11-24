@@ -7,16 +7,14 @@
 {-# LANGUAGE EmptyDataDecls #-}
 {-# LANGUAGE MultiParamTypeClasses, FlexibleContexts, FlexibleInstances, UndecidableInstances #-}
 {-# LANGUAGE DeriveDataTypeable #-}
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 707
+#if __GLASGOW_HASKELL__ >= 707
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE RoleAnnotations #-}
 #define USE_TYPE_LITS 1
 #endif
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE DeriveGeneric #-}
-#endif
 
 #ifndef MIN_VERSION_reflection
 #define MIN_VERSION_reflection(x,y,z) 1
@@ -53,7 +51,7 @@ import Data.Distributive
 import Data.Foldable as Foldable
 import Data.Functor.Bind
 import Data.Functor.Rep as Rep
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ < 708
+#if __GLASGOW_HASKELL__ < 708
 import Data.Proxy
 #endif
 import Data.Reflection as R
@@ -63,10 +61,10 @@ import Foreign.Storable
 #ifdef USE_TYPE_LITS
 import GHC.TypeLits
 #endif
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+#if __GLASGOW_HASKELL__ >= 702
 import GHC.Generics (Generic)
 #endif
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 707
+#if __GLASGOW_HASKELL__ >= 707
 import GHC.Generics (Generic1)
 #endif
 #if !(MIN_VERSION_reflection(1,3,0))
@@ -79,17 +77,14 @@ import Linear.Vector
 class Dim n where
   reflectDim :: p n -> Int
 
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 707
+#if __GLASGOW_HASKELL__ >= 707
 type role V nominal representational
 #endif
 
 newtype V n a = V { toVector :: V.Vector a } deriving (Eq,Ord,Show,Read,Typeable
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
                                                       , Generic
-#endif
-                                                       
 -- GHC bug: https://ghc.haskell.org/trac/ghc/ticket/8468
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 707
+#if __GLASGOW_HASKELL__ >= 707
                                                       ,Generic1
 #endif
                                                       )
@@ -315,3 +310,20 @@ instance (Bounded a, Dim n) => Bounded (V n a) where
   {-# INLINE minBound #-}
   maxBound = pure maxBound
   {-# INLINE maxBound #-}
+
+vConstr :: Constr
+vConstr = mkConstr vDataType "variadic" [] Prefix
+{-# NOINLINE vConstr #-}
+
+vDataType :: DataType
+vDataType = mkDataType "Linear.V.V" [vConstr]
+{-# NOINLINE vDataType #-}
+
+instance (Dim n, Typeable n, Data a) => Data (V n a) where
+  gfoldl f z (V as) = z (V . fromList) `f` V.toList as
+  toConstr _ = vConstr
+  gunfold k z c = case constrIndex c of
+    1 -> k (z (V . fromList))
+    _ -> error "gunfold"
+  dataTypeOf _ = vDataType
+  dataCast1 f = gcast1 f

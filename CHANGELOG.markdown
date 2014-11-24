@@ -1,3 +1,7 @@
+1.15.4
+------
+* Added Typeable and Data instances for V
+
 1.15.3
 ------
 * Added missing `FunctorWithIndex`, `FoldableWithIndex` and `TraversableWithIndex Int (V n)` instances for `V`
