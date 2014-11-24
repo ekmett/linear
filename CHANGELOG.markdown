@@ -1,3 +1,7 @@
+1.15.3
+------
+* Added missing `FunctorWithIndex`, `FoldableWithIndex` and `TraversableWithIndex Int (V n)` instances for `V`
+
 1.15.2
 ------
 * Added `frustum`, analogous to the old `glFrustum` call.

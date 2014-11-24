@@ -126,13 +126,25 @@ instance Functor (V n) where
   fmap f (V as) = V (fmap f as)
   {-# INLINE fmap #-}
 
+instance FunctorWithIndex Int (V n) where
+  imap f (V as) = V (Lens.imap f as)
+  {-# INLINE imap #-}
+
 instance Foldable (V n) where
   foldMap f (V as) = foldMap f as
   {-# INLINE foldMap #-}
 
+instance FoldableWithIndex Int (V n) where
+  ifoldMap f (V as) = ifoldMap f as
+  {-# INLINE ifoldMap #-}
+
 instance Traversable (V n) where
   traverse f (V as) = V <$> traverse f as
   {-# INLINE traverse #-}
+
+instance TraversableWithIndex Int (V n) where
+  itraverse f (V as) = V <$> itraverse f as
+  {-# INLINE itraverse #-}
 
 instance Apply (V n) where
   V as <.> V bs = V (V.zipWith id as bs)
