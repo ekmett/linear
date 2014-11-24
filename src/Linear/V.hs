@@ -6,6 +6,7 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE EmptyDataDecls #-}
 {-# LANGUAGE MultiParamTypeClasses, FlexibleContexts, FlexibleInstances, UndecidableInstances #-}
+{-# LANGUAGE DeriveDataTypeable #-}
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 707
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE PolyKinds #-}
@@ -47,11 +48,14 @@ import Control.Applicative
 import Control.Monad.Fix
 import Control.Monad.Zip
 import Control.Lens as Lens
+import Data.Data
 import Data.Distributive
 import Data.Foldable as Foldable
 import Data.Functor.Bind
 import Data.Functor.Rep as Rep
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ < 708
 import Data.Proxy
+#endif
 import Data.Reflection as R
 import Data.Vector as V
 import Foreign.Ptr
@@ -79,10 +83,11 @@ class Dim n where
 type role V nominal representational
 #endif
 
-newtype V n a = V { toVector :: V.Vector a } deriving (Eq,Ord,Show,Read
+newtype V n a = V { toVector :: V.Vector a } deriving (Eq,Ord,Show,Read,Typeable
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
-                                                      ,Generic
+                                                      , Generic
 #endif
+                                                       
 -- GHC bug: https://ghc.haskell.org/trac/ghc/ticket/8468
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 707
                                                       ,Generic1
