@@ -74,6 +74,11 @@ import Linear.Epsilon
 import Linear.Metric
 import Linear.Vector
 
+
+#ifdef HLINT
+{-# ANN module "hlint: ignore Eta reduce" #-}
+#endif
+
 class Dim n where
   reflectDim :: p n -> Int
 
@@ -327,3 +332,4 @@ instance (Dim n, Typeable n, Data a) => Data (V n a) where
     _ -> error "gunfold"
   dataTypeOf _ = vDataType
   dataCast1 f = gcast1 f
+
