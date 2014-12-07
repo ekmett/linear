@@ -11,9 +11,8 @@
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE DeriveGeneric #-}
 #endif
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 708
 {-# LANGUAGE DeriveDataTypeable #-}
-#else
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ < 708
 {-# LANGUAGE StandaloneDeriving #-}
 #endif
 -----------------------------------------------------------------------------
