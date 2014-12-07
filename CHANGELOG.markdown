@@ -1,3 +1,7 @@
+1.15.5
+------
+* Added `Metric` instances for `[]`, `ZipList`, `Maybe`
+
 1.15.4
 ------
 * Added Typeable and Data instances for V

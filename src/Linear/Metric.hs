@@ -18,6 +18,7 @@ module Linear.Metric
   ( Metric(..), normalize, project
   ) where
 
+import Control.Applicative
 import Data.Foldable as Foldable
 import Data.Functor.Identity
 import Data.Vector (Vector)
@@ -68,6 +69,14 @@ class Additive f => Metric f where
 
 instance Metric Identity where
   dot (Identity x) (Identity y) = x * y
+
+instance Metric []
+
+instance Metric Maybe
+
+instance Metric ZipList where
+  -- ZipList is missing its Foldable instance
+  dot (ZipList x) (ZipList y) = dot x y
 
 instance Metric IntMap
 
