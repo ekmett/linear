@@ -11,6 +11,11 @@
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE DeriveGeneric #-}
 #endif
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 708
+{-# LANGUAGE DeriveDataTypeable #-}
+#else
+{-# LANGUAGE StandaloneDeriving #-}
+#endif
 -----------------------------------------------------------------------------
 -- |
 -- License     :  BSD-style (see the file LICENSE)
@@ -25,6 +30,7 @@ module Linear.Affine where
 import Control.Applicative
 import Control.Lens
 import Data.Complex (Complex)
+import Data.Data
 import Data.Distributive
 import Data.Foldable as Foldable
 import Data.Functor.Bind
@@ -128,7 +134,18 @@ newtype Point f a = P (f a)
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
            , Generic1
 #endif
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 708
+           , Typeable, Data
+#endif
            )
+
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ < 708
+instance forall f. Typeable1 f => Typeable1 (Point f) where
+  typeOf1 _ = mkTyConApp (mkTyCon3 "linear" "Linear.Affine" "Point") [] `mkAppTy`
+              typeOf1 (undefined :: f a)
+
+deriving instance (Data (f a), Typeable1 f, Typeable a) => Data (Point f a)
+#endif
 
 lensP :: Lens' (Point g a) (g a)
 lensP afb (P a) = P <$> afb a
@@ -163,7 +180,7 @@ type instance IxValue (Point f a) = IxValue (f a)
 instance Ixed (f a) => Ixed (Point f a) where
   ix l = lensP . ix l
   {-# INLINE ix #-}
-  
+
 instance Traversable f => Each (Point f a) (Point f b) a b where
   each = traverse
   {-# INLINE each #-}
