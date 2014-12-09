@@ -4,6 +4,10 @@
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
 #endif
+
+#ifdef HLINT
+{-# ANN module "HLint: ignore Reduce duplication" #-}
+#endif
 ---------------------------------------------------------------------------
 -- |
 -- Copyright   :  (C) 2012-2013 Edward Kmett,
