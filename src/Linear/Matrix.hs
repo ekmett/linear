@@ -21,7 +21,7 @@ module Linear.Matrix
   , adjoint
   , M22, M23, M24, M32, M33, M34, M42, M43, M44
   , m33_to_m44, m43_to_m44
-  , det22, det33, inv22, inv33
+  , det22, det33, det44, inv22, inv33, inv44
   , eye2, eye3, eye4
   , Trace(..)
   , translation
@@ -34,6 +34,7 @@ module Linear.Matrix
 import Control.Applicative
 import Control.Lens hiding (index)
 import Control.Lens.Internal.Context
+import Control.Monad (guard)
 import Data.Distributive
 import Data.Foldable as Foldable
 import Data.Functor.Rep
@@ -264,6 +265,29 @@ det33 (V3 (V3 a b c)
           (V3 g h i)) = a * (e*i-f*h) - d * (b*i-c*h) + g * (b*f-c*e)
 {-# INLINE det33 #-}
 
+-- |4x4 matrix determinant.
+det44 :: Num a => M44 a -> a
+det44 (V4 (V4 i00 i01 i02 i03)
+          (V4 i10 i11 i12 i13)
+          (V4 i20 i21 i22 i23)
+          (V4 i30 i31 i32 i33)) =
+  let
+    s0 = i00 * i11 - i10 * i01
+    s1 = i00 * i12 - i10 * i02
+    s2 = i00 * i13 - i10 * i03
+    s3 = i01 * i12 - i11 * i02
+    s4 = i01 * i13 - i11 * i03
+    s5 = i02 * i13 - i12 * i03
+
+    c5 = i22 * i33 - i32 * i23
+    c4 = i21 * i33 - i31 * i23
+    c3 = i21 * i32 - i31 * i22
+    c2 = i20 * i33 - i30 * i23
+    c1 = i20 * i32 - i30 * i22
+    c0 = i20 * i31 - i30 * i21
+  in s0 * c5 - s1 * c4 + s2 * c3 + s3 * c2 - s4 * c1 + s5 * c0
+{-# INLINE det44 #-}
+
 -- |2x2 matrix inverse.
 --
 -- >>> inv22 $ V2 (V2 1 2) (V2 3 4)
@@ -307,3 +331,44 @@ inv33 m@(V3 (V3 a b c)
 -- V2 (V3 1 3 5) (V3 2 4 6)
 transpose :: (Distributive g, Functor f) => f (g a) -> g (f a)
 transpose = distribute
+{-# INLINE transpose #-}
+
+-- |4x4 matrix inverse.
+inv44 :: (Epsilon a, Fractional a) => M44 a -> Maybe (M44 a)
+inv44 (V4 (V4 i00 i01 i02 i03)
+          (V4 i10 i11 i12 i13)
+          (V4 i20 i21 i22 i23)
+          (V4 i30 i31 i32 i33)) =
+  let s0 = i00 * i11 - i10 * i01
+      s1 = i00 * i12 - i10 * i02
+      s2 = i00 * i13 - i10 * i03
+      s3 = i01 * i12 - i11 * i02
+      s4 = i01 * i13 - i11 * i03
+      s5 = i02 * i13 - i12 * i03
+      c5 = i22 * i33 - i32 * i23
+      c4 = i21 * i33 - i31 * i23
+      c3 = i21 * i32 - i31 * i22
+      c2 = i20 * i33 - i30 * i23
+      c1 = i20 * i32 - i30 * i22
+      c0 = i20 * i31 - i30 * i21
+      det = s0 * c5 - s1 * c4 + s2 * c3 + s3 * c2 - s4 * c1 + s5 * c0
+      invDet = recip det
+  in do guard (not (nearZero det))
+        return (invDet *!!
+                V4 (V4 (i11 * c5 - i12 * c4 + i13 * c3)
+                       (-i01 * c5 + i02 * c4 - i03 * c3)
+                       (i31 * s5 - i32 * s4 + i33 * s3)
+                       (-i21 * s5 + i22 * s4 - i23 * s3))
+                   (V4 (-i10 * c5 + i12 * c2 - i13 * c1)
+                       (i00 * c5 - i02 * c2 + i03 * c1)
+                       (-i30 * s5 + i32 * s2 - i33 * s1)
+                       (i20 * s5 - i22 * s2 + i23 * s1))
+                   (V4 (i10 * c4 - i11 * c2 + i13 * c0)
+                       (-i00 * c4 + i01 * c2 - i03 * c0)
+                       (i30 * s4 - i31 * s2 + i33 * s0)
+                       (-i20 * s4 + i21 * s2 - i23 * s0))
+                   (V4 (-i10 * c3 + i11 * c1 - i12 * c0)
+                       (i00 * c3 - i01 * c1 + i02 * c0)
+                       (-i30 * s3 + i31 * s1 - i32 * s0)
+                       (i20 * s3 - i21 * s1 + i22 * s0)))
+{-# INLINE inv44 #-}
