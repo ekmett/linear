@@ -1,6 +1,8 @@
 1.15.5
 ------
 * Added `Metric` instances for `[]`, `ZipList`, `Maybe`
+* Added `det44` and `inv44` to `Linear.Matrix`
+* Added `Data` instance for `Point`
 
 1.15.4
 ------
