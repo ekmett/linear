@@ -5,9 +5,6 @@
 {-# LANGUAGE Trustworthy #-}
 #endif
 
-#ifdef HLINT
-{-# ANN module "HLint: ignore Reduce duplication" #-}
-#endif
 ---------------------------------------------------------------------------
 -- |
 -- Copyright   :  (C) 2012-2013 Edward Kmett,
@@ -50,6 +47,10 @@ import Linear.V4
 import Linear.Vector
 import Linear.Conjugate
 import Linear.Trace
+
+#ifdef HLINT
+{-# ANN module "HLint: ignore Reduce duplication" #-}
+#endif
 
 -- | This is a generalization of 'Control.Lens.inside' to work over any corepresentable 'Functor'.
 --
