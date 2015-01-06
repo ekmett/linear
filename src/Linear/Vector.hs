@@ -28,7 +28,7 @@ module Linear.Vector
   , sumV
   , basis
   , basisFor
-  , kronecker
+  , scaled
   , outer
   , unit
   ) where
@@ -384,9 +384,9 @@ basis = basisFor (zero :: Additive v => v Int)
 basisFor :: (Traversable t, Num a) => t b -> [t a]
 basisFor = choices . traverse (\_ -> SetOne 0 [1])
 
--- | Produce a diagonal matrix from a vector.
-kronecker :: (Traversable t, Num a) => t a -> t (t a)
-kronecker v = fillFromList (choices $ traverse (\a -> SetOne 0 [a]) v) v
+-- | Produce a diagonal (scale) matrix from a vector.
+scaled :: (Traversable t, Num a) => t a -> t (t a)
+scaled v = fillFromList (choices $ traverse (\a -> SetOne 0 [a]) v) v
 
 -- | Create a unit vector.
 --
