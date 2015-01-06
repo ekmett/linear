@@ -1,3 +1,7 @@
+1.16
+----
+* Renamed `kronecker` to `scaled`.
+
 1.15.5
 ------
 * Added `Metric` instances for `[]`, `ZipList`, `Maybe`
