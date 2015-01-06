@@ -33,9 +33,6 @@ module Linear.Matrix
   , fromQuaternion
   , mkTransformation
   , mkTransformationMat
-  , scale2
-  , scale3
-  , scale4
   ) where
 
 import Control.Applicative
@@ -379,24 +376,3 @@ inv44 (V4 (V4 i00 i01 i02 i03)
                        (-i30 * s3 + i31 * s1 - i32 * s0)
                        (i20 * s3 - i21 * s1 + i22 * s0)))
 {-# INLINE inv44 #-}
-
--- | 2x2 scale matrix.
-scale2 :: (Num a) => V2 a -> M22 a
-scale2 (V2 x y) = V2 (V2 x 0) (V2 0 y)
-
--- | 3x3 scale matrix.
-scale3 :: (Num a) => V3 a -> M33 a
-scale3 (V3 x y z) =
-  V3
-    (V3 x 0 0)
-    (V3 0 y 0)
-    (V3 0 0 z)
-
--- | 4x4 scale matrix.
-scale4 :: (Num a) => V4 a -> M44 a
-scale4 (V4 x y z w) =
-  V4
-    (V4 x 0 0 0)
-    (V4 0 y 0 0)
-    (V4 0 0 z 0)
-    (V4 0 0 0 w)
