@@ -385,6 +385,9 @@ basisFor :: (Traversable t, Num a) => t b -> [t a]
 basisFor = choices . traverse (\_ -> SetOne 0 [1])
 
 -- | Produce a diagonal (scale) matrix from a vector.
+--
+-- >>> scaled (V2 2 3)
+-- V2 (V2 2 0) (V2 0 3)
 scaled :: (Traversable t, Num a) => t a -> t (t a)
 scaled v = fillFromList (choices $ traverse (\a -> SetOne 0 [a]) v) v
 
