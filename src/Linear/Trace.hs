@@ -20,8 +20,8 @@ module Linear.Trace
   ) where
 
 import Control.Monad as Monad
--- import Linear.V1
 import Linear.V0
+import Linear.V1
 import Linear.V2
 import Linear.V3
 import Linear.V4
@@ -83,6 +83,7 @@ instance (Eq k, Hashable k) => Trace (HashMap k) where
 
 instance Dim n => Trace (V n)
 instance Trace V0
+instance Trace V1
 instance Trace V2
 instance Trace V3
 instance Trace V4

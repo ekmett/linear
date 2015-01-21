@@ -1,3 +1,7 @@
+1.16.1
+----
+* Added `Trace` instance for `V1`.
+
 1.16
 ----
 * Renamed `kronecker` to `scaled`.
