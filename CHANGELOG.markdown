@@ -1,6 +1,7 @@
 1.16.2
 ----
 * Added `NFData` instances for the various vector types.
+* Added `!!/` operator for matrix division by scalar.
 
 1.16.1
 ----
