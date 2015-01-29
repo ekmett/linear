@@ -17,7 +17,7 @@
 -- Simple matrix operation for low-dimensional primitives.
 ---------------------------------------------------------------------------
 module Linear.Matrix
-  ( (!*!), (!+!), (!-!), (!*) , (*!), (!!*), (*!!)
+  ( (!*!), (!+!), (!-!), (!*), (*!), (!!*), (*!!), (!!/)
   , column
   , adjoint
   , M22, M23, M24, M32, M33, M34, M42, M43, M44
@@ -140,6 +140,12 @@ infixl 7 !!*
 (!!*) :: (Functor m, Functor r, Num a) => m (r a) -> a -> m (r a)
 (!!*) = flip (*!!)
 {-# INLINE (!!*) #-}
+
+infixl 7 !!/
+-- | Matrix-scalar division
+(!!/) :: (Functor m, Functor r, Fractional a) => m (r a) -> a -> m (r a)
+m !!/ s = fmap (^/ s) m
+{-# INLINE (!!/) #-}
 
 -- | Hermitian conjugate or conjugate transpose
 --
