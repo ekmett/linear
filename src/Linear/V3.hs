@@ -33,6 +33,7 @@ module Linear.V3
   ) where
 
 import Control.Applicative
+import Control.DeepSeq (NFData(rnf))
 import Control.Monad (liftM)
 import Control.Monad.Fix
 import Control.Monad.Zip
@@ -351,3 +352,6 @@ instance Bounded a => Bounded (V3 a) where
   {-# INLINE minBound #-}
   maxBound = pure maxBound
   {-# INLINE maxBound #-}
+
+instance NFData a => NFData (V3 a) where
+  rnf (V3 a b c) = rnf a `seq` rnf b `seq` rnf c

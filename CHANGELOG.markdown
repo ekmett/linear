@@ -1,3 +1,7 @@
+1.16.2
+----
+* Added `NFData` instances for the various vector types.
+
 1.16.1
 ----
 * Added `Trace` instance for `V1`.

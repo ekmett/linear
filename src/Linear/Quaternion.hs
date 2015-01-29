@@ -39,6 +39,7 @@ module Linear.Quaternion
   ) where
 
 import Control.Applicative
+import Control.DeepSeq (NFData(rnf))
 import Control.Monad (liftM)
 import Control.Monad.Fix
 import Control.Monad.Zip
@@ -550,3 +551,6 @@ instance MonadFix Quaternion where
                       (V3 (let Quaternion _ (V3 a _ _) = f a in a)
                           (let Quaternion _ (V3 _ a _) = f a in a)
                           (let Quaternion _ (V3 _ _ a) = f a in a))
+
+instance NFData a => NFData (Quaternion a) where
+  rnf (Quaternion a b) = rnf a `seq` rnf b

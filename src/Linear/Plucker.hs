@@ -46,6 +46,7 @@ module Linear.Plucker
   ) where
 
 import Control.Applicative
+import Control.DeepSeq (NFData(rnf))
 import Control.Monad (liftM)
 import Control.Monad.Fix
 import Control.Monad.Zip
@@ -519,3 +520,7 @@ instance MonadFix Plucker where
                    (let Plucker _ _ _ a _ _ = f a in a)
                    (let Plucker _ _ _ _ a _ = f a in a)
                    (let Plucker _ _ _ _ _ a = f a in a)
+
+instance NFData a => NFData (Plucker a) where
+  rnf (Plucker a b c d e f) = rnf a `seq` rnf b `seq` rnf c
+                        `seq` rnf d `seq` rnf e `seq` rnf f

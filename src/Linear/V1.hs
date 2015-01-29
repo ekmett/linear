@@ -35,6 +35,7 @@ module Linear.V1
   ) where
 
 import Control.Applicative
+import Control.DeepSeq (NFData)
 import Control.Monad (liftM)
 import Control.Monad.Fix
 import Control.Monad.Zip
@@ -89,7 +90,7 @@ import qualified Data.Vector.Unboxed.Base as U
 newtype V1 a = V1 a
   deriving (Eq,Ord,Show,Read,Data,Typeable,
             Functor,Foldable,Traversable,
-            Epsilon,Storable
+            Epsilon,Storable,NFData
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
            ,Generic
 #endif

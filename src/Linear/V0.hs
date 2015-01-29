@@ -28,6 +28,7 @@ module Linear.V0
   ) where
 
 import Control.Applicative
+import Control.DeepSeq (NFData(rnf))
 import Control.Lens
 import Control.Monad.Fix
 import Control.Monad.Zip
@@ -232,3 +233,6 @@ instance Bounded (V0 a) where
   {-# INLINE minBound #-}
   maxBound = V0
   {-# INLINE maxBound #-}
+
+instance NFData (V0 a) where
+  rnf V0 = ()

@@ -43,6 +43,7 @@ module Linear.V
   ) where
 
 import Control.Applicative
+import Control.DeepSeq (NFData)
 import Control.Monad.Fix
 import Control.Monad.Zip
 import Control.Lens as Lens
@@ -86,7 +87,7 @@ class Dim n where
 type role V nominal representational
 #endif
 
-newtype V n a = V { toVector :: V.Vector a } deriving (Eq,Ord,Show,Read,Typeable
+newtype V n a = V { toVector :: V.Vector a } deriving (Eq,Ord,Show,Read,Typeable,NFData
                                                       , Generic
 -- GHC bug: https://ghc.haskell.org/trac/ghc/ticket/8468
 #if __GLASGOW_HASKELL__ >= 707
