@@ -1,3 +1,10 @@
+1.16.3
+----
+* Improve the performance of `fromQuaternion`, `mkTransformation`,
+  `mkTransformationMat`, `basisFor`, `scaled` by using implementations
+  that inline well for functions that were previously reference
+  implementations.
+
 1.16.2
 ----
 * Added `NFData` instances for the various vector types.
