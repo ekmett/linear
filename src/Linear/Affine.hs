@@ -16,6 +16,9 @@
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 #endif
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ > 706
+{-# LANGUAGE PatternSynonyms #-}
+#endif
 -----------------------------------------------------------------------------
 -- |
 -- License     :  BSD-style (see the file LICENSE)
@@ -225,4 +228,18 @@ origin = P zero
 relative :: (Additive f, Num a) => Point f a -> Iso' (Point f a) (f a)
 relative p0 = iso (.-. p0) (p0 .+^)
 {-# INLINE relative #-}
+
+type P0 = Point V0
+type P1 = Point V1
+type P2 = Point V2
+type P3 = Point V3
+type P4 = Point V4
+
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ > 706
+pattern P0 = P V0
+pattern P1 x = P (V1 x)
+pattern P2 x y = P (V2 x y)
+pattern P3 x y z = P (V3 x y z)
+pattern P4 x y z w = P (V4 x y z w)
+#endif
 
