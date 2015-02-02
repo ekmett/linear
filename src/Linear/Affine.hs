@@ -225,7 +225,7 @@ origin = P zero
 
 -- | An isomorphism between points and vectors, given a reference
 --   point.
-relative :: (Additive f, Num a) => Point f a -> Iso' (Point f a) (f a)
+relative :: (Affine p, Num a) => p a -> Iso' (p a) (Diff p a)
 relative p0 = iso (.-. p0) (p0 .+^)
 {-# INLINE relative #-}
 

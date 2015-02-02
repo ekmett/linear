@@ -5,6 +5,7 @@
   that inline well for functions that were previously reference
   implementations.
 * Add type and pattern synonyms for P0, P1, P2, P3 and P4.
+* Generalise relative to any affine space.
 
 1.16.2
 ----
