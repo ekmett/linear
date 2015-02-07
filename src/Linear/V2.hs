@@ -6,7 +6,7 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 -- {-# OPTIONS_GHC -fno-warn-name-shadowing #-}
 {-# LANGUAGE CPP #-}
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE DeriveGeneric #-}
 #endif

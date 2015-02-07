@@ -1,7 +1,7 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE DefaultSignatures #-}
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
 #endif
 ---------------------------------------------------------------------------
@@ -28,7 +28,7 @@ import Linear.V4
 import Linear.Plucker
 import Linear.Quaternion
 import Linear.V
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ > 704
+#if __GLASGOW_HASKELL__ > 704
 import Data.Complex
 #endif
 import Data.Distributive
@@ -90,7 +90,7 @@ instance Trace V4
 instance Trace Plucker
 instance Trace Quaternion
 
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ > 704
+#if __GLASGOW_HASKELL__ > 704
 instance Trace Complex where
   trace ((a :+ _) :+ (_ :+ b)) = a + b
   {-# INLINE trace #-}

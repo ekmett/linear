@@ -7,16 +7,16 @@
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE RankNTypes #-}
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE DeriveGeneric #-}
 #endif
 {-# LANGUAGE DeriveDataTypeable #-}
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ < 708
+#if __GLASGOW_HASKELL__ < 708
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 #endif
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ > 706
+#if __GLASGOW_HASKELL__ > 706
 {-# LANGUAGE PatternSynonyms #-}
 #endif
 -----------------------------------------------------------------------------
@@ -45,10 +45,10 @@ import Data.Ix
 import Data.Map (Map)
 import Data.Vector (Vector)
 import Foreign.Storable
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+#if __GLASGOW_HASKELL__ >= 702
 import GHC.Generics (Generic)
 #endif
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
+#if __GLASGOW_HASKELL__ >= 706
 import GHC.Generics (Generic1)
 #endif
 import Linear.Epsilon
@@ -131,18 +131,18 @@ newtype Point f a = P (f a)
            , Traversable, Apply, Additive, Metric
            , Fractional , Num, Ix, Storable, Epsilon
            , Hashable
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+#if __GLASGOW_HASKELL__ >= 702
            , Generic
 #endif
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
+#if __GLASGOW_HASKELL__ >= 706
            , Generic1
 #endif
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 708
+#if __GLASGOW_HASKELL__ >= 708
            , Typeable, Data
 #endif
            )
 
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ < 708
+#if __GLASGOW_HASKELL__ < 708
 instance forall f. Typeable1 f => Typeable1 (Point f) where
   typeOf1 _ = mkTyConApp (mkTyCon3 "linear" "Linear.Affine" "Point") [] `mkAppTy`
               typeOf1 (undefined :: f a)
@@ -235,7 +235,7 @@ type P2 = Point V2
 type P3 = Point V3
 type P4 = Point V4
 
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ > 706
+#if __GLASGOW_HASKELL__ > 706
 pattern P0 = P V0
 pattern P1 x = P (V1 x)
 pattern P2 x y = P (V2 x y)
