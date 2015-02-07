@@ -142,7 +142,7 @@ newtype Point f a = P (f a)
 #endif
            )
 
-#if __GLASGOW_HASKELL__ < 708
+#if __GLASGOW_HASKELL__ < 708 && !defined( HLINT )
 instance forall f. Typeable1 f => Typeable1 (Point f) where
   typeOf1 _ = mkTyConApp (mkTyCon3 "linear" "Linear.Affine" "Point") [] `mkAppTy`
               typeOf1 (undefined :: f a)
