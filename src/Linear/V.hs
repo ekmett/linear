@@ -207,6 +207,44 @@ instance (Dim n, Fractional a) => Fractional (V n a) where
   fromRational = pure . fromRational
   {-# INLINE fromRational #-}
 
+instance (Dim n, Floating a) => Floating (V n a) where
+    pi = pure pi
+    {-# INLINE pi #-}
+    exp = fmap exp
+    {-# INLINE exp #-}
+    sqrt = fmap sqrt
+    {-# INLINE sqrt #-}
+    log = fmap log
+    {-# INLINE log #-}
+    V as ** V bs = V $ V.zipWith (**) as bs
+    {-# INLINE (**) #-}
+    logBase (V as) (V bs) = V $ V.zipWith logBase as bs
+    {-# INLINE logBase #-}
+    sin = fmap sin
+    {-# INLINE sin #-}
+    tan = fmap tan
+    {-# INLINE tan #-}
+    cos = fmap cos
+    {-# INLINE cos #-}
+    asin = fmap asin
+    {-# INLINE asin #-}
+    atan = fmap atan
+    {-# INLINE atan #-}
+    acos = fmap acos
+    {-# INLINE acos #-}
+    sinh = fmap sinh
+    {-# INLINE sinh #-}
+    tanh = fmap tanh
+    {-# INLINE tanh #-}
+    cosh = fmap cosh
+    {-# INLINE cosh #-}
+    asinh = fmap asinh
+    {-# INLINE asinh #-}
+    atanh = fmap atanh
+    {-# INLINE atanh #-}
+    acosh = fmap acosh
+    {-# INLINE acosh #-}
+
 instance Dim n => Distributive (V n) where
   distribute f = V $ V.generate (reflectDim (Proxy :: Proxy n)) $ \i -> fmap (\(V v) -> unsafeIndex v i) f
   {-# INLINE distribute #-}

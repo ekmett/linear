@@ -141,6 +141,44 @@ instance Fractional (V0 a) where
   fromRational _ = V0
   {-# INLINE fromRational #-}
 
+instance Floating (V0 a) where
+    pi = V0
+    {-# INLINE pi #-}
+    exp V0 = V0
+    {-# INLINE exp #-}
+    sqrt V0 = V0
+    {-# INLINE sqrt #-}
+    log V0 = V0
+    {-# INLINE log #-}
+    V0 ** V0 = V0
+    {-# INLINE (**) #-}
+    logBase V0 V0 = V0
+    {-# INLINE logBase #-}
+    sin V0 = V0
+    {-# INLINE sin #-}
+    tan V0 = V0
+    {-# INLINE tan #-}
+    cos V0 = V0
+    {-# INLINE cos #-}
+    asin V0 = V0
+    {-# INLINE asin #-}
+    atan V0 = V0
+    {-# INLINE atan #-}
+    acos V0 = V0
+    {-# INLINE acos #-}
+    sinh V0 = V0
+    {-# INLINE sinh #-}
+    tanh V0 = V0
+    {-# INLINE tanh #-}
+    cosh V0 = V0
+    {-# INLINE cosh #-}
+    asinh V0 = V0
+    {-# INLINE asinh #-}
+    atanh V0 = V0
+    {-# INLINE atanh #-}
+    acosh V0 = V0
+    {-# INLINE acosh #-}
+
 instance Metric V0 where
   dot V0 V0 = 0
   {-# INLINE dot #-}
