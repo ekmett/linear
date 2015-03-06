@@ -1,6 +1,6 @@
 name:          linear
 category:      Math, Algebra
-version:       1.16.4
+version:       1.17
 license:       BSD3
 cabal-version: >= 1.8
 license-file:  LICENSE
@@ -33,6 +33,8 @@ library
     adjunctions          >= 4     && < 5,
     base                 >= 4.5   && < 5,
     binary               >= 0.5   && < 0.8,
+    bytes                >= 0.14.1.3 && < 1,
+    cereal               >= 0.4.1.1 && < 0.5,
     containers           >= 0.4   && < 0.6,
     deepseq              >= 1.1   && < 1.5,
     distributive         >= 0.2.2 && < 1,

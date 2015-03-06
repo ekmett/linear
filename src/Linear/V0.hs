@@ -33,6 +33,10 @@ import Control.Lens
 import Control.Monad.Fix
 import Control.Monad.Zip
 import Data.Data
+import Data.Bytes.Serial -- bytes
+import Data.Serialize -- cereal
+import Data.Binary -- binary
+
 import Data.Distributive
 import Data.Foldable
 import Data.Functor.Rep
@@ -74,6 +78,17 @@ data V0 a = V0 deriving (Eq,Ord,Show,Read,Ix,Enum,Data,Typeable
                         ,Generic1
 #endif
                         )
+
+instance Serial1 V0
+instance Serial (V0 a)
+
+instance Binary (V0 a) where
+  put V0 = return ()
+  get = return V0
+
+instance Serialize (V0 a) where
+  put V0 = return ()
+  get = return V0
 
 instance Functor V0 where
   fmap _ V0 = V0
