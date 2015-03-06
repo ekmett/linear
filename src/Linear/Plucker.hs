@@ -56,6 +56,7 @@ import Data.Bytes.Serial
 import Data.Distributive
 import Data.Foldable as Foldable
 import Data.Functor.Bind
+import Data.Functor.Classes
 import Data.Functor.Rep
 import Data.Hashable
 import Data.Semigroup
@@ -576,3 +577,8 @@ instance Binary a => Binary (Plucker a) where
 instance Serialize a => Serialize (Plucker a) where
   put = serializeWith Cereal.put
   get = deserializeWith Cereal.get
+
+instance Eq1 Plucker where eq1 = (==)
+instance Ord1 Plucker where compare1 = compare
+instance Show1 Plucker where showsPrec1 = showsPrec
+instance Read1 Plucker where readsPrec1 = readsPrec

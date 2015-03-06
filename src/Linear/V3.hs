@@ -44,6 +44,7 @@ import Data.Data
 import Data.Distributive
 import Data.Foldable
 import Data.Functor.Bind
+import Data.Functor.Classes
 import Data.Functor.Rep
 import Data.Hashable
 import Data.Semigroup
@@ -407,3 +408,8 @@ instance Binary a => Binary (V3 a) where
 instance Serialize a => Serialize (V3 a) where
   put = serializeWith Cereal.put
   get = deserializeWith Cereal.get
+
+instance Eq1 V3 where eq1 = (==)
+instance Ord1 V3 where compare1 = compare
+instance Show1 V3 where showsPrec1 = showsPrec
+instance Read1 V3 where readsPrec1 = readsPrec

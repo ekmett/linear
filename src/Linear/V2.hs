@@ -42,9 +42,10 @@ import Data.Bytes.Serial
 import Data.Data
 import Data.Distributive
 import Data.Foldable
-import Data.Hashable
 import Data.Functor.Bind
+import Data.Functor.Classes
 import Data.Functor.Rep
+import Data.Hashable
 import Data.Semigroup
 import Data.Semigroup.Foldable
 import Data.Serialize as Cereal
@@ -384,3 +385,8 @@ instance Binary a => Binary (V2 a) where
 instance Serialize a => Serialize (V2 a) where
   put = serializeWith Cereal.put
   get = deserializeWith Cereal.get
+
+instance Eq1 V2 where eq1 = (==)
+instance Ord1 V2 where compare1 = compare
+instance Show1 V2 where showsPrec1 = showsPrec
+instance Read1 V2 where readsPrec1 = readsPrec

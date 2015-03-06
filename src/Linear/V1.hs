@@ -46,8 +46,8 @@ import Data.Serialize as Cereal
 import Data.Data
 import Data.Distributive
 import Data.Foldable
-import Data.Functor.Classes
 import Data.Functor.Bind
+import Data.Functor.Classes
 import Data.Functor.Rep
 import Data.Hashable
 import Data.Semigroup.Foldable

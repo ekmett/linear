@@ -53,6 +53,7 @@ import Data.Data
 import Data.Distributive
 import Data.Foldable as Foldable
 import Data.Functor.Bind
+import Data.Functor.Classes
 import Data.Functor.Rep as Rep
 #if __GLASGOW_HASKELL__ < 708
 import Data.Proxy
@@ -391,3 +392,8 @@ instance (Dim n, Binary a) => Binary (V n a) where
 instance (Dim n, Serialize a) => Serialize (V n a) where
   put = serializeWith Cereal.put
   get = deserializeWith Cereal.get
+
+instance Dim n => Eq1 (V n) where eq1 = (==)
+instance Dim n => Ord1 (V n) where compare1 = compare
+instance Dim n => Show1 (V n) where showsPrec1 = showsPrec
+instance Dim n => Read1 (V n) where readsPrec1 = readsPrec

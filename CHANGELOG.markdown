@@ -1,3 +1,11 @@
+1.17.1
+------
+* Added support for `Data.Functor.Classes` from `transformers` 0.5 via `transformers-compat`.
+
+1.17
+----
+* Better support for `binary`. Added support for `bytes` and `cereal`
+
 1.16.4
 ------
 * `ortho` and `inverseOrtho` now only require a `Fractional` constraint.

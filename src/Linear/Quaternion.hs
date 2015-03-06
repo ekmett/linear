@@ -46,12 +46,12 @@ import Control.Monad.Zip
 import Control.Lens hiding ((<.>))
 import Data.Binary as Binary
 import Data.Bytes.Serial
-
 import Data.Complex (Complex((:+)))
 import Data.Data
 import Data.Distributive
 import Data.Foldable
 import Data.Functor.Bind
+import Data.Functor.Classes
 import Data.Functor.Rep
 import Data.Hashable
 import Data.Serialize as Cereal
@@ -569,3 +569,8 @@ instance Binary a => Binary (Quaternion a) where
 instance Serialize a => Serialize (Quaternion a) where
   put = serializeWith Cereal.put
   get = deserializeWith Cereal.get
+
+instance Eq1 Quaternion where eq1 = (==)
+instance Ord1 Quaternion where compare1 = compare
+instance Show1 Quaternion where showsPrec1 = showsPrec
+instance Read1 Quaternion where readsPrec1 = readsPrec
