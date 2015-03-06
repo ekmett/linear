@@ -186,7 +186,7 @@ inverseInfinitePerspective fovy a n =
 
 -- | Build an orthographic perspective matrix from 6 clipping planes
 ortho
-  :: Floating a
+  :: Fractional a
   => a -- ^ Left
   -> a -- ^ Right
   -> a -- ^ Bottom
@@ -205,7 +205,7 @@ ortho l r b t n f =
 
 -- | Build an inverse orthographic perspective matrix from 6 clipping planes
 inverseOrtho
-  :: Floating a
+  :: Fractional a
   => a -- ^ Left
   -> a -- ^ Right
   -> a -- ^ Bottom
