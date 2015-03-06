@@ -1,6 +1,7 @@
 1.16.4
 ------
 * `ortho` and `inverseOrtho` now only require a `Fractional` constraint.
+* Added missing `Floating` instances.
 
 1.16.3
 ----
