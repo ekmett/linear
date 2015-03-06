@@ -44,6 +44,9 @@ import Control.Monad (liftM)
 import Control.Monad.Fix
 import Control.Monad.Zip
 import Control.Lens hiding ((<.>))
+import Data.Binary as Binary
+import Data.Bytes.Serial
+
 import Data.Complex (Complex((:+)))
 import Data.Data
 import Data.Distributive
@@ -51,6 +54,7 @@ import Data.Foldable
 import Data.Functor.Bind
 import Data.Functor.Rep
 import Data.Hashable
+import Data.Serialize as Cereal
 import GHC.Arr (Ix(..))
 import qualified Data.Foldable as F
 import Data.Monoid
@@ -554,3 +558,14 @@ instance MonadFix Quaternion where
 
 instance NFData a => NFData (Quaternion a) where
   rnf (Quaternion a b) = rnf a `seq` rnf b
+
+instance Serial1 Quaternion
+instance Serial a => Serial (Quaternion a)
+
+instance Binary a => Binary (Quaternion a) where
+  put = serializeWith Binary.put
+  get = deserializeWith Binary.get
+
+instance Serialize a => Serialize (Quaternion a) where
+  put = serializeWith Cereal.put
+  get = deserializeWith Cereal.get

@@ -32,11 +32,9 @@ import Control.DeepSeq (NFData(rnf))
 import Control.Lens
 import Control.Monad.Fix
 import Control.Monad.Zip
-import Data.Data
-import Data.Bytes.Serial -- bytes
-import Data.Serialize -- cereal
 import Data.Binary -- binary
-
+import Data.Bytes.Serial -- bytes
+import Data.Data
 import Data.Distributive
 import Data.Foldable
 import Data.Functor.Rep
@@ -44,6 +42,7 @@ import Data.Functor.Bind
 import Data.Hashable
 import Data.Ix
 import Data.Semigroup
+import Data.Serialize -- cereal
 import Foreign.Storable (Storable(..))
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 import GHC.Generics (Generic)

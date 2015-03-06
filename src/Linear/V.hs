@@ -47,6 +47,8 @@ import Control.DeepSeq (NFData)
 import Control.Monad.Fix
 import Control.Monad.Zip
 import Control.Lens as Lens
+import Data.Binary as Binary
+import Data.Bytes.Serial
 import Data.Data
 import Data.Distributive
 import Data.Foldable as Foldable
@@ -56,6 +58,8 @@ import Data.Functor.Rep as Rep
 import Data.Proxy
 #endif
 import Data.Reflection as R
+import Data.Serialize as Cereal
+import Data.Traversable (sequenceA)
 import Data.Vector as V
 import Foreign.Ptr
 import Foreign.Storable
@@ -372,3 +376,18 @@ instance (Dim n, Typeable n, Data a) => Data (V n a) where
   dataTypeOf _ = vDataType
   dataCast1 f = gcast1 f
 
+instance Dim n => Serial1 (V n) where
+  serializeWith = traverse_
+  deserializeWith f = sequenceA $ pure f
+
+instance (Dim n, Serial a) => Serial (V n a) where
+  serialize = traverse_ serialize
+  deserialize = sequenceA $ pure deserialize
+
+instance (Dim n, Binary a) => Binary (V n a) where
+  put = serializeWith Binary.put
+  get = deserializeWith Binary.get
+
+instance (Dim n, Serialize a) => Serialize (V n a) where
+  put = serializeWith Cereal.put
+  get = deserializeWith Cereal.get

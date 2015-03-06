@@ -51,6 +51,8 @@ import Control.Monad (liftM)
 import Control.Monad.Fix
 import Control.Monad.Zip
 import Control.Lens hiding (index, (<.>))
+import Data.Binary as Binary
+import Data.Bytes.Serial
 import Data.Distributive
 import Data.Foldable as Foldable
 import Data.Functor.Bind
@@ -58,6 +60,7 @@ import Data.Functor.Rep
 import Data.Hashable
 import Data.Semigroup
 import Data.Semigroup.Foldable
+import Data.Serialize as Cereal
 import Foreign.Ptr (castPtr)
 import Foreign.Storable (Storable(..))
 import GHC.Arr (Ix(..))
@@ -562,3 +565,14 @@ instance MonadFix Plucker where
 instance NFData a => NFData (Plucker a) where
   rnf (Plucker a b c d e f) = rnf a `seq` rnf b `seq` rnf c
                         `seq` rnf d `seq` rnf e `seq` rnf f
+
+instance Serial1 Plucker
+instance Serial a => Serial (Plucker a)
+
+instance Binary a => Binary (Plucker a) where
+  put = serializeWith Binary.put
+  get = deserializeWith Binary.get
+
+instance Serialize a => Serialize (Plucker a) where
+  put = serializeWith Cereal.put
+  get = deserializeWith Cereal.get

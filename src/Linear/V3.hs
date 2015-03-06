@@ -38,6 +38,8 @@ import Control.Monad (liftM)
 import Control.Monad.Fix
 import Control.Monad.Zip
 import Control.Lens hiding ((<.>))
+import Data.Binary as Binary -- binary
+import Data.Bytes.Serial -- bytes
 import Data.Data
 import Data.Distributive
 import Data.Foldable
@@ -46,6 +48,7 @@ import Data.Functor.Rep
 import Data.Hashable
 import Data.Semigroup
 import Data.Semigroup.Foldable
+import Data.Serialize as Cereal -- cereal
 import Foreign.Ptr (castPtr)
 import Foreign.Storable (Storable(..))
 import GHC.Arr (Ix(..))
@@ -393,3 +396,14 @@ instance Bounded a => Bounded (V3 a) where
 
 instance NFData a => NFData (V3 a) where
   rnf (V3 a b c) = rnf a `seq` rnf b `seq` rnf c
+
+instance Serial1 V3
+instance Serial a => Serial (V3 a)
+
+instance Binary a => Binary (V3 a) where
+  put = serializeWith Binary.put
+  get = deserializeWith Binary.get
+
+instance Serialize a => Serialize (V3 a) where
+  put = serializeWith Cereal.put
+  get = deserializeWith Cereal.get
