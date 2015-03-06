@@ -1,6 +1,7 @@
 1.17.1
 ------
 * Added support for `Data.Functor.Classes` from `transformers` 0.5 via `transformers-compat`.
+* Added missing support for `binary`, `bytes` and `cereal` for `Point`
 
 1.17
 ----

@@ -28,18 +28,23 @@
 module Linear.Affine where
 
 import Control.Applicative
+import Control.Monad (liftM)
 import Control.Lens
+import Data.Binary as Binary
+import Data.Bytes.Serial
 import Data.Complex (Complex)
 import Data.Data
 import Data.Distributive
 import Data.Foldable as Foldable
 import Data.Functor.Bind
+import Data.Functor.Classes
 import Data.Functor.Rep as Rep
 import Data.HashMap.Lazy (HashMap)
 import Data.Hashable
 import Data.IntMap (IntMap)
 import Data.Ix
 import Data.Map (Map)
+import Data.Serialize as Cereal
 import Data.Vector (Vector)
 import Foreign.Storable
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
@@ -125,6 +130,7 @@ ADDITIVEC(Dim n, (V n))
 -- type level
 newtype Point f a = P (f a)
   deriving ( Eq, Ord, Show, Read, Monad, Functor, Applicative, Foldable
+           , Eq1, Ord1, Show1, Read1
            , Traversable, Apply, Additive, Metric
            , Fractional , Num, Ix, Storable, Epsilon
            , Hashable
@@ -138,6 +144,23 @@ newtype Point f a = P (f a)
            , Typeable, Data
 #endif
            )
+
+
+instance Serial1 f => Serial1 (Point f) where
+  serializeWith f (P p) = serializeWith f p
+  deserializeWith m = P `liftM` deserializeWith m
+
+instance Serial (f a) => Serial (Point f a) where
+  serialize (P p) = serialize p
+  deserialize = P `liftM` deserialize
+
+instance Binary (f a) => Binary (Point f a) where
+  put (P p) = Binary.put p
+  get = P `liftM` Binary.get
+
+instance Serialize (f a) => Serialize (Point f a) where
+  put (P p) = Cereal.put p
+  get = P `liftM` Cereal.get
 
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ < 708
 instance forall f. Typeable1 f => Typeable1 (Point f) where
