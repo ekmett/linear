@@ -1,6 +1,6 @@
 name:          linear
 category:      Math, Algebra
-version:       1.17
+version:       1.17.1
 license:       BSD3
 cabal-version: >= 1.8
 license-file:  LICENSE
@@ -47,6 +47,7 @@ library
     tagged               >= 0.4.4 && < 1,
     template-haskell     >= 2.7   && < 3.0,
     transformers         >= 0.2   && < 0.5,
+    transformers-compat  >= 0.4   && < 1,
     unordered-containers >= 0.2.3 && < 0.3,
     vector               >= 0.10  && < 0.11,
     void                 >= 0.6   && < 1

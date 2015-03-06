@@ -46,6 +46,7 @@ import Data.Serialize as Cereal
 import Data.Data
 import Data.Distributive
 import Data.Foldable
+import Data.Functor.Classes
 import Data.Functor.Bind
 import Data.Functor.Rep
 import Data.Hashable
@@ -323,3 +324,7 @@ instance Serialize a => Serialize (V1 a) where
   put = serializeWith Cereal.put
   get = deserializeWith Cereal.get
 
+instance Eq1 V1 where eq1 = (==)
+instance Ord1 V1 where compare1 = compare
+instance Show1 V1 where showsPrec1 = showsPrec
+instance Read1 V1 where readsPrec1 = readsPrec

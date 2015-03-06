@@ -37,8 +37,9 @@ import Data.Bytes.Serial -- bytes
 import Data.Data
 import Data.Distributive
 import Data.Foldable
-import Data.Functor.Rep
 import Data.Functor.Bind
+import Data.Functor.Classes
+import Data.Functor.Rep
 import Data.Hashable
 import Data.Ix
 import Data.Semigroup
@@ -288,3 +289,8 @@ instance Bounded (V0 a) where
 
 instance NFData (V0 a) where
   rnf V0 = ()
+
+instance Eq1 V0   where eq1 = (==)
+instance Ord1 V0  where compare1 = compare
+instance Show1 V0 where showsPrec1 = showsPrec
+instance Read1 V0 where readsPrec1 = readsPrec
