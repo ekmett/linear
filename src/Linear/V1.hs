@@ -40,6 +40,9 @@ import Control.Monad (liftM)
 import Control.Monad.Fix
 import Control.Monad.Zip
 import Control.Lens
+import Data.Binary as Binary
+import Data.Bytes.Serial
+import Data.Serialize as Cereal
 import Data.Data
 import Data.Distributive
 import Data.Foldable
@@ -308,3 +311,15 @@ instance Bounded a => Bounded (V1 a) where
   {-# INLINE minBound #-}
   maxBound = pure maxBound
   {-# INLINE maxBound #-}
+
+instance Serial1 V1
+instance Serial a => Serial (V1 a)
+
+instance Binary a => Binary (V1 a) where
+  put = serializeWith Binary.put
+  get = deserializeWith Binary.get
+
+instance Serialize a => Serialize (V1 a) where
+  put = serializeWith Cereal.put
+  get = deserializeWith Cereal.get
+
