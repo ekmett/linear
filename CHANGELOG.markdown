@@ -1,3 +1,7 @@
+1.16.4
+------
+* `ortho` and `inverseOrtho` now only require a `Fractional` constraint.
+
 1.16.3
 ----
 * Improve the performance of `fromQuaternion`, `mkTransformation`,
