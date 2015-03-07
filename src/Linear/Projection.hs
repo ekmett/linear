@@ -90,7 +90,7 @@ inversePerspective fovy aspect near far =
         b = tanHalfFovy
         c = -(far - near) / (2 * far * near)
         d = (far + near) / (2 * far * near)
- 
+
 
 -- | Build a perspective matrix per the classic @glFrustum@ arguments.
 frustum
@@ -102,13 +102,13 @@ frustum
   -> a -- ^ Near
   -> a -- ^ Far
   -> M44 a
-frustum l r b t n f = 
+frustum l r b t n f =
   V4 (V4 x 0 a    0)
      (V4 0 y e    0)
      (V4 0 0 c    d)
      (V4 0 0 (-1) 0)
   where
-    rml = r-l 
+    rml = r-l
     tmb = t-b
     fmn = f-n
     x = 2*n/rml
@@ -127,7 +127,7 @@ inverseFrustum
   -> a -- ^ Near
   -> a -- ^ Far
   -> M44 a
-inverseFrustum l r b t n f = 
+inverseFrustum l r b t n f =
   V4 (V4 rx 0 0 ax)
      (V4 0 ry 0 by)
      (V4 0 0 0 (-1))
@@ -184,7 +184,28 @@ inverseInfinitePerspective fovy a n =
     ry = (t-b)*hrn
     rw = -hrn
 
--- | Build an orthographic perspective matrix from 6 clipping planes
+-- | Build an orthographic perspective matrix from 6 clipping planes.
+-- This matrix takes the region delimited by these planes and maps it
+-- to normalized device coordinates between [-1,1]
+--
+-- This call is designed to mimic the parameters to the OpenGL @glOrtho@
+-- call, so it has a slightly strange convention: Notably: the near and
+-- far planes are negated.
+--
+-- Consequently:
+--
+-- @
+-- 'ortho' l r b t n f !* 'V4' l b (-n) 1 = 'V4' (-1) (-1) (-1) 1
+-- 'ortho' l r b t n f !* 'V4' r t (-f) 1 = 'V4' 1 1 1 1
+-- @
+--
+-- Examples:
+--
+-- >>> ortho 100 200 150 250 300 500 !* V4 100 150 (-300) 1
+-- V4 (-1.0) (-1.0) (-1.0) 1.0
+--
+-- >>> ortho 100 200 150 250 300 500 !* V4 200 250 (-500) 1
+-- V4 1.0 1.0 1.0 1.0
 ortho
   :: Fractional a
   => a -- ^ Left
