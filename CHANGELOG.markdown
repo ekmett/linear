@@ -1,3 +1,7 @@
+1.17.1.1
+--------
+* `filepath` 1.4 support
+
 1.17.1
 ------
 * Added support for `Data.Functor.Classes` from `transformers` 0.5 via `transformers-compat`.
