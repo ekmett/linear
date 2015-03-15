@@ -23,7 +23,7 @@ module Linear.Matrix
   , M22, M23, M24, M32, M33, M34, M42, M43, M44
   , m33_to_m44, m43_to_m44
   , det22, det33, det44, inv22, inv33, inv44
-  , eye2, eye3, eye4
+  , eye2, eye3, eye4, eye
   , Trace(..)
   , translation
   , transpose
@@ -247,6 +247,17 @@ eye4 = V4 (V4 1 0 0 0)
           (V4 0 1 0 0)
           (V4 0 0 1 0)
           (V4 0 0 0 1)
+
+-- |The identity matrix for any dimension vector.
+--
+-- >>> eye :: M44 Int
+-- V4 (V4 1 0 0 0) (V4 0 1 0 0) (V4 0 0 1 0) (V4 0 0 0 1)
+-- >>> eye :: V3 (V3 Int)
+-- V3 (V3 1 0 0) (V3 0 1 0) (V3 0 0 1)
+-- >>> eye :: V 2 (V 2 Int)
+-- V (fromList [V (fromList [1, 0]), V (fromList [0, 1]))
+eye :: (Num a, Traversable t, Applicative t) => t (t a)
+eye = scaled (pure 1)
 
 -- |Extract the translation vector (first three entries of the last
 -- column) from a 3x4 or 4x4 matrix.
