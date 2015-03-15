@@ -1,3 +1,7 @@
+1.18
+----
+* Consolidated `eye2` .. `eye4` into a single `identity` combinator.
+
 1.17.1.1
 --------
 * `filepath` 1.4 support
