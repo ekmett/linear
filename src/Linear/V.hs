@@ -33,17 +33,25 @@
 ----------------------------------------------------------------------------
 
 module Linear.V
-  ( V(toVector)
+  ( -- * N-dimentional vectors
+    V(toVector)
   , int
   , dim
   , Dim(..)
   , reifyDim
   , reifyVector
+
+    -- * Construcing vectors
   , fromVector
+  , unsafeFromVector
+  , generateV
+  , generateVM
+  , unsafeEV
   ) where
 
 import Control.Applicative
 import Control.DeepSeq (NFData)
+import Control.Monad (liftM)
 import Control.Monad.Fix
 import Control.Monad.Zip
 import Control.Lens as Lens
@@ -55,6 +63,7 @@ import Data.Foldable as Foldable
 import Data.Functor.Bind
 import Data.Functor.Classes
 import Data.Functor.Rep as Rep
+import Data.Maybe
 #if __GLASGOW_HASKELL__ < 708
 import Data.Proxy
 #endif
@@ -213,42 +222,42 @@ instance (Dim n, Fractional a) => Fractional (V n a) where
   {-# INLINE fromRational #-}
 
 instance (Dim n, Floating a) => Floating (V n a) where
-    pi = pure pi
-    {-# INLINE pi #-}
-    exp = fmap exp
-    {-# INLINE exp #-}
-    sqrt = fmap sqrt
-    {-# INLINE sqrt #-}
-    log = fmap log
-    {-# INLINE log #-}
-    V as ** V bs = V $ V.zipWith (**) as bs
-    {-# INLINE (**) #-}
-    logBase (V as) (V bs) = V $ V.zipWith logBase as bs
-    {-# INLINE logBase #-}
-    sin = fmap sin
-    {-# INLINE sin #-}
-    tan = fmap tan
-    {-# INLINE tan #-}
-    cos = fmap cos
-    {-# INLINE cos #-}
-    asin = fmap asin
-    {-# INLINE asin #-}
-    atan = fmap atan
-    {-# INLINE atan #-}
-    acos = fmap acos
-    {-# INLINE acos #-}
-    sinh = fmap sinh
-    {-# INLINE sinh #-}
-    tanh = fmap tanh
-    {-# INLINE tanh #-}
-    cosh = fmap cosh
-    {-# INLINE cosh #-}
-    asinh = fmap asinh
-    {-# INLINE asinh #-}
-    atanh = fmap atanh
-    {-# INLINE atanh #-}
-    acosh = fmap acosh
-    {-# INLINE acosh #-}
+  pi = pure pi
+  {-# INLINE pi #-}
+  exp = fmap exp
+  {-# INLINE exp #-}
+  sqrt = fmap sqrt
+  {-# INLINE sqrt #-}
+  log = fmap log
+  {-# INLINE log #-}
+  V as ** V bs = V $ V.zipWith (**) as bs
+  {-# INLINE (**) #-}
+  logBase (V as) (V bs) = V $ V.zipWith logBase as bs
+  {-# INLINE logBase #-}
+  sin = fmap sin
+  {-# INLINE sin #-}
+  tan = fmap tan
+  {-# INLINE tan #-}
+  cos = fmap cos
+  {-# INLINE cos #-}
+  asin = fmap asin
+  {-# INLINE asin #-}
+  atan = fmap atan
+  {-# INLINE atan #-}
+  acos = fmap acos
+  {-# INLINE acos #-}
+  sinh = fmap sinh
+  {-# INLINE sinh #-}
+  tanh = fmap tanh
+  {-# INLINE tanh #-}
+  cosh = fmap cosh
+  {-# INLINE cosh #-}
+  asinh = fmap asinh
+  {-# INLINE asinh #-}
+  atanh = fmap atanh
+  {-# INLINE atanh #-}
+  acosh = fmap acosh
+  {-# INLINE acosh #-}
 
 instance Dim n => Distributive (V n) where
   distribute f = V $ V.generate (reflectDim (Proxy :: Proxy n)) $ \i -> fmap (\(V v) -> unsafeIndex v i) f
@@ -277,10 +286,20 @@ instance Dim n => Metric (V n) where
 
 -- TODO: instance (Dim n, Ix a) => Ix (V n a)
 
+-- | Construct a @V n@ by taking @n@ elements from a vector. If there
+--   are less than @n@ elements in the vector, 'Nothing' is
+--   returned.
 fromVector :: forall n a. Dim n => Vector a -> Maybe (V n a)
 fromVector v
-  | V.length v == reflectDim (Proxy :: Proxy n) = Just (V v)
-  | otherwise                                   = Nothing
+  | V.length v >= n = Just (V $ V.slice 0 n v)
+  | otherwise       = Nothing
+    where n = reflectDim (Proxy :: Proxy n)
+
+-- | Construct a @V n@ by taking @n@ elements from a vector. If there
+--   are less than @n@ elements in the vector, an error is thrown.
+unsafeFromVector :: Dim n => Vector a -> V n a
+unsafeFromVector = fromMaybe (error "unsafeFromVector: not enough elements in vector")
+                 . fromVector
 
 #if !(MIN_VERSION_reflection(1,3,0))
 data Z  -- 0
@@ -331,18 +350,33 @@ int n = case quotRem n 2 of
 
 instance Dim n => Representable (V n) where
   type Rep (V n) = E (V n)
-  tabulate f = V $ generate (reflectDim (Proxy :: Proxy n)) $ \i -> f $ E $ \g (V v) ->
-    (\a -> V $ v V.// [(i,a)]) <$> g (unsafeIndex v i)
+  tabulate f = V $ generate (reflectDim (Proxy :: Proxy n)) (f . unsafeEV)
   {-# INLINE tabulate #-}
   index xs (E l) = view l xs
   {-# INLINE index #-}
 
-type instance Index (V n a) = E (V n)
+type instance Index (V n a)   = Int
 type instance IxValue (V n a) = a
 
-instance Ixed (V n a) where
-  ix = el
+instance Dim n => Ixed (V n a) where
+  ix i
+    | i >= 0 && i < (reflectDim (Proxy :: Proxy n)) = el (unsafeEV i)
+    | otherwise                                     = ignored
   {-# INLINE ix #-}
+
+-- | Create a basis element. If the index is out of range, behavious is
+--   undefined. A safe way to index elements is using the 'ix' traversal.
+unsafeEV :: Int -> E (V n)
+unsafeEV i = E $ \f (V v) -> f (unsafeIndex v i) <&> \a -> V $ v `V.unsafeUpd` [(i,a)]
+{-# INLINE unsafeEV #-}
+
+-- | Generate a @V n@ by applying the function to each index.
+generateV :: forall n a. Dim n => (Int -> a) -> V n a
+generateV f = V $ generate (reflectDim (Proxy :: Proxy n)) f
+
+-- | Generate a @V n@ by applying the monadic function to each index.
+generateVM :: forall m n a. (Dim n, Monad m) => (Int -> m a) -> m (V n a)
+generateVM f = V `liftM` generateM (reflectDim (Proxy :: Proxy n)) f
 
 instance Dim n => MonadZip (V n) where
   mzip (V as) (V bs) = V $ V.zip as bs
