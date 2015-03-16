@@ -229,8 +229,8 @@ m33_to_m44 (V3 r1 r2 r3) = V4 (vector r1) (vector r2) (vector r3) (point 0)
 -- V3 (V3 1 0 0) (V3 0 1 0) (V3 0 0 1)
 -- >>> identity :: V 2 (V 2 Int)
 -- V (fromList [V (fromList [1, 0]), V (fromList [0, 1]))
-identity :: (Num a, Traversable t, Applicative t) => t (t a)
-identity = scaled (pure 1)
+identity :: (Representable f, Additive f, Num a, R.Rep f ~ E f) => t (t a)
+identity = tabulate $ \(E e) -> zero & e .~ 1
 
 -- |Extract the translation vector (first three entries of the last
 -- column) from a 3x4 or 4x4 matrix.

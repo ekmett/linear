@@ -36,7 +36,7 @@ module Linear.Vector
 import Control.Applicative
 import Control.Lens
 import Data.Complex
-import Data.Foldable as Foldable (Foldable, forM_, foldl')
+import Data.Foldable as Foldable (Foldable, toList, forM_, foldl')
 import Data.Functor.Rep as R
 import Data.HashMap.Lazy as HashMap
 import Data.Hashable
@@ -370,8 +370,10 @@ f ^/ a = fmap (/a) f
 
 -- | Produce a default basis for a vector space. If the dimensionality
 -- of the vector space is not statically known, see 'basisFor'.
-basis :: (Additive t, Traversable t, Num a) => [t a]
-basis = basisFor (zero :: Additive v => v Int)
+basis :: (Representable f, Additive f, Foldable f, Num a, R.Rep f ~ E f)
+      => [f a]
+basis = Foldable.toList . (id :: f (f a) -> f (f a)) . tabulate $ \(E e) -> zero & e .~ 1
+{-# INLINABLE basis #-}
 
 -- | Produce a default basis for a vector space from which the
 -- argument is drawn.
