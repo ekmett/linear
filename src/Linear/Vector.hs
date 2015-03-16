@@ -37,6 +37,7 @@ import Control.Applicative
 import Control.Lens
 import Data.Complex
 import Data.Foldable as Foldable (Foldable, forM_, foldl')
+import Data.Functor.Rep as R
 import Data.HashMap.Lazy as HashMap
 import Data.Hashable
 import Data.IntMap as IntMap
@@ -386,11 +387,8 @@ basisFor = \t ->
 --
 -- >>> scaled (V2 2 3)
 -- V2 (V2 2 0) (V2 0 3)
-scaled :: (Traversable t, Num a) => t a -> t (t a)
-scaled = \t -> iter t (\i x -> iter t (\j _ -> if i == j then x else 0))
-  where
-  iter :: Traversable t => t a -> (Int -> a -> b) -> t b
-  iter x f = iover traversed f x
+scaled :: (Representable f, Additive f, Num a, R.Rep f ~ E f) => f a -> f (f a)
+scaled v = tabulate $ \(E e) -> zero & e .~ (v ^. e)
 {-# INLINE scaled #-}
 
 -- | Create a unit vector.
