@@ -44,6 +44,7 @@ module Linear.V
     -- * Construcing vectors
   , fromVector
   , unsafeFromVector
+  , indexV
   , generateV
   , generateVM
   , unsafeEV
@@ -381,7 +382,7 @@ int n = case quotRem n 2 of
 
 instance Dim n => Representable (V n) where
   type Rep (V n) = E (V n)
-  tabulate f = V $ generate (reflectDim (Proxy :: Proxy n)) (f . unsafeEV)
+  tabulate f = V $ generate DIM (f . unsafeEV)
   {-# INLINE tabulate #-}
   index xs (E l) = view l xs
   {-# INLINE index #-}
@@ -390,9 +391,8 @@ type instance Index (V n a)   = Int
 type instance IxValue (V n a) = a
 
 instance Dim n => Ixed (V n a) where
-  ix i
-    | i >= 0 && i < DIM = el (unsafeEV i)
-    | otherwise         = ignored
+  ix i | i >= 0 && i < DIM = el (unsafeEV i)
+       | otherwise         = ignored
   {-# INLINE ix #-}
 
 -- | Create a basis element. If the index is out of range, behavious is
@@ -400,6 +400,9 @@ instance Dim n => Ixed (V n a) where
 unsafeEV :: Int -> E (V n)
 unsafeEV i = E $ \f (V v) -> f (unsafeIndex v i) <&> \a -> V $ v `V.unsafeUpd` [(i,a)]
 {-# INLINE unsafeEV #-}
+
+indexV :: V n a -> Int -> a
+indexV (V v) i = V.index v i
 
 -- | Generate a @V n@ by applying the function to each index.
 generateV :: forall n a. Dim n => (Int -> a) -> V n a
