@@ -71,6 +71,9 @@ import Data.Reflection as R
 import Data.Serialize as Cereal
 import Data.Traversable (sequenceA)
 import Data.Vector as V
+import qualified Data.Vector.Generic.Mutable as M
+import qualified Data.Vector.Generic as G
+import qualified Data.Vector.Unboxed as U
 import Foreign.Ptr
 import Foreign.Storable
 #ifdef USE_TYPE_LITS
@@ -94,8 +97,11 @@ import Linear.Vector
 {-# ANN module "hlint: ignore Eta reduce" #-}
 #endif
 
+
 class Dim n where
   reflectDim :: p n -> Int
+
+#define DIM (reflectDim (Proxy :: Proxy n))
 
 #if __GLASGOW_HASKELL__ >= 707
 type role V nominal representational
@@ -276,6 +282,31 @@ instance (Dim n, Storable a) => Storable (V n a) where
     where ptr' = castPtr ptr
   {-# INLINE peek #-}
 
+data instance U.Vector    (V n a) =  V_Vn {-# UNPACK #-} !Int !(U.Vector    a)
+data instance U.MVector s (V n a) = MV_Vn {-# UNPACK #-} !Int !(U.MVector s a)
+instance (U.Unbox a, Dim n) => U.Unbox (V n a)
+
+instance (Dim n, U.Unbox a) => M.MVector U.MVector (V n a) where
+  basicLength (MV_Vn n _) = n
+  basicUnsafeSlice m n (MV_Vn _ v) = MV_Vn n (M.basicUnsafeSlice (DIM*m) (DIM*n) v)
+  basicOverlaps (MV_Vn _ v) (MV_Vn _ u) = M.basicOverlaps v u
+  basicUnsafeNew n = liftM (MV_Vn n) (M.basicUnsafeNew (DIM*n))
+  basicUnsafeRead (MV_Vn _ v) i =
+    do let o = DIM*i
+       generateVM (\j -> M.basicUnsafeRead v (o + j))
+  basicUnsafeWrite (MV_Vn _ v) i vn =
+    do let o = DIM*i
+       iforM_ vn (\j a -> M.basicUnsafeWrite v (o + j) a)
+
+instance (Dim n, U.Unbox a) => G.Vector U.Vector (V n a) where
+  basicUnsafeFreeze (MV_Vn n v) =  V_Vn n `liftM` G.basicUnsafeFreeze v
+  basicUnsafeThaw   ( V_Vn n v) = MV_Vn n `liftM` G.basicUnsafeThaw v
+  basicLength       ( V_Vn n _) = n
+  basicUnsafeSlice m n (V_Vn _ v) = V_Vn n (G.basicUnsafeSlice (DIM*m) (DIM*n) v)
+  basicUnsafeIndexM (V_Vn _ v) i =
+    do let o = DIM*i
+       generateVM (\j -> G.basicUnsafeIndexM v (o + j))
+
 instance (Dim n, Epsilon a) => Epsilon (V n a) where
   nearZero = nearZero . quadrance
   {-# INLINE nearZero #-}
@@ -360,8 +391,8 @@ type instance IxValue (V n a) = a
 
 instance Dim n => Ixed (V n a) where
   ix i
-    | i >= 0 && i < (reflectDim (Proxy :: Proxy n)) = el (unsafeEV i)
-    | otherwise                                     = ignored
+    | i >= 0 && i < DIM = el (unsafeEV i)
+    | otherwise         = ignored
   {-# INLINE ix #-}
 
 -- | Create a basis element. If the index is out of range, behavious is
@@ -372,11 +403,11 @@ unsafeEV i = E $ \f (V v) -> f (unsafeIndex v i) <&> \a -> V $ v `V.unsafeUpd` [
 
 -- | Generate a @V n@ by applying the function to each index.
 generateV :: forall n a. Dim n => (Int -> a) -> V n a
-generateV f = V $ generate (reflectDim (Proxy :: Proxy n)) f
+generateV f = V $ generate DIM f
 
 -- | Generate a @V n@ by applying the monadic function to each index.
 generateVM :: forall m n a. (Dim n, Monad m) => (Int -> m a) -> m (V n a)
-generateVM f = V `liftM` generateM (reflectDim (Proxy :: Proxy n)) f
+generateVM f = V `liftM` generateM DIM f
 
 instance Dim n => MonadZip (V n) where
   mzip (V as) (V bs) = V $ V.zip as bs
