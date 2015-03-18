@@ -92,6 +92,7 @@ class Dim n where
 type role V nominal representational
 #endif
 
+
 newtype V n a = V { toVector :: V.Vector a } deriving (Eq,Ord,Show,Read,Typeable,NFData
                                                       , Generic
 -- GHC bug: https://ghc.haskell.org/trac/ghc/ticket/8468
@@ -368,7 +369,11 @@ vDataType :: DataType
 vDataType = mkDataType "Linear.V.V" [vConstr]
 {-# NOINLINE vDataType #-}
 
-instance (Typeable (V n), Typeable (V n a), Dim n, Data a) => Data (V n a) where
+#if __GLASGOW_HASKELL__ >= 708
+#define Typeable1 Typeable
+#endif
+
+instance (Typeable1 (V n), Typeable (V n a), Dim n, Data a) => Data (V n a) where
   gfoldl f z (V as) = z (V . fromList) `f` V.toList as
   toConstr _ = vConstr
   gunfold k z c = case constrIndex c of
