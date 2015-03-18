@@ -76,7 +76,6 @@ column l f es = o <$> f i where
 -- >>> import Data.IntMap
 -- >>> import Debug.SimpleReflect.Vars
 -- >>> import Linear.V
--- >>> :set -XDataKinds -XPolyKinds
 
 infixl 7 !*!
 -- | Matrix product. This can compute any combination of sparse and dense multiplication.
@@ -229,8 +228,6 @@ m33_to_m44 (V3 r1 r2 r3) = V4 (vector r1) (vector r2) (vector r3) (point 0)
 -- V4 (V4 1 0 0 0) (V4 0 1 0 0) (V4 0 0 1 0) (V4 0 0 0 1)
 -- >>> identity :: V3 (V3 Int)
 -- V3 (V3 1 0 0) (V3 0 1 0) (V3 0 0 1)
--- >>> identity :: V 2 (V 2 Int)
--- V (fromList [V (fromList [1, 0]), V (fromList [0, 1]))
 identity :: (Num a, Traversable t, Applicative t) => t (t a)
 identity = scaled (pure 1)
 
