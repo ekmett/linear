@@ -75,6 +75,7 @@ column l f es = o <$> f i where
 -- >>> import Data.Complex
 -- >>> import Data.IntMap
 -- >>> import Debug.SimpleReflect.Vars
+-- >>> :set -XDataKinds
 
 infixl 7 !*!
 -- | Matrix product. This can compute any combination of sparse and dense multiplication.
