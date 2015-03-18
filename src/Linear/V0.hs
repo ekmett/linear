@@ -79,8 +79,13 @@ data V0 a = V0 deriving (Eq,Ord,Show,Read,Ix,Enum,Data,Typeable
 #endif
                         )
 
-instance Serial1 V0
-instance Serial (V0 a)
+instance Serial1 V0 where
+  serializeWith f = serialize
+  deserializeWith f = deserialize
+
+instance Serial (V0 a) where
+  serialize = return ()
+  deserialize = return V0
 
 instance Binary (V0 a) where
   put V0 = return ()
