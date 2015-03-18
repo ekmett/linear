@@ -368,7 +368,7 @@ vDataType :: DataType
 vDataType = mkDataType "Linear.V.V" [vConstr]
 {-# NOINLINE vDataType #-}
 
-instance (Dim n, Typeable n, Data a) => Data (V n a) where
+instance (Typeable (V n), Typeable (V n a), Dim n, Data a) => Data (V n a) where
   gfoldl f z (V as) = z (V . fromList) `f` V.toList as
   toConstr _ = vConstr
   gunfold k z c = case constrIndex c of
