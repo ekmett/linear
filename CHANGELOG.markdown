@@ -1,10 +1,7 @@
-1.19
-----
-* Fixed the `Data` instance `V n a` for GHC 7.10-RC3.
-
 1.18
 ----
 * Consolidated `eye2` .. `eye4` into a single `identity` combinator.
+* Fixed the `Data` instance `V n a` for GHC 7.10-RC3.
 
 1.17.1.1
 --------
