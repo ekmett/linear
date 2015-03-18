@@ -84,7 +84,7 @@ instance Serial1 V0 where
   deserializeWith f = deserialize
 
 instance Serial (V0 a) where
-  serialize = return ()
+  serialize V0 = return ()
   deserialize = return V0
 
 instance Binary (V0 a) where
