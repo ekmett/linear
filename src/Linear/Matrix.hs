@@ -75,6 +75,7 @@ column l f es = o <$> f i where
 -- >>> import Data.Complex
 -- >>> import Data.IntMap
 -- >>> import Debug.SimpleReflect.Vars
+-- >>> import Linear.V
 -- >>> :set -XDataKinds
 
 infixl 7 !*!
