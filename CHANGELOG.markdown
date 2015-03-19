@@ -1,3 +1,8 @@
+1.18.0.1
+--------
+* Fixed the test suite.
+* Fixed builds on older GHCs.
+
 1.18
 ----
 * Consolidated `eye2` .. `eye4` into a single `identity` combinator.
