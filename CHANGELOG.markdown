@@ -1,3 +1,7 @@
+1.18.0.2
+--------
+* Fixed builds on even older GHCs.
+
 1.18.0.1
 --------
 * Fixed the test suite.

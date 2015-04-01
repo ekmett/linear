@@ -313,8 +313,13 @@ instance Bounded a => Bounded (V1 a) where
   maxBound = pure maxBound
   {-# INLINE maxBound #-}
 
-instance Serial1 V1
-instance Serial a => Serial (V1 a)
+instance Serial1 V1 where
+  serializeWith f (V1 a) = f a
+  deserializeWith m = V1 `liftM` m
+
+instance Serial a => Serial (V1 a) where
+  serialize (V1 a) = serialize a
+  deserialize = V1 `liftM` serialize
 
 instance Binary a => Binary (V1 a) where
   put = serializeWith Binary.put
