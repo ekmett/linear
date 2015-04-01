@@ -319,7 +319,7 @@ instance Serial1 V1 where
 
 instance Serial a => Serial (V1 a) where
   serialize (V1 a) = serialize a
-  deserialize = V1 `liftM` serialize
+  deserialize = V1 `liftM` deserialize
 
 instance Binary a => Binary (V1 a) where
   put = serializeWith Binary.put
