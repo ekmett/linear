@@ -34,7 +34,9 @@
 
 module Linear.V
   ( V(V,toVector)
+#ifdef TEMPLATE_HASKELL
   , int
+#endif
   , dim
   , Dim(..)
   , reifyDim
@@ -73,7 +75,7 @@ import GHC.Generics (Generic)
 #if __GLASGOW_HASKELL__ >= 707
 import GHC.Generics (Generic1)
 #endif
-#if !(MIN_VERSION_reflection(1,3,0))
+#if !(MIN_VERSION_reflection(1,3,0)) && defined(TEMPLATE_HASKELL)
 import Language.Haskell.TH
 #endif
 import Linear.Epsilon
@@ -283,7 +285,7 @@ fromVector v
   | V.length v == reflectDim (Proxy :: Proxy n) = Just (V v)
   | otherwise                                   = Nothing
 
-#if !(MIN_VERSION_reflection(1,3,0))
+#if !(MIN_VERSION_reflection(1,3,0)) && TEMPLATE_HASKELL
 data Z  -- 0
 data D  (n :: *) -- 2n
 data SD (n :: *) -- 2n+1

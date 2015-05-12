@@ -24,6 +24,10 @@ extra-source-files:
   CHANGELOG.markdown
   README.markdown
 
+flag th
+  default: True
+  manual: True
+
 source-repository head
   type: git
   location: git://github.com/ekmett/linear.git
@@ -45,12 +49,15 @@ library
     semigroups           >= 0.9   && < 1,
     semigroupoids        >= 3     && < 5,
     tagged               >= 0.4.4 && < 1,
-    template-haskell     >= 2.7   && < 3.0,
     transformers         >= 0.2   && < 0.5,
     transformers-compat  >= 0.4   && < 1,
     unordered-containers >= 0.2.3 && < 0.3,
     vector               >= 0.10  && < 0.11,
     void                 >= 0.6   && < 1
+
+  if flag(th) && impl(ghc)
+    cpp-options: -DTEMPLATE_HASKELL
+    build-depends: template-haskell >= 2.7 && < 3.0
 
   exposed-modules:
     Linear
