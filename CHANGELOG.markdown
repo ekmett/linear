@@ -1,3 +1,7 @@
+1.18.1
+------
+* Added an `-f-template-haskell` option to allow disabling `template-haskell` support. This is an unsupported configuration but may be useful for expert users in sandbox configurations.
+
 1.18.0.2
 --------
 * Fixed builds on even older GHCs.
