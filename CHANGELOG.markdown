@@ -1,6 +1,7 @@
 1.18.1
 ------
 * Added an `-f-template-haskell` option to allow disabling `template-haskell` support. This is an unsupported configuration but may be useful for expert users in sandbox configurations.
+* Added lenses for extracting corner various sub-matrices e.g. `_m22`, `_m33`
 
 1.18.0.2
 --------
