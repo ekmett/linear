@@ -24,7 +24,11 @@ extra-source-files:
   CHANGELOG.markdown
   README.markdown
 
-flag th
+flag template-haskell
+  description:
+    You can disable the use of the `template-haskell` package using `-f-template-haskell`.
+    .
+    Disabling this is an unsupported configuration, but it may be useful for accelerating builds in sandboxes for expert users.
   default: True
   manual: True
 
@@ -55,8 +59,7 @@ library
     vector               >= 0.10  && < 0.11,
     void                 >= 0.6   && < 1
 
-  if flag(th) && impl(ghc)
-    cpp-options: -DTEMPLATE_HASKELL
+  if flag(template-haskell) && impl(ghc)
     build-depends: template-haskell >= 2.7 && < 3.0
 
   exposed-modules:
