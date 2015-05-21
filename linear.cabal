@@ -93,7 +93,7 @@ library
 test-suite doctests
   type:           exitcode-stdio-1.0
   main-is:        doctests.hs
-  ghc-options:    -Wall -Werror -threaded
+  ghc-options:    -Wall -threaded
   hs-source-dirs: tests
   build-depends:
     base,
@@ -107,7 +107,7 @@ test-suite UnitTests
   type:           exitcode-stdio-1.0
   main-is:        UnitTests.hs
   other-modules:  Plucker, Binary
-  ghc-options:    -Wall -Werror -threaded
+  ghc-options:    -Wall -threaded
   hs-source-dirs: tests
   build-depends:
     base,
