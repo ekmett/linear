@@ -1,6 +1,6 @@
 name:          linear
 category:      Math, Algebra
-version:       1.18.1
+version:       1.18.1.1
 license:       BSD3
 cabal-version: >= 1.8
 license-file:  LICENSE
@@ -51,7 +51,7 @@ library
     lens                 >= 4     && < 5,
     reflection           >= 1.3.2 && < 2,
     semigroups           >= 0.9   && < 1,
-    semigroupoids        >= 3     && < 5,
+    semigroupoids        >= 3     && < 6,
     tagged               >= 0.4.4 && < 1,
     transformers         >= 0.2   && < 0.5,
     transformers-compat  >= 0.4   && < 1,
