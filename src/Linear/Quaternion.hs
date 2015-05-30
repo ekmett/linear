@@ -44,7 +44,6 @@ import Control.Monad (liftM)
 import Control.Monad.Fix
 import Control.Monad.Zip
 import Control.Lens hiding ((<.>))
-import Data.Binary as Binary
 import Data.Bytes.Serial
 import Data.Complex (Complex((:+)))
 import Data.Data
@@ -54,7 +53,6 @@ import Data.Functor.Bind
 import Data.Functor.Classes
 import Data.Functor.Rep
 import Data.Hashable
-import Data.Serialize as Cereal
 import GHC.Arr (Ix(..))
 import qualified Data.Foldable as F
 import Data.Monoid
@@ -65,6 +63,8 @@ import GHC.Generics (Generic)
 #endif
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
 import GHC.Generics (Generic1)
+import Data.Binary as Binary
+import Data.Serialize as Cereal
 #endif
 import qualified Data.Vector.Generic.Mutable as M
 import qualified Data.Vector.Generic as G
@@ -559,8 +559,10 @@ instance MonadFix Quaternion where
 instance NFData a => NFData (Quaternion a) where
   rnf (Quaternion a b) = rnf a `seq` rnf b
 
-instance Serial1 Quaternion
 instance Serial a => Serial (Quaternion a)
+
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
+instance Serial1 Quaternion
 
 instance Binary a => Binary (Quaternion a) where
   put = serializeWith Binary.put
@@ -569,6 +571,7 @@ instance Binary a => Binary (Quaternion a) where
 instance Serialize a => Serialize (Quaternion a) where
   put = serializeWith Cereal.put
   get = deserializeWith Cereal.get
+#endif
 
 instance Eq1 Quaternion where eq1 = (==)
 instance Ord1 Quaternion where compare1 = compare

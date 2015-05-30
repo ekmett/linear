@@ -51,7 +51,6 @@ import Control.Monad (liftM)
 import Control.Monad.Fix
 import Control.Monad.Zip
 import Control.Lens hiding (index, (<.>))
-import Data.Binary as Binary
 import Data.Bytes.Serial
 import Data.Distributive
 import Data.Foldable as Foldable
@@ -61,7 +60,6 @@ import Data.Functor.Rep
 import Data.Hashable
 import Data.Semigroup
 import Data.Semigroup.Foldable
-import Data.Serialize as Cereal
 import Foreign.Ptr (castPtr)
 import Foreign.Storable (Storable(..))
 import GHC.Arr (Ix(..))
@@ -70,6 +68,8 @@ import GHC.Generics (Generic)
 #endif
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
 import GHC.Generics (Generic1)
+import Data.Binary as Binary
+import Data.Serialize as Cereal
 #endif
 import qualified Data.Vector.Generic.Mutable as M
 import qualified Data.Vector.Generic as G
@@ -567,8 +567,10 @@ instance NFData a => NFData (Plucker a) where
   rnf (Plucker a b c d e f) = rnf a `seq` rnf b `seq` rnf c
                         `seq` rnf d `seq` rnf e `seq` rnf f
 
-instance Serial1 Plucker
 instance Serial a => Serial (Plucker a)
+
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
+instance Serial1 Plucker
 
 instance Binary a => Binary (Plucker a) where
   put = serializeWith Binary.put
@@ -577,6 +579,7 @@ instance Binary a => Binary (Plucker a) where
 instance Serialize a => Serialize (Plucker a) where
   put = serializeWith Cereal.put
   get = deserializeWith Cereal.get
+#endif
 
 instance Eq1 Plucker where eq1 = (==)
 instance Ord1 Plucker where compare1 = compare

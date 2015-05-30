@@ -45,7 +45,6 @@ import Control.Monad (liftM)
 import Control.Monad.Fix
 import Control.Monad.Zip
 import Control.Lens hiding ((<.>))
-import Data.Binary as Binary
 import Data.Bytes.Serial
 import Data.Data
 import Data.Distributive
@@ -56,7 +55,6 @@ import Data.Functor.Rep
 import Data.Hashable
 import Data.Semigroup
 import Data.Semigroup.Foldable
-import Data.Serialize as Cereal
 import Foreign.Ptr (castPtr)
 import Foreign.Storable (Storable(..))
 import GHC.Arr (Ix(..))
@@ -65,6 +63,8 @@ import GHC.Generics (Generic)
 #endif
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
 import GHC.Generics (Generic1)
+import Data.Binary as Binary
+import Data.Serialize as Cereal
 #endif
 import qualified Data.Vector.Generic.Mutable as M
 import qualified Data.Vector.Generic as G
@@ -545,8 +545,10 @@ instance Bounded a => Bounded (V4 a) where
 instance NFData a => NFData (V4 a) where
   rnf (V4 a b c d) = rnf a `seq` rnf b `seq` rnf c `seq` rnf d
 
-instance Serial1 V4
 instance Serial a => Serial (V4 a)
+
+#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
+instance Serial1 V4
 
 instance Binary a => Binary (V4 a) where
   put = serializeWith Binary.put
@@ -555,6 +557,7 @@ instance Binary a => Binary (V4 a) where
 instance Serialize a => Serialize (V4 a) where
   put = serializeWith Cereal.put
   get = deserializeWith Cereal.get
+#endif
 
 instance Eq1 V4 where eq1 = (==)
 instance Ord1 V4 where compare1 = compare
