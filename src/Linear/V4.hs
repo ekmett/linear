@@ -545,8 +545,13 @@ instance Bounded a => Bounded (V4 a) where
 instance NFData a => NFData (V4 a) where
   rnf (V4 a b c d) = rnf a `seq` rnf b `seq` rnf c `seq` rnf d
 
-instance Serial1 V4
-instance Serial a => Serial (V4 a)
+instance Serial1 V4 where
+  serializeWith = traverse_
+  deserializeWith k = V4 <$> k <*> k <*> k <*> k
+
+instance Serial a => Serial (V4 a) where
+  serialize = serializeWith serialize
+  deserialize = deserializeWith deserialize
 
 instance Binary a => Binary (V4 a) where
   put = serializeWith Binary.put

@@ -375,8 +375,13 @@ instance Bounded a => Bounded (V2 a) where
 instance NFData a => NFData (V2 a) where
   rnf (V2 a b) = rnf a `seq` rnf b
 
-instance Serial1 V2
-instance Serial a => Serial (V2 a)
+instance Serial1 V2 where
+  serializeWith = traverse_
+  deserializeWith k = V2 <$> k <*> k
+
+instance Serial a => Serial (V2 a) where
+  serialize = serializeWith serialize
+  deserialize = deserializeWith deserialize
 
 instance Binary a => Binary (V2 a) where
   put = serializeWith Binary.put

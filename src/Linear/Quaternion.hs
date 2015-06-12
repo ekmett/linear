@@ -559,8 +559,13 @@ instance MonadFix Quaternion where
 instance NFData a => NFData (Quaternion a) where
   rnf (Quaternion a b) = rnf a `seq` rnf b
 
-instance Serial1 Quaternion
-instance Serial a => Serial (Quaternion a)
+instance Serial1 Quaternion where
+  serializeWith f (Quaternion a b) = f a >> serializeWith f b
+  deserializeWith f = Quaternion <$> f <*> deserializeWith f
+
+instance Serial a => Serial (Quaternion a) where
+  serialize = serializeWith serialize
+  deserialize = deserializeWith deserialize
 
 instance Binary a => Binary (Quaternion a) where
   put = serializeWith Binary.put
