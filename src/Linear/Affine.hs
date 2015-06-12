@@ -28,6 +28,7 @@
 module Linear.Affine where
 
 import Control.Applicative
+import Control.DeepSeq
 import Control.Monad (liftM)
 import Control.Lens
 import Data.Binary as Binary
@@ -145,6 +146,8 @@ newtype Point f a = P (f a)
 #endif
            )
 
+instance NFData (f a) => NFData (Point f a) where
+  rnf (P x) = rnf x
 
 instance Serial1 f => Serial1 (Point f) where
   serializeWith f (P p) = serializeWith f p
