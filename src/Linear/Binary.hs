@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Copyright   :  (C) 2013-2014 Edward Kmett and Anthony Cowley
+-- Copyright   :  (C) 2013-2015 Edward Kmett and Anthony Cowley
 -- License     :  BSD-style (see the file LICENSE)
 --
 -- Maintainer  :  Edward Kmett <ekmett@gmail.com>
