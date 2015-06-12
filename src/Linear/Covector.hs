@@ -1,4 +1,13 @@
 {-# LANGUAGE MultiParamTypeClasses, FlexibleInstances, FlexibleContexts #-}
+-----------------------------------------------------------------------------
+-- |
+-- License     :  BSD-style (see the file LICENSE)
+-- Maintainer  :  Edward Kmett <ekmett@gmail.com>
+-- Stability   :  provisional
+-- Portability :  portable
+--
+-- Operations on affine spaces.
+-----------------------------------------------------------------------------
 module Linear.Covector
   ( Covector(..)
   , ($*)
