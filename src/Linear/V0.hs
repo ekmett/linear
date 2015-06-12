@@ -80,8 +80,8 @@ data V0 a = V0 deriving (Eq,Ord,Show,Read,Ix,Enum,Data,Typeable
                         )
 
 instance Serial1 V0 where
-  serializeWith f = serialize
-  deserializeWith f = deserialize
+  serializeWith _ = serialize
+  deserializeWith _ = deserialize
 
 instance Serial (V0 a) where
   serialize V0 = return ()

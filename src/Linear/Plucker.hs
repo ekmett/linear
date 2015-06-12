@@ -567,8 +567,13 @@ instance NFData a => NFData (Plucker a) where
   rnf (Plucker a b c d e f) = rnf a `seq` rnf b `seq` rnf c
                         `seq` rnf d `seq` rnf e `seq` rnf f
 
-instance Serial1 Plucker
-instance Serial a => Serial (Plucker a)
+instance Serial1 Plucker where
+  serializeWith = traverse_
+  deserializeWith k = Plucker <$> k <*> k <*> k <*> k <*> k <*> k
+
+instance Serial a => Serial (Plucker a) where
+  serialize = serializeWith serialize
+  deserialize = deserializeWith deserialize
 
 instance Binary a => Binary (Plucker a) where
   put = serializeWith Binary.put
