@@ -133,7 +133,7 @@ class Functor f => Additive f where
 
   -- | Compute the difference between two vectors
   --
-  -- >>> V2 4 5 - V2 3 1
+  -- >>> V2 4 5 ^-^ V2 3 1
   -- V2 1 4
   (^-^) :: Num a => f a -> f a -> f a
 #ifdef USE_GHC_GENERICS
