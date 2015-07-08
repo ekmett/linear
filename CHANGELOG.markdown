@@ -1,3 +1,8 @@
+1.18.3
+------
+* Compile warning-free on GHC 7.10.
+
+
 1.18.2
 ------
 * Added `NFData` instance for `Point`
