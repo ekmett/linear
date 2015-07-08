@@ -28,7 +28,7 @@
 <a name="line-19"></a><span class='hs-cpp'>#endif</span>
 <a name="line-20"></a><span class='hs-comment'>-----------------------------------------------------------------------------</span>
 <a name="line-21"></a><span class='hs-comment'>-- |</span>
-<a name="line-22"></a><span class='hs-comment'>-- Copyright   :  (C) 2012-2013 Edward Kmett,</span>
+<a name="line-22"></a><span class='hs-comment'>-- Copyright   :  (C) 2012-2015 Edward Kmett</span>
 <a name="line-23"></a><span class='hs-comment'>-- License     :  BSD-style (see the file LICENSE)</span>
 <a name="line-24"></a><span class='hs-comment'>--</span>
 <a name="line-25"></a><span class='hs-comment'>-- Maintainer  :  Edward Kmett &lt;ekmett@gmail.com&gt;</span>
@@ -322,20 +322,25 @@
 <a name="line-313"></a>  <span class='hs-varid'>maxBound</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>pure</span> <span class='hs-varid'>maxBound</span>
 <a name="line-314"></a>  <span class='hs-comment'>{-# INLINE maxBound #-}</span>
 <a name="line-315"></a>
-<a name="line-316"></a><a name="instance%20Serial%20(V1%20a)%20instance%20Binary%20a%20=%3e%20Binary%20(V1%20a)"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Serial1</span> <span class='hs-conid'>V1</span>
-<a name="line-317"></a><a name="instance%20Serial%20(V1%20a)%20instance%20Binary%20a%20=%3e%20Binary%20(V1%20a)"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Serial</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-conid'>Serial</span> <span class='hs-layout'>(</span><span class='hs-conid'>V1</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span>
-<a name="line-318"></a>
-<a name="line-319"></a><a name="instance%20Binary%20(V1%20a)"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Binary</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-conid'>Binary</span> <span class='hs-layout'>(</span><span class='hs-conid'>V1</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyword'>where</span>
-<a name="line-320"></a>  <span class='hs-varid'>put</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>serializeWith</span> <span class='hs-conid'>Binary</span><span class='hs-varop'>.</span><span class='hs-varid'>put</span>
-<a name="line-321"></a>  <span class='hs-varid'>get</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>deserializeWith</span> <span class='hs-conid'>Binary</span><span class='hs-varop'>.</span><span class='hs-varid'>get</span>
-<a name="line-322"></a>
-<a name="line-323"></a><a name="instance%20Serialize%20(V1%20a)"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Serialize</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-conid'>Serialize</span> <span class='hs-layout'>(</span><span class='hs-conid'>V1</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyword'>where</span>
-<a name="line-324"></a>  <span class='hs-varid'>put</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>serializeWith</span> <span class='hs-conid'>Cereal</span><span class='hs-varop'>.</span><span class='hs-varid'>put</span>
-<a name="line-325"></a>  <span class='hs-varid'>get</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>deserializeWith</span> <span class='hs-conid'>Cereal</span><span class='hs-varop'>.</span><span class='hs-varid'>get</span>
-<a name="line-326"></a>
-<a name="line-327"></a><a name="instance%20Eq1%20V1"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Eq1</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span> <span class='hs-varid'>eq1</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varop'>==</span><span class='hs-layout'>)</span>
-<a name="line-328"></a><a name="instance%20Ord1%20V1"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Ord1</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span> <span class='hs-varid'>compare1</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>compare</span>
-<a name="line-329"></a><a name="instance%20Show1%20V1"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Show1</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span> <span class='hs-varid'>showsPrec1</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>showsPrec</span>
-<a name="line-330"></a><a name="instance%20Read1%20V1"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Read1</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span> <span class='hs-varid'>readsPrec1</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>readsPrec</span>
+<a name="line-316"></a><a name="instance%20Serial1%20V1"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Serial1</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span>
+<a name="line-317"></a>  <span class='hs-varid'>serializeWith</span> <span class='hs-varid'>f</span> <span class='hs-layout'>(</span><span class='hs-conid'>V1</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>f</span> <span class='hs-varid'>a</span>
+<a name="line-318"></a>  <span class='hs-varid'>deserializeWith</span> <span class='hs-varid'>m</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>V1</span> <span class='hs-varop'>`liftM`</span> <span class='hs-varid'>m</span>
+<a name="line-319"></a>
+<a name="line-320"></a><a name="instance%20Serial%20(V1%20a)"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Serial</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-conid'>Serial</span> <span class='hs-layout'>(</span><span class='hs-conid'>V1</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyword'>where</span>
+<a name="line-321"></a>  <span class='hs-varid'>serialize</span> <span class='hs-layout'>(</span><span class='hs-conid'>V1</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>serialize</span> <span class='hs-varid'>a</span>
+<a name="line-322"></a>  <span class='hs-varid'>deserialize</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>V1</span> <span class='hs-varop'>`liftM`</span> <span class='hs-varid'>deserialize</span>
+<a name="line-323"></a>
+<a name="line-324"></a><a name="instance%20Binary%20(V1%20a)"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Binary</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-conid'>Binary</span> <span class='hs-layout'>(</span><span class='hs-conid'>V1</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyword'>where</span>
+<a name="line-325"></a>  <span class='hs-varid'>put</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>serializeWith</span> <span class='hs-conid'>Binary</span><span class='hs-varop'>.</span><span class='hs-varid'>put</span>
+<a name="line-326"></a>  <span class='hs-varid'>get</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>deserializeWith</span> <span class='hs-conid'>Binary</span><span class='hs-varop'>.</span><span class='hs-varid'>get</span>
+<a name="line-327"></a>
+<a name="line-328"></a><a name="instance%20Serialize%20(V1%20a)"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Serialize</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-conid'>Serialize</span> <span class='hs-layout'>(</span><span class='hs-conid'>V1</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyword'>where</span>
+<a name="line-329"></a>  <span class='hs-varid'>put</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>serializeWith</span> <span class='hs-conid'>Cereal</span><span class='hs-varop'>.</span><span class='hs-varid'>put</span>
+<a name="line-330"></a>  <span class='hs-varid'>get</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>deserializeWith</span> <span class='hs-conid'>Cereal</span><span class='hs-varop'>.</span><span class='hs-varid'>get</span>
+<a name="line-331"></a>
+<a name="line-332"></a><a name="instance%20Eq1%20V1"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Eq1</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span> <span class='hs-varid'>eq1</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varop'>==</span><span class='hs-layout'>)</span>
+<a name="line-333"></a><a name="instance%20Ord1%20V1"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Ord1</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span> <span class='hs-varid'>compare1</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>compare</span>
+<a name="line-334"></a><a name="instance%20Show1%20V1"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Show1</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span> <span class='hs-varid'>showsPrec1</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>showsPrec</span>
+<a name="line-335"></a><a name="instance%20Read1%20V1"></a><span class='hs-keyword'>instance</span> <span class='hs-conid'>Read1</span> <span class='hs-conid'>V1</span> <span class='hs-keyword'>where</span> <span class='hs-varid'>readsPrec1</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>readsPrec</span>
 </pre></body>
 </html>
