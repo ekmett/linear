@@ -35,7 +35,9 @@ module Linear.Matrix
   , _m42, _m43, _m44
   ) where
 
+#if __GLASGOW_HASKELL__ < 710
 import Control.Applicative
+#endif
 import Control.Lens hiding (index)
 import Control.Lens.Internal.Context
 import Control.Monad (guard)

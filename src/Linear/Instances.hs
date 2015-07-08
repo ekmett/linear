@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# LANGUAGE CPP #-}
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+#if __GLASGOW_HASKELL__ >= 702 && __GLASGOW_HASKELL__ < 710
 {-# LANGUAGE Trustworthy #-}
 #endif
 -----------------------------------------------------------------------------
@@ -19,14 +19,18 @@ import Control.Applicative
 import Control.Monad.Fix
 import Control.Monad.Zip
 import Data.Complex
+#if __GLASGOW_HASKELL__ < 710
 import Data.Foldable
+#endif
 import Data.Functor.Bind
 import Data.HashMap.Lazy as HashMap
 import Data.Hashable
 import Data.Semigroup
 import Data.Semigroup.Foldable
 import Data.Semigroup.Traversable
+#if __GLASGOW_HASKELL__ < 710
 import Data.Traversable
+#endif
 
 instance (Hashable k, Eq k) => Apply (HashMap k) where
   (<.>) = HashMap.intersectionWith id

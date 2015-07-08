@@ -36,12 +36,18 @@ module Linear.Vector
 import Control.Applicative
 import Control.Lens
 import Data.Complex
+#if __GLASGOW_HASKELL__ < 710
 import Data.Foldable as Foldable (Foldable, forM_, foldl')
+#else
+import Data.Foldable as Foldable (forM_, foldl')
+#endif
 import Data.HashMap.Lazy as HashMap
 import Data.Hashable
 import Data.IntMap as IntMap
 import Data.Map as Map
+#if __GLASGOW_HASKELL__ < 710
 import Data.Monoid (mempty)
+#endif
 import Data.Vector as Vector
 import Data.Vector.Mutable as Mutable
 #ifdef USE_GHC_GENERICS

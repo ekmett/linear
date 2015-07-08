@@ -44,7 +44,9 @@ module Linear.V
   , fromVector
   ) where
 
+#if __GLASGOW_HASKELL__ < 710
 import Control.Applicative
+#endif
 import Control.DeepSeq (NFData)
 import Control.Monad.Fix
 import Control.Monad.Zip
@@ -62,7 +64,9 @@ import Data.Proxy
 #endif
 import Data.Reflection as R
 import Data.Serialize as Cereal
+#if __GLASGOW_HASKELL__ < 710
 import Data.Traversable (sequenceA)
+#endif
 import Data.Vector as V
 import Foreign.Ptr
 import Foreign.Storable

@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 -----------------------------------------------------------------------------
 -- |
 -- Copyright   :  (C) 2013-2015 Edward Kmett and Anthony Cowley
@@ -15,10 +16,16 @@ module Linear.Binary
   , getLinear
   ) where
 
+#if __GLASGOW_HASKELL__ < 710
 import Control.Applicative
+#endif
 import Data.Binary
+#if __GLASGOW_HASKELL__ < 710
 import Data.Foldable (Foldable, traverse_)
 import Data.Traversable (Traversable, sequenceA)
+#else
+import Data.Foldable (traverse_)
+#endif
 
 -- | Serialize a linear type.
 putLinear :: (Binary a, Foldable t) => t a -> Put
