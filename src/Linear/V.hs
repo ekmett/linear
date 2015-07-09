@@ -41,6 +41,10 @@ module Linear.V
   , Dim(..)
   , reifyDim
   , reifyVector
+#if MIN_VERSION_reflection(2,0,0)
+  , reifyDimNat
+  , reifyVectorNat
+#endif
   , fromVector
   ) where
 
@@ -125,6 +129,18 @@ retagDim f _ = f Proxy
 instance Reifies s Int => Dim (ReifiedDim s) where
   reflectDim = retagDim reflect
   {-# INLINE reflectDim #-}
+
+#if (MIN_VERSION_reflection(2,0,0)) && __GLASGOW_HASKELL__ >= 708
+
+reifyDimNat :: Int -> (forall (n :: Nat). KnownNat n => Proxy n -> r) -> r
+reifyDimNat i f = R.reifyNat (fromIntegral i) f
+{-# INLINE reifyDimNat #-}
+
+reifyVectorNat :: forall a r. Vector a -> (forall (n :: Nat). KnownNat n => V n a -> r) -> r
+reifyVectorNat v f = reifyNat (fromIntegral $ V.length v) $ \(Proxy :: Proxy n) -> f (V v :: V n a)
+{-# INLINE reifyVectorNat #-}
+
+#endif
 
 reifyDim :: Int -> (forall (n :: *). Dim n => Proxy n -> r) -> r
 reifyDim i f = R.reify i (go f) where
