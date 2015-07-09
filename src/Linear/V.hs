@@ -149,8 +149,42 @@ instance FunctorWithIndex Int (V n) where
   {-# INLINE imap #-}
 
 instance Foldable (V n) where
+  fold (V as) = fold as
+  {-# INLINE fold #-}
   foldMap f (V as) = foldMap f as
   {-# INLINE foldMap #-}
+  foldr f z (V as) = V.foldr f z as
+  {-# INLINE foldr #-}
+  foldl f z (V as) = V.foldl f z as
+  {-# INLINE foldl #-}
+  foldr' f z (V as) = V.foldr' f z as
+  {-# INLINE foldr' #-}
+  foldl' f z (V as) = V.foldl' f z as
+  {-# INLINE foldl' #-}
+  foldr1 f (V as) = V.foldr1 f as
+  {-# INLINE foldr1 #-}
+  foldl1 f (V as) = V.foldl1 f as
+  {-# INLINE foldl1 #-}
+
+#if __GLASGOW_HASKELL__ >= 710
+  length (V as) = V.length as
+  {-# INLINE length #-}
+  null (V as) = V.null as
+  {-# INLINE null #-}
+  toList (V as) = V.toList as
+  {-# INLINE toList #-}
+  elem a (V as) = V.elem a as
+  {-# INLINE elem #-}
+  maximum (V as) = V.maximum as
+  {-# INLINE maximum #-}
+  minimum (V as) = V.minimum as
+  {-# INLINE minimum #-}
+  sum (V as) = V.sum as
+  {-# INLINE sum #-}
+  product (V as) = V.product as
+  {-# INLINE product #-}
+#endif
+  
 
 instance FoldableWithIndex Int (V n) where
   ifoldMap f (V as) = ifoldMap f as
