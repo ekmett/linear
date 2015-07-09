@@ -41,7 +41,7 @@ module Linear.V
   , Dim(..)
   , reifyDim
   , reifyVector
-#if MIN_VERSION_reflection(2,0,0)
+#if MIN_VERSION_reflection(2,0,0) && __GLASGOW_HASKELL__ >= 708
   , reifyDimNat
   , reifyVectorNat
 #endif

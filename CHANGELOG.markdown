@@ -1,3 +1,11 @@
+1.19.1.1
+--------
+* Proper `reflection` 2 support
+
+1.19.1
+------
+* `reflection` 2 support
+
 1.19
 ----
 * Change the Ixed instance for `Linear.V` to use `Int` as the index type. This makes `V n` a _lot_ easier to use.
