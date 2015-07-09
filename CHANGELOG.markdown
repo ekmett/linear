@@ -1,3 +1,7 @@
+1.19
+----
+* Change the Ixed instance for `Linear.V` to use `Int` as the index type. This makes `V n` a _lot_ easier to use.
+
 1.18.3
 ------
 * Compile warning-free on GHC 7.10.

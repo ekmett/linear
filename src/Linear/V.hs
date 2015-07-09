@@ -343,11 +343,13 @@ instance Dim n => Representable (V n) where
   index (V xs) i = xs V.! i
   {-# INLINE index #-}
 
-type instance Index (V n a) = E (V n)
+type instance Index (V n a) = Int
 type instance IxValue (V n a) = a
 
 instance Ixed (V n a) where
-  ix = el
+  ix i f (V as)
+     | i < 0 || i >= V.length as = pure $ V as
+     | otherwise = f (as ! i) <&> \a -> V $ as V.// [(i, a)]
   {-# INLINE ix #-}
 
 instance Dim n => MonadZip (V n) where
