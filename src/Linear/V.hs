@@ -173,10 +173,12 @@ instance Foldable (V n) where
   {-# INLINE foldr #-}
   foldl f z (V as) = V.foldl f z as
   {-# INLINE foldl #-}
+#if __GLASGOW_HASKELL__ >= 706
   foldr' f z (V as) = V.foldr' f z as
   {-# INLINE foldr' #-}
   foldl' f z (V as) = V.foldl' f z as
   {-# INLINE foldl' #-}
+#endif
   foldr1 f (V as) = V.foldr1 f as
   {-# INLINE foldr1 #-}
   foldl1 f (V as) = V.foldl1 f as
