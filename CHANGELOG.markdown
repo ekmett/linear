@@ -1,3 +1,7 @@
+1.19.1.2
+--------
+* Fix GHC 7.4.
+
 1.19.1.1
 --------
 * Proper `reflection` 2 support
