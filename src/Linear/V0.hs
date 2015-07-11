@@ -32,6 +32,7 @@ import Control.DeepSeq (NFData(rnf))
 import Control.Lens
 import Control.Monad.Fix
 import Control.Monad.Zip
+import Data.Aeson ( FromJSON, ToJSON )
 import Data.Binary -- binary
 import Data.Bytes.Serial -- bytes
 import Data.Data
@@ -247,6 +248,10 @@ instance Representable V0 where
   {-# INLINE tabulate #-}
   index xs (E l) = view l xs
   {-# INLINE index #-}
+
+instance FromJSON (V0 a)
+
+instance ToJSON (V0 a)
 
 type instance Index (V0 a) = E V0
 type instance IxValue (V0 a) = a

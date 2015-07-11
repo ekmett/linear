@@ -1,10 +1,13 @@
 1.19.?
 ------
 * Added `FromJSON` and `ToJSON` instances for several types:
+  + `V0`
+  + `V1`
   + `V2`
   + `V3`
   + `V4`
   + `Quaternion`
+  + `Plucker`
 
 1.19.1.2
 --------

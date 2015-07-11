@@ -55,6 +55,7 @@ import Control.DeepSeq (NFData)
 import Control.Monad.Fix
 import Control.Monad.Zip
 import Control.Lens as Lens
+import Data.Aeson ( FromJSON, ToJSON )
 import Data.Binary as Binary
 import Data.Bytes.Serial
 import Data.Data
@@ -202,7 +203,7 @@ instance Foldable (V n) where
   product (V as) = V.product as
   {-# INLINE product #-}
 #endif
-  
+
 
 instance FoldableWithIndex Int (V n) where
   ifoldMap f (V as) = ifoldMap f as
@@ -333,6 +334,10 @@ instance (Dim n, Epsilon a) => Epsilon (V n a) where
 instance Dim n => Metric (V n) where
   dot (V a) (V b) = V.sum $ V.zipWith (*) a b
   {-# INLINE dot #-}
+
+instance (FromJSON a) => FromJSON (V n a)
+
+instance (ToJSON a) => ToJSON (V n a)
 
 -- TODO: instance (Dim n, Ix a) => Ix (V n a)
 
