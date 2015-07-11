@@ -37,6 +37,7 @@ import Control.Monad (liftM)
 import Control.Monad.Fix
 import Control.Monad.Zip
 import Control.Lens hiding ((<.>))
+import Data.Aeson ( FromJSON, ToJSON )
 import Data.Binary as Binary
 import Data.Bytes.Serial
 import Data.Data
@@ -217,6 +218,10 @@ instance Floating a => Floating (V2 a) where
 instance Metric V2 where
   dot (V2 a b) (V2 c d) = a * c + b * d
   {-# INLINE dot #-}
+
+instance (FromJSON a) => FromJSON (V2 a)
+
+instance (ToJSON a) => ToJSON (V2 a)
 
 -- | A space that distinguishes 2 orthogonal basis vectors '_x' and '_y', but may have more.
 class R1 t => R2 t where
