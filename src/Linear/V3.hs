@@ -38,6 +38,7 @@ import Control.Monad (liftM)
 import Control.Monad.Fix
 import Control.Monad.Zip
 import Control.Lens hiding ((<.>))
+import Data.Aeson ( FromJSON, ToJSON )
 import Data.Binary as Binary -- binary
 import Data.Bytes.Serial -- bytes
 import Data.Data
@@ -209,6 +210,10 @@ instance Metric V3 where
 instance Distributive V3 where
   distribute f = V3 (fmap (\(V3 x _ _) -> x) f) (fmap (\(V3 _ y _) -> y) f) (fmap (\(V3 _ _ z) -> z) f)
   {-# INLINE distribute #-}
+
+instance (FromJSON a) => FromJSON (V3 a)
+
+instance (ToJSON a) => ToJSON (V3 a)
 
 -- | A space that distinguishes 3 orthogonal basis vectors: '_x', '_y', and '_z'. (It may have more)
 class R2 t => R3 t where

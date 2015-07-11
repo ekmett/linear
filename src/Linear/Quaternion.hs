@@ -44,6 +44,7 @@ import Control.Monad (liftM)
 import Control.Monad.Fix
 import Control.Monad.Zip
 import Control.Lens hiding ((<.>))
+import Data.Aeson ( FromJSON, ToJSON )
 import Data.Binary as Binary
 import Data.Bytes.Serial
 import Data.Complex (Complex((:+)))
@@ -265,6 +266,10 @@ instance RealFloat a => Fractional (Quaternion a) where
 instance Metric Quaternion where
   Quaternion e v `dot` Quaternion e' v' = e*e' + (v `dot` v')
   {-# INLINE dot #-}
+
+instance (FromJSON a) => FromJSON (Quaternion a)
+
+instance (ToJSON a) => ToJSON (Quaternion a)
 
 -- | A vector space that includes the basis elements '_e' and '_i'
 class Complicated t where

@@ -51,6 +51,7 @@ import Control.Monad (liftM)
 import Control.Monad.Fix
 import Control.Monad.Zip
 import Control.Lens hiding (index, (<.>))
+import Data.Aeson ( FromJSON, ToJSON )
 import Data.Binary as Binary
 import Data.Bytes.Serial
 import Data.Distributive
@@ -298,6 +299,10 @@ instance Metric Plucker where
 instance Epsilon a => Epsilon (Plucker a) where
   nearZero = nearZero . quadrance
   {-# INLINE nearZero #-}
+
+instance (FromJSON a) => FromJSON (Plucker a)
+
+instance (ToJSON a) => ToJSON (Plucker a)
 
 -- | Given a pair of points represented by homogeneous coordinates
 -- generate Plücker coordinates for the line through them, directed

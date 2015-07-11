@@ -45,6 +45,7 @@ import Control.Monad (liftM)
 import Control.Monad.Fix
 import Control.Monad.Zip
 import Control.Lens hiding ((<.>))
+import Data.Aeson ( FromJSON, ToJSON )
 import Data.Binary as Binary
 import Data.Bytes.Serial
 import Data.Data
@@ -221,6 +222,10 @@ instance Distributive V4 where
 instance Hashable a => Hashable (V4 a) where
   hashWithSalt s (V4 a b c d) = s `hashWithSalt` a `hashWithSalt` b `hashWithSalt` c `hashWithSalt` d
   {-# INLINE hashWithSalt #-}
+
+instance (FromJSON a) => FromJSON (V4 a)
+
+instance (ToJSON a) => ToJSON (V4 a)
 
 -- | A space that distinguishes orthogonal basis vectors '_x', '_y', '_z', '_w'. (It may have more.)
 class R3 t => R4 t where

@@ -40,6 +40,7 @@ import Control.Monad (liftM)
 import Control.Monad.Fix
 import Control.Monad.Zip
 import Control.Lens
+import Data.Aeson ( FromJSON, ToJSON )
 import Data.Binary as Binary
 import Data.Bytes.Serial
 import Data.Serialize as Cereal
@@ -210,6 +211,10 @@ instance Hashable a => Hashable (V1 a) where
 instance Metric V1 where
   dot (V1 a) (V1 b) = a * b
   {-# INLINE dot #-}
+
+instance (FromJSON a) => FromJSON (V1 a)
+
+instance (ToJSON a) => ToJSON (V1 a)
 
 -- | A space that has at least 1 basis vector '_x'.
 class R1 t where
