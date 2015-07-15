@@ -202,10 +202,10 @@ instance Additive Vector where
   {-# INLINE zero #-}
   liftU2 f u v = case compare lu lv of
     LT | lu == 0   -> v
-       | otherwise -> modify (\ w -> Foldable.forM_ [0..lu-1] $ \i -> unsafeWrite w i $ f (unsafeIndex u i) (unsafeIndex v i)) v
+       | otherwise -> Vector.modify (\ w -> Foldable.forM_ [0..lu-1] $ \i -> unsafeWrite w i $ f (unsafeIndex u i) (unsafeIndex v i)) v
     EQ -> Vector.zipWith f u v
     GT | lv == 0   -> u
-       | otherwise -> modify (\ w -> Foldable.forM_ [0..lv-1] $ \i -> unsafeWrite w i $ f (unsafeIndex u i) (unsafeIndex v i)) u
+       | otherwise -> Vector.modify (\ w -> Foldable.forM_ [0..lv-1] $ \i -> unsafeWrite w i $ f (unsafeIndex u i) (unsafeIndex v i)) u
     where
       lu = Vector.length u
       lv = Vector.length v

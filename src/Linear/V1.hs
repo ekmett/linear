@@ -17,6 +17,10 @@
 #ifndef MIN_VERSION_hashable
 #define MIN_VERSION_hashable(x,y,z) 1
 #endif
+
+#ifndef MIN_VERSION_vector
+#define MIN_VERSION_vector(x,y,z) 1
+#endif
 -----------------------------------------------------------------------------
 -- |
 -- Copyright   :  (C) 2012-2015 Edward Kmett
@@ -291,6 +295,9 @@ instance U.Unbox a => M.MVector U.MVector (V1 a) where
   basicUnsafeNew n = liftM MV_V1 (M.basicUnsafeNew n)
   basicUnsafeRead (MV_V1 v) i = liftM V1 (M.basicUnsafeRead v i)
   basicUnsafeWrite (MV_V1 v) i (V1 x) = M.basicUnsafeWrite v i x
+#if MIN_VERSION_vector(0,11,0)
+  basicInitialize (MV_V1 v) = M.basicInitialize v
+#endif
 
 instance U.Unbox a => G.Vector U.Vector (V1 a) where
   basicUnsafeFreeze (MV_V1 v) = liftM V_V1 (G.basicUnsafeFreeze v)

@@ -8,6 +8,10 @@
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE DeriveGeneric #-}
 #endif
+
+#ifndef MIN_VERSION_vector
+#define MIN_VERSION_vector(x,y,z) 1
+#endif
 -----------------------------------------------------------------------------
 -- |
 -- Copyright   :  (C) 2012-2015 Edward Kmett
@@ -536,6 +540,9 @@ instance U.Unbox a => M.MVector U.MVector (Plucker a) where
        M.basicUnsafeWrite a (o+3) w
        M.basicUnsafeWrite a (o+4) v
        M.basicUnsafeWrite a (o+5) u
+#if MIN_VERSION_vector(0,11,0)
+  basicInitialize (MV_Plucker _ v) = M.basicInitialize v
+#endif
 
 instance U.Unbox a => G.Vector U.Vector (Plucker a) where
   basicUnsafeFreeze (MV_Plucker n v) = liftM ( V_Plucker n) (G.basicUnsafeFreeze v)

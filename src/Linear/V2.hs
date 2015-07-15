@@ -10,6 +10,10 @@
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE DeriveGeneric #-}
 #endif
+
+#ifndef MIN_VERSION_vector
+#define MIN_VERSION_vector(x,y,z) 1
+#endif
 -----------------------------------------------------------------------------
 -- |
 -- Copyright   :  (C) 2012-2015 Edward Kmett
@@ -344,6 +348,9 @@ instance U.Unbox a => M.MVector U.MVector (V2 a) where
     do let o = 2*i
        M.basicUnsafeWrite v o     x
        M.basicUnsafeWrite v (o+1) y
+#if MIN_VERSION_vector(0,11,0)
+  basicInitialize (MV_V2 _ v) = M.basicInitialize v
+#endif
 
 instance U.Unbox a => G.Vector U.Vector (V2 a) where
   basicUnsafeFreeze (MV_V2 n v) = liftM ( V_V2 n) (G.basicUnsafeFreeze v)
