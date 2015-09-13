@@ -40,7 +40,6 @@ import Control.Applicative
 #endif
 import Control.Lens hiding (index)
 import Control.Lens.Internal.Context
-import Control.Monad (guard)
 import Data.Distributive
 import Data.Foldable as Foldable
 import Data.Functor.Rep
@@ -339,10 +338,8 @@ det44 (V4 (V4 i00 i01 i02 i03)
 --
 -- >>> inv22 $ V2 (V2 1 2) (V2 3 4)
 -- Just (V2 (V2 (-2.0) 1.0) (V2 1.5 (-0.5)))
-inv22 :: (Epsilon a, Floating a) => M22 a -> Maybe (M22 a)
-inv22 m@(V2 (V2 a b) (V2 c d))
-  | nearZero det = Nothing
-  | otherwise = Just $ (1 / det) *!! V2 (V2 d (-b)) (V2 (-c) a)
+inv22 :: (Epsilon a, Floating a) => M22 a -> M22 a
+inv22 m@(V2 (V2 a b) (V2 c d)) = (1 / det) *!! V2 (V2 d (-b)) (V2 (-c) a)
   where det = det22 m
 {-# INLINE inv22 #-}
 
@@ -350,14 +347,13 @@ inv22 m@(V2 (V2 a b) (V2 c d))
 --
 -- >>> inv33 $ V3 (V3 1 2 4) (V3 4 2 2) (V3 1 1 1)
 -- Just (V3 (V3 0.0 0.5 (-1.0)) (V3 (-0.5) (-0.75) 3.5) (V3 0.5 0.25 (-1.5)))
-inv33 :: (Epsilon a, Floating a) => M33 a -> Maybe (M33 a)
+inv33 :: (Epsilon a, Floating a) => M33 a -> M33 a
 inv33 m@(V3 (V3 a b c)
             (V3 d e f)
             (V3 g h i))
-  | nearZero det = Nothing
-  | otherwise = Just $ (1 / det) *!! V3 (V3 a' b' c')
-                                        (V3 d' e' f')
-                                        (V3 g' h' i')
+  = (1 / det) *!! V3 (V3 a' b' c')
+                     (V3 d' e' f')
+                     (V3 g' h' i')
   where a' = cofactor (e,f,h,i)
         b' = cofactor (c,b,i,h)
         c' = cofactor (b,c,e,f)
@@ -381,7 +377,7 @@ transpose = distribute
 {-# INLINE transpose #-}
 
 -- |4x4 matrix inverse.
-inv44 :: (Epsilon a, Fractional a) => M44 a -> Maybe (M44 a)
+inv44 :: (Epsilon a, Fractional a) => M44 a -> M44 a
 inv44 (V4 (V4 i00 i01 i02 i03)
           (V4 i10 i11 i12 i13)
           (V4 i20 i21 i22 i23)
@@ -400,9 +396,7 @@ inv44 (V4 (V4 i00 i01 i02 i03)
       c0 = i20 * i31 - i30 * i21
       det = s0 * c5 - s1 * c4 + s2 * c3 + s3 * c2 - s4 * c1 + s5 * c0
       invDet = recip det
-  in do guard (not (nearZero det))
-        return (invDet *!!
-                V4 (V4 (i11 * c5 - i12 * c4 + i13 * c3)
+  in invDet *!! V4 (V4 (i11 * c5 - i12 * c4 + i13 * c3)
                        (-i01 * c5 + i02 * c4 - i03 * c3)
                        (i31 * s5 - i32 * s4 + i33 * s3)
                        (-i21 * s5 + i22 * s4 - i23 * s3))
@@ -417,5 +411,5 @@ inv44 (V4 (V4 i00 i01 i02 i03)
                    (V4 (-i10 * c3 + i11 * c1 - i12 * c0)
                        (i00 * c3 - i01 * c1 + i02 * c0)
                        (-i30 * s3 + i31 * s1 - i32 * s0)
-                       (i20 * s3 - i21 * s1 + i22 * s0)))
+                       (i20 * s3 - i21 * s1 + i22 * s0))
 {-# INLINE inv44 #-}

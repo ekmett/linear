@@ -1,3 +1,8 @@
+1.20
+----
+* `inv22`, `inv33` and `inv44` no longer attempt an epsilon check. They no longer return a `Maybe` result as a consequence.
+  You should filter for the 0 determinant case yourself.
+
 1.19.1.3
 --------
 * `vector` 0.11.0.0 support
