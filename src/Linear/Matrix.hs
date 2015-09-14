@@ -43,7 +43,6 @@ import Control.Lens.Internal.Context
 import Data.Distributive
 import Data.Foldable as Foldable
 import Data.Functor.Rep
-import Linear.Epsilon
 import Linear.Quaternion
 import Linear.V2
 import Linear.V3
@@ -338,7 +337,7 @@ det44 (V4 (V4 i00 i01 i02 i03)
 --
 -- >>> inv22 $ V2 (V2 1 2) (V2 3 4)
 -- Just (V2 (V2 (-2.0) 1.0) (V2 1.5 (-0.5)))
-inv22 :: (Epsilon a, Floating a) => M22 a -> M22 a
+inv22 :: Floating a => M22 a -> M22 a
 inv22 m@(V2 (V2 a b) (V2 c d)) = (1 / det) *!! V2 (V2 d (-b)) (V2 (-c) a)
   where det = det22 m
 {-# INLINE inv22 #-}
@@ -347,7 +346,7 @@ inv22 m@(V2 (V2 a b) (V2 c d)) = (1 / det) *!! V2 (V2 d (-b)) (V2 (-c) a)
 --
 -- >>> inv33 $ V3 (V3 1 2 4) (V3 4 2 2) (V3 1 1 1)
 -- Just (V3 (V3 0.0 0.5 (-1.0)) (V3 (-0.5) (-0.75) 3.5) (V3 0.5 0.25 (-1.5)))
-inv33 :: (Epsilon a, Floating a) => M33 a -> M33 a
+inv33 :: Floating a => M33 a -> M33 a
 inv33 m@(V3 (V3 a b c)
             (V3 d e f)
             (V3 g h i))
@@ -377,7 +376,7 @@ transpose = distribute
 {-# INLINE transpose #-}
 
 -- |4x4 matrix inverse.
-inv44 :: (Epsilon a, Fractional a) => M44 a -> M44 a
+inv44 :: Fractional a => M44 a -> M44 a
 inv44 (V4 (V4 i00 i01 i02 i03)
           (V4 i10 i11 i12 i13)
           (V4 i20 i21 i22 i23)
