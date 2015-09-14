@@ -1,3 +1,7 @@
+1.20.0.1
+------
+* Fixed doctests broken by the previous change.
+
 1.20
 ----
 * `inv22`, `inv33` and `inv44` no longer attempt an epsilon check. They no longer return a `Maybe` result as a consequence.
