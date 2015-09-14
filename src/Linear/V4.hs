@@ -495,8 +495,8 @@ instance Ixed (V4 a) where
 instance Each (V4 a) (V4 b) a b where
   each = traverse
 
-data instance U.Vector    (V4 a) =  V_V4 !Int (U.Vector    a)
-data instance U.MVector s (V4 a) = MV_V4 !Int (U.MVector s a)
+data instance U.Vector    (V4 a) =  V_V4 {-# UNPACK #-} !Int !(U.Vector    a)
+data instance U.MVector s (V4 a) = MV_V4 {-# UNPACK #-} !Int !(U.MVector s a)
 instance U.Unbox a => U.Unbox (V4 a)
 
 instance U.Unbox a => M.MVector U.MVector (V4 a) where

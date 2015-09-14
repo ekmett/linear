@@ -330,8 +330,8 @@ instance Each (V2 a) (V2 b) a b where
   each = traverse
   {-# INLINE each #-}
 
-data instance U.Vector    (V2 a) =  V_V2 !Int (U.Vector    a)
-data instance U.MVector s (V2 a) = MV_V2 !Int (U.MVector s a)
+data instance U.Vector    (V2 a) =  V_V2 {-# UNPACK #-} !Int !(U.Vector    a)
+data instance U.MVector s (V2 a) = MV_V2 {-# UNPACK #-} !Int !(U.MVector s a)
 instance U.Unbox a => U.Unbox (V2 a)
 
 instance U.Unbox a => M.MVector U.MVector (V2 a) where
