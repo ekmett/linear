@@ -335,6 +335,12 @@ data instance U.MVector s (V2 a) = MV_V2 !Int (U.MVector s a)
 instance U.Unbox a => U.Unbox (V2 a)
 
 instance U.Unbox a => M.MVector U.MVector (V2 a) where
+  {-# INLINE basicLength #-}
+  {-# INLINE basicUnsafeSlice #-}
+  {-# INLINE basicOverlaps #-}
+  {-# INLINE basicUnsafeNew #-}
+  {-# INLINE basicUnsafeRead #-}
+  {-# INLINE basicUnsafeWrite #-}
   basicLength (MV_V2 n _) = n
   basicUnsafeSlice m n (MV_V2 _ v) = MV_V2 n (M.basicUnsafeSlice (2*m) (2*n) v)
   basicOverlaps (MV_V2 _ v) (MV_V2 _ u) = M.basicOverlaps v u
@@ -350,9 +356,15 @@ instance U.Unbox a => M.MVector U.MVector (V2 a) where
        M.basicUnsafeWrite v (o+1) y
 #if MIN_VERSION_vector(0,11,0)
   basicInitialize (MV_V2 _ v) = M.basicInitialize v
+  {-# INLINE basicInitialize #-}
 #endif
 
 instance U.Unbox a => G.Vector U.Vector (V2 a) where
+  {-# INLINE basicUnsafeFreeze #-}
+  {-# INLINE basicUnsafeThaw   #-}
+  {-# INLINE basicLength       #-}
+  {-# INLINE basicUnsafeSlice  #-}
+  {-# INLINE basicUnsafeIndexM #-}
   basicUnsafeFreeze (MV_V2 n v) = liftM ( V_V2 n) (G.basicUnsafeFreeze v)
   basicUnsafeThaw   ( V_V2 n v) = liftM (MV_V2 n) (G.basicUnsafeThaw   v)
   basicLength       ( V_V2 n _) = n

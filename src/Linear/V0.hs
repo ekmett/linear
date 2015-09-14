@@ -269,6 +269,12 @@ newtype instance U.MVector s (V0 a) = MV_V0 Int
 instance U.Unbox (V0 a)
 
 instance M.MVector U.MVector (V0 a) where
+  {-# INLINE basicLength #-}
+  {-# INLINE basicUnsafeSlice #-}
+  {-# INLINE basicOverlaps #-}
+  {-# INLINE basicUnsafeNew #-}
+  {-# INLINE basicUnsafeRead #-}
+  {-# INLINE basicUnsafeWrite #-}
   basicLength (MV_V0 n) = n
   basicUnsafeSlice _ n _ = MV_V0 n
   basicOverlaps _ _ = False
@@ -277,9 +283,15 @@ instance M.MVector U.MVector (V0 a) where
   basicUnsafeWrite _ _ _ = return ()
 #if MIN_VERSION_vector(0,11,0)
   basicInitialize _ = return ()
+  {-# INLINE basicInitialize #-}
 #endif
 
 instance G.Vector U.Vector (V0 a) where
+  {-# INLINE basicUnsafeFreeze #-}
+  {-# INLINE basicUnsafeThaw   #-}
+  {-# INLINE basicLength       #-}
+  {-# INLINE basicUnsafeSlice  #-}
+  {-# INLINE basicUnsafeIndexM #-}
   basicUnsafeFreeze (MV_V0 n) = return (V_V0 n)
   basicUnsafeThaw (V_V0 n) = return (MV_V0 n)
   basicLength (V_V0 n) = n
