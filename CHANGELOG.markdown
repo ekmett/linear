@@ -1,6 +1,7 @@
-1.20.0.1
+1.20.1
 ------
 * Fixed doctests broken by the previous change.
+* Unboxed vector instances for various linear data types now use unpacked integers even on older GHCs.
 
 1.20
 ----
