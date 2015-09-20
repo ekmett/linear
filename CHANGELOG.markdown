@@ -1,3 +1,8 @@
+1.20.2
+------
+* Modified the `doctest` machinery to work with `stack` and builds to non-standard locations.
+* Removed the local `.ghci` file.
+
 1.20.1
 ------
 * Fixed doctests broken by the previous change.
