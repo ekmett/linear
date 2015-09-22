@@ -185,12 +185,18 @@ type M44 a = V4 (V4 a)
 -- | Build a rotation matrix from a unit 'Quaternion'.
 fromQuaternion :: Num a => Quaternion a -> M33 a
 fromQuaternion (Quaternion w (V3 x y z)) =
-  V3 (V3 (1-2*(y2+z2)) (2*(x*y-z*w)) (2*(x*z+y*w)))
-     (V3 (2*(x*y+z*w)) (1-2*(x2+z2)) (2*(y*z-x*w)))
-     (V3 (2*(x*z-y*w)) (2*(y*z+x*w)) (1-2*(x2+y2)))
-  where x2 = x * x
-        y2 = y * y
-        z2 = z * z
+  V3 (V3 (1-2*(y2+z2)) (2*(xy-zw)) (2*(xz+yw)))
+     (V3 (2*(xy+zw)) (1-2*(x2+z2)) (2*(yz-xw)))
+     (V3 (2*(xz-yw)) (2*(yz+xw)) (1-2*(x2+y2)))
+  where x2 = x*x
+        y2 = y*y
+        z2 = z*z
+        xy = x*y
+        xz = x*z
+        xw = x*w
+        yz = y*z
+        yw = y*w
+        zw = z*w
 {-# INLINE fromQuaternion #-}
 
 -- | Build a transformation matrix from a rotation matrix and a

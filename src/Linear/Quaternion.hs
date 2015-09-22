@@ -346,8 +346,8 @@ sqrte2pqiq e qiq -- = sqrt (e*e) + qiq
   | e < - 1.5097698010472593e153 = -(qiq/e) - e
   | e < 5.582399551122541e57      = sqrt ((e*e) + qiq) -- direct definition
   | otherwise                     = (qiq/e) + e
-{-# SPECIALIZE sqrte2pqiq :: Double -> Double -> Double #-}
-{-# SPECIALIZE sqrte2pqiq :: Float -> Float -> Float #-}
+-- {-# SPECIALIZE sqrte2pqiq :: Double -> Double -> Double #-}
+-- {-# SPECIALIZE sqrte2pqiq :: Float -> Float -> Float #-}
 #ifdef HERBIE
 {-# ANN sqrte2pqiq "NoHerbie" #-}
 #endif
@@ -357,8 +357,8 @@ tanrhs sai ai d -- = cosh ai * (sai / ai) / d -- improved from 6.04 bits of erro
   | sai < -4.618902267687042e-52 = (sai / d / ai) * cosh ai
   | sai < 1.038530535935153e-39 = (cosh ai * sai) / ai / d
   | otherwise = (sai / d / ai) * cosh ai
-{-# SPECIALIZE tanrhs :: Double -> Double -> Double -> Double #-}
-{-# SPECIALIZE tanrhs :: Float -> Float -> Float -> Float #-}
+-- {-# SPECIALIZE tanrhs :: Double -> Double -> Double -> Double #-}
+-- {-# SPECIALIZE tanrhs :: Float -> Float -> Float -> Float #-}
 #ifdef HERBIE
 {-# ANN tanrhs "NoHerbie" #-}
 #endif
@@ -382,12 +382,11 @@ instance RealFloat a => Floating (Quaternion a) where
     | ai <- sqrt qiq = reimagine (log m) (atan2 m e / ai) q
     where qiq = qi q
           m = sqrte2pqiq e qiq
-
-
-
   {-# INLINE log #-}
+
   x ** y = exp (y * log x)
   {-# INLINE (**) #-}
+
   sqrt q@(Quaternion e v)
     | m   == 0 = q
     | qiq == 0 = if e > 0
@@ -397,32 +396,39 @@ instance RealFloat a => Floating (Quaternion a) where
     where qiq = qi q
           m = sqrte2pqiq e qiq
   {-# INLINE sqrt #-}
+
   cos q@(Quaternion e v)
     | qiq == 0 = Quaternion (cos e) v
-    | ai <- sqrt qiq = reimagine (cos e * cosh ai) (- sin e * sinh ai / ai) q
+    | ai <- sqrt qiq = reimagine (cos e * cosh ai) (- sin e / ai / sinh ai) q -- 0.15 bits error
+                    -- reimagine (cos e * cosh ai) (- sin e * sinh ai / ai) q -- 13.5 bits worse
     where qiq = qi q
   {-# INLINE cos #-}
+
   sin q@(Quaternion e v)
     | qiq == 0 = Quaternion (sin e) v
     | ai <- sqrt qiq = reimagine (sin e * cosh ai) (cos e * sinh ai / ai) q
     where qiq = qi q
   {-# INLINE sin #-}
+
   tan q@(Quaternion e v)
     | qiq == 0 = Quaternion (tan e) v
     | ai <- sqrt qiq, ce <- cos e, sai <- sinh ai, d <- ce*ce + sai*sai =
       reimagine (ce * sin e / d) (tanrhs sai ai d) q
     where qiq = qi q
   {-# INLINE tan #-}
+
   sinh q@(Quaternion e v)
     | qiq == 0 = Quaternion (sinh e) v
     | ai <- sqrt qiq = reimagine (sinh e * cos ai) (cosh e * sin ai / ai) q
     where qiq = qi q
   {-# INLINE sinh #-}
+
   cosh q@(Quaternion e v)
     | qiq == 0 = Quaternion (cosh e) v
-    | ai <- sqrt qiq = reimagine (cosh e * cos ai) (sinh e * sin ai / ai) q
+    | ai <- sqrt qiq = reimagine (cosh e * cos ai) (sin ai * (sinh e / ai)) q
     where qiq = qi q
   {-# INLINE cosh #-}
+
   tanh q@(Quaternion e v)
     | qiq == 0 = Quaternion (tanh e) v
     | ai <- sqrt qiq, se <- sinh e, cai <- cos ai, d <- se*se + cai*cai =
@@ -448,8 +454,8 @@ tanhrhs :: (Floating a, Ord a) => a -> a -> a -> a
 tanhrhs cai ai d -- = cai * (sin ai / ai) / d
   | d >= -4.2173720203427147e-29 && d < 4.446702369113811e64 = cai / (d * (ai / sin ai))
   | otherwise                                                = cai * (1 / ai / sin ai) / d
-{-# SPECIALIZE tanhrhs :: Double -> Double -> Double -> Double #-}
-{-# SPECIALIZE tanhrhs :: Float -> Float -> Float -> Float #-}
+-- {-# SPECIALIZE tanhrhs :: Double -> Double -> Double -> Double #-}
+-- {-# SPECIALIZE tanhrhs :: Float -> Float -> Float -> Float #-}
 #ifdef HERBIE
 {-# ANN tanhrhs "NoHerbie" #-}
 #endif
