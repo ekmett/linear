@@ -399,12 +399,12 @@ instance RealFloat a => Floating (Quaternion a) where
   {-# INLINE sqrt #-}
   cos q@(Quaternion e v)
     | qiq == 0 = Quaternion (cos e) v
-    | ai <- sqrt qiq = reimagine (cos e * cosh ai) (- sin e * (sinh ai / ai)) q
+    | ai <- sqrt qiq = reimagine (cos e * cosh ai) (- sin e * sinh ai / ai) q
     where qiq = qi q
   {-# INLINE cos #-}
   sin q@(Quaternion e v)
     | qiq == 0 = Quaternion (sin e) v
-    | ai <- sqrt qiq = reimagine (sin e * cosh ai) (cos e * (sinh ai / ai)) q
+    | ai <- sqrt qiq = reimagine (sin e * cosh ai) (cos e * sinh ai / ai) q
     where qiq = qi q
   {-# INLINE sin #-}
   tan q@(Quaternion e v)
@@ -415,18 +415,18 @@ instance RealFloat a => Floating (Quaternion a) where
   {-# INLINE tan #-}
   sinh q@(Quaternion e v)
     | qiq == 0 = Quaternion (sinh e) v
-    | ai <- sqrt qiq = reimagine (sinh e * cos ai) (cosh e * (sin ai / ai)) q
+    | ai <- sqrt qiq = reimagine (sinh e * cos ai) (cosh e * sin ai / ai) q
     where qiq = qi q
   {-# INLINE sinh #-}
   cosh q@(Quaternion e v)
     | qiq == 0 = Quaternion (cosh e) v
-    | ai <- sqrt qiq = reimagine (cosh e * cos ai) ((sinh e * sin ai) / ai) q
+    | ai <- sqrt qiq = reimagine (cosh e * cos ai) (sinh e * sin ai / ai) q
     where qiq = qi q
   {-# INLINE cosh #-}
   tanh q@(Quaternion e v)
     | qiq == 0 = Quaternion (tanh e) v
     | ai <- sqrt qiq, se <- sinh e, cai <- cos ai, d <- se*se + cai*cai =
-      reimagine ((cosh e * se) / d) ((cai * (sin ai / ai)) / d) q
+      reimagine (cosh e * se / d) (tanhrhs cai ai d) q
     where qiq = qi q
   {-# INLINE tanh #-}
 
@@ -444,6 +444,15 @@ instance RealFloat a => Floating (Quaternion a) where
   atanh = cut atanh
   {-# INLINE atanh #-}
 
+tanhrhs :: (Floating a, Ord a) => a -> a -> a -> a
+tanhrhs cai ai d -- = cai * (sin ai / ai) / d
+  | d >= -4.2173720203427147e-29 && d < 4.446702369113811e64 = cai / (d * (ai / sin ai))
+  | otherwise                                                = cai * (1 / ai / sin ai) / d
+{-# SPECIALIZE tanhrhs :: Double -> Double -> Double -> Double #-}
+{-# SPECIALIZE tanhrhs :: Float -> Float -> Float -> Float #-}
+#ifdef HERBIE
+{-# ANN tanhrhs "NoHerbie #-}
+#endif
 
 -- | Helper for calculating with specific branch cuts
 cut :: RealFloat a => (Complex a -> Complex a) -> Quaternion a -> Quaternion a
