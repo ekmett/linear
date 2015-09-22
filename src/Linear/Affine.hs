@@ -48,10 +48,10 @@ import Data.Map (Map)
 import Data.Serialize as Cereal
 import Data.Vector (Vector)
 import Foreign.Storable
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+#if __GLASGOW_HASKELL__ >= 702
 import GHC.Generics (Generic)
 #endif
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
+#if __GLASGOW_HASKELL__ >= 706
 import GHC.Generics (Generic1)
 #endif
 import Linear.Epsilon
@@ -135,13 +135,13 @@ newtype Point f a = P (f a)
            , Traversable, Apply, Additive, Metric
            , Fractional , Num, Ix, Storable, Epsilon
            , Hashable
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+#if __GLASGOW_HASKELL__ >= 702
            , Generic
 #endif
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
+#if __GLASGOW_HASKELL__ >= 706
            , Generic1
 #endif
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 708
+#if __GLASGOW_HASKELL__ >= 708
            , Typeable, Data
 #endif
            )
@@ -165,7 +165,7 @@ instance Serialize (f a) => Serialize (Point f a) where
   put (P p) = Cereal.put p
   get = P `liftM` Cereal.get
 
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ < 708
+#if __GLASGOW_HASKELL__ < 708
 instance forall f. Typeable1 f => Typeable1 (Point f) where
   typeOf1 _ = mkTyConApp (mkTyCon3 "linear" "Linear.Affine" "Point") [] `mkAppTy`
               typeOf1 (undefined :: f a)

@@ -31,6 +31,11 @@ flag template-haskell
   default: True
   manual: True
 
+flag herbie
+  description: Enable `herbie`.
+  default: False
+  manual: True
+
 source-repository head
   type: git
   location: git://github.com/ekmett/linear.git
@@ -60,6 +65,11 @@ library
 
   if flag(template-haskell) && impl(ghc)
     build-depends: template-haskell >= 2.7 && < 3.0
+
+  if flag(herbie)
+    build-depends: HerbiePlugin >= 0.1 && < 0.2
+    ghc-options: -fplugin=Herbie
+    cpp-options: -DHERBIE
 
   exposed-modules:
     Linear

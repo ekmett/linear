@@ -341,6 +341,29 @@ pow :: RealFloat a => Quaternion a -> a -> Quaternion a
 pow q t = exp (t *^ log q)
 {-# INLINE pow #-}
 
+sqrte2pqiq :: (Floating a, Ord a) => a -> a -> a
+sqrte2pqiq e qiq -- = sqrt (e*e) + qiq
+  | e < - 1.5097698010472593e153 = -(qiq/e) - e
+  | e < 5.582399551122541e57      = sqrt ((e*e) + qiq) -- direct definition
+  | otherwise                     = (qiq/e) + e
+{-# SPECIALIZE sqrte2pqiq :: Double -> Double -> Double #-}
+{-# SPECIALIZE sqrte2pqiq :: Float -> Float -> Float #-}
+#ifdef HERBIE
+{-# ANN sqrte2pqiq "NoHerbie" #-}
+#endif
+
+tanrhs :: (Floating a, Ord a) => a -> a -> a -> a
+tanrhs sai ai d -- = cosh ai * (sai / ai) / d -- improved from 6.04 bits of error to 0.19 bits
+  | sai < -4.618902267687042e-52 = (sai / d / ai) * cosh ai
+  | sai < 1.038530535935153e-39 = (cosh ai * sai) / ai / d
+  | otherwise = (sai / d / ai) * cosh ai
+{-# SPECIALIZE tanrhs :: Double -> Double -> Double -> Double #-}
+{-# SPECIALIZE tanrhs :: Float -> Float -> Float -> Float #-}
+#ifdef HERBIE
+{-# ANN tanrhs "NoHerbie" #-}
+#endif
+
+
 -- ehh..
 instance RealFloat a => Floating (Quaternion a) where
   {-# SPECIALIZE instance Floating (Quaternion Float) #-}
@@ -356,8 +379,12 @@ instance RealFloat a => Floating (Quaternion a) where
     | qiq == 0 = if e >= 0
                  then Quaternion (log e) v
                  else Quaternion (log (negate e)) (V3 pi j k) -- mmm, pi
-    | ai <- sqrt qiq, m <- sqrt (e*e + qiq) = reimagine (log m) (atan2 m e / ai) q
+    | ai <- sqrt qiq = reimagine (log m) (atan2 m e / ai) q
     where qiq = qi q
+          m = sqrte2pqiq e qiq
+
+
+
   {-# INLINE log #-}
   x ** y = exp (y * log x)
   {-# INLINE (**) #-}
@@ -368,7 +395,7 @@ instance RealFloat a => Floating (Quaternion a) where
                  else Quaternion 0 (V3 (sqrt (negate e)) 0 0)
     | im <- sqrt (0.5*(m-e)) / sqrt qiq = Quaternion (0.5*(m+e)) (v^*im)
     where qiq = qi q
-          m = sqrt (e*e + qiq)
+          m = sqrte2pqiq e qiq
   {-# INLINE sqrt #-}
   cos q@(Quaternion e v)
     | qiq == 0 = Quaternion (cos e) v
@@ -383,7 +410,7 @@ instance RealFloat a => Floating (Quaternion a) where
   tan q@(Quaternion e v)
     | qiq == 0 = Quaternion (tan e) v
     | ai <- sqrt qiq, ce <- cos e, sai <- sinh ai, d <- ce*ce + sai*sai =
-      reimagine (ce * sin e / d) (cosh ai * (sai / ai) / d) q
+      reimagine (ce * sin e / d) (tanrhs sai ai d) q
     where qiq = qi q
   {-# INLINE tan #-}
   sinh q@(Quaternion e v)

@@ -71,9 +71,16 @@ perspective fovy aspect near far =
         y = 1 / tanHalfFovy
         fpn = far + near
         fmn = far - near
-        ftn = far * near
-        z = 1 / (near/fpn - far/fpn) -- better by .5 bits
-        w = -(2 * ftn) / fmn
+        oon = 1/near
+        oof = 1/far
+        -- z = 1 / (near/fpn - far/fpn) -- would be better by .5 bits
+        z = -fpn/fmn
+        w = 1/(oof-oon) -- 13 bits error reduced to 0.17
+        -- w = -(2 * far * near) / fmn
+
+#ifdef HERBIE
+{-# ANN perspective "NoHerbie" #-}
+#endif
 
 -- | Build an inverse perspective matrix
 inversePerspective
