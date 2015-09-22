@@ -451,7 +451,7 @@ tanhrhs cai ai d -- = cai * (sin ai / ai) / d
 {-# SPECIALIZE tanhrhs :: Double -> Double -> Double -> Double #-}
 {-# SPECIALIZE tanhrhs :: Float -> Float -> Float -> Float #-}
 #ifdef HERBIE
-{-# ANN tanhrhs "NoHerbie #-}
+{-# ANN tanhrhs "NoHerbie" #-}
 #endif
 
 -- | Helper for calculating with specific branch cuts
