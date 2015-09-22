@@ -15,7 +15,6 @@ description:   Types and combinators for linear algebra on free vector spaces
 build-type:    Custom
 tested-with:   GHC == 7.4.2, GHC == 7.6.1, GHC == 7.8.4, GHC == 7.10.1
 extra-source-files:
-  .ghci
   .gitignore
   .travis.yml
   .vim.custom
