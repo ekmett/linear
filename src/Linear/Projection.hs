@@ -69,8 +69,11 @@ perspective fovy aspect near far =
   where tanHalfFovy = tan $ fovy / 2
         x = 1 / (aspect * tanHalfFovy)
         y = 1 / tanHalfFovy
-        z = -(far + near) / (far - near)
-        w = -(2 * far * near) / (far - near)
+        fpn = far + near
+        fmn = far - near
+        ftn = far * near
+        z = 1 / (near/fpn - far/fpn) -- better by .5 bits
+        w = -(2 * ftn) / fmn
 
 -- | Build an inverse perspective matrix
 inversePerspective
@@ -88,8 +91,10 @@ inversePerspective fovy aspect near far =
   where tanHalfFovy = tan $ fovy / 2
         a = aspect * tanHalfFovy
         b = tanHalfFovy
-        c = -(far - near) / (2 * far * near)
-        d = (far + near) / (2 * far * near)
+        c = oon - oof
+        d = oon + oof
+        oon = 1/near
+        oof = 1/far
 
 
 -- | Build a perspective matrix per the classic @glFrustum@ arguments.
