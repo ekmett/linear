@@ -52,6 +52,7 @@ module Linear.V
 import Control.Applicative
 #endif
 import Control.DeepSeq (NFData)
+import Control.Monad
 import Control.Monad.Fix
 import Control.Monad.Zip
 import Control.Lens as Lens
@@ -482,10 +483,10 @@ instance (Dim n, U.Unbox a) => M.MVector U.MVector (V n a) where
   basicUnsafeSlice m n (MV_VN _ v) = MV_VN n (M.basicUnsafeSlice (d*m) (d*n) v)
     where d = reflectDim (Proxy :: Proxy n)
   basicOverlaps (MV_VN _ v) (MV_VN _ u) = M.basicOverlaps v u
-  basicUnsafeNew n = fmap (MV_VN n) (M.basicUnsafeNew (d*n))
+  basicUnsafeNew n = liftM (MV_VN n) (M.basicUnsafeNew (d*n))
     where d = reflectDim (Proxy :: Proxy n)
   basicUnsafeRead (MV_VN _ v) i =
-    fmap V $ V.generateM d (\j -> M.basicUnsafeRead v (d*i+j))
+    liftM V $ V.generateM d (\j -> M.basicUnsafeRead v (d*i+j))
     where d = reflectDim (Proxy :: Proxy n)
   basicUnsafeWrite (MV_VN _ v) i (V vn) =
     V.imapM_ (\j -> M.basicUnsafeWrite v (d*i+j)) vn
@@ -501,11 +502,11 @@ instance (Dim n, U.Unbox a) => G.Vector U.Vector (V n a) where
   {-# INLINE basicLength       #-}
   {-# INLINE basicUnsafeSlice  #-}
   {-# INLINE basicUnsafeIndexM #-}
-  basicUnsafeFreeze (MV_VN n v) = fmap ( V_VN n) (G.basicUnsafeFreeze v)
-  basicUnsafeThaw   ( V_VN n v) = fmap (MV_VN n) (G.basicUnsafeThaw   v)
+  basicUnsafeFreeze (MV_VN n v) = liftM ( V_VN n) (G.basicUnsafeFreeze v)
+  basicUnsafeThaw   ( V_VN n v) = liftM (MV_VN n) (G.basicUnsafeThaw   v)
   basicLength       ( V_VN n _) = n
   basicUnsafeSlice m n (V_VN _ v) = V_VN n (G.basicUnsafeSlice (d*m) (d*n) v)
     where d = reflectDim (Proxy :: Proxy n)
   basicUnsafeIndexM (V_VN _ v) i =
-    fmap V $ V.generateM d (\j -> G.basicUnsafeIndexM v (d*i+j))
+    liftM V $ V.generateM d (\j -> G.basicUnsafeIndexM v (d*i+j))
     where d = reflectDim (Proxy :: Proxy n)
