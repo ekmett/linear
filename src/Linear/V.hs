@@ -72,6 +72,9 @@ import Data.Serialize as Cereal
 import Data.Traversable (sequenceA)
 #endif
 import Data.Vector as V
+import qualified Data.Vector.Generic as G
+import qualified Data.Vector.Unboxed as U
+import qualified Data.Vector.Generic.Mutable as M
 import Foreign.Ptr
 import Foreign.Storable
 #ifdef USE_TYPE_LITS
@@ -462,3 +465,47 @@ instance Dim n => Eq1 (V n) where eq1 = (==)
 instance Dim n => Ord1 (V n) where compare1 = compare
 instance Dim n => Show1 (V n) where showsPrec1 = showsPrec
 instance Dim n => Read1 (V n) where readsPrec1 = readsPrec
+
+
+data instance U.Vector    (V n a) =  V_VN {-# UNPACK #-} !Int !(U.Vector    a)
+data instance U.MVector s (V n a) = MV_VN {-# UNPACK #-} !Int !(U.MVector s a)
+instance (Dim n, U.Unbox a) => U.Unbox (V n a)
+
+instance (Dim n, U.Unbox a) => M.MVector U.MVector (V n a) where
+  {-# INLINE basicLength #-}
+  {-# INLINE basicUnsafeSlice #-}
+  {-# INLINE basicOverlaps #-}
+  {-# INLINE basicUnsafeNew #-}
+  {-# INLINE basicUnsafeRead #-}
+  {-# INLINE basicUnsafeWrite #-}
+  basicLength (MV_VN n _) = n
+  basicUnsafeSlice m n (MV_VN _ v) = MV_VN n (M.basicUnsafeSlice (d*m) (d*n) v)
+    where d = reflectDim (Proxy :: Proxy n)
+  basicOverlaps (MV_VN _ v) (MV_VN _ u) = M.basicOverlaps v u
+  basicUnsafeNew n = fmap (MV_VN n) (M.basicUnsafeNew (d*n))
+    where d = reflectDim (Proxy :: Proxy n)
+  basicUnsafeRead (MV_VN _ v) i =
+    fmap V $ V.generateM d (\j -> M.basicUnsafeRead v (d*i+j))
+    where d = reflectDim (Proxy :: Proxy n)
+  basicUnsafeWrite (MV_VN _ v) i (V vn) =
+    V.imapM_ (\j -> M.basicUnsafeWrite v (d*i+j)) vn
+    where d = reflectDim (Proxy :: Proxy n)
+#if MIN_VERSION_vector(0,11,0)
+  basicInitialize (MV_VN _ v) = M.basicInitialize v
+  {-# INLINE basicInitialize #-}
+#endif
+
+instance (Dim n, U.Unbox a) => G.Vector U.Vector (V n a) where
+  {-# INLINE basicUnsafeFreeze #-}
+  {-# INLINE basicUnsafeThaw   #-}
+  {-# INLINE basicLength       #-}
+  {-# INLINE basicUnsafeSlice  #-}
+  {-# INLINE basicUnsafeIndexM #-}
+  basicUnsafeFreeze (MV_VN n v) = fmap ( V_VN n) (G.basicUnsafeFreeze v)
+  basicUnsafeThaw   ( V_VN n v) = fmap (MV_VN n) (G.basicUnsafeThaw   v)
+  basicLength       ( V_VN n _) = n
+  basicUnsafeSlice m n (V_VN _ v) = V_VN n (G.basicUnsafeSlice (d*m) (d*n) v)
+    where d = reflectDim (Proxy :: Proxy n)
+  basicUnsafeIndexM (V_VN _ v) i =
+    fmap V $ V.generateM d (\j -> G.basicUnsafeIndexM v (d*i+j))
+    where d = reflectDim (Proxy :: Proxy n)
