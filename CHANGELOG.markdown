@@ -2,6 +2,7 @@
 ------
 * Modified the `doctest` machinery to work with `stack` and builds to non-standard locations.
 * Removed the local `.ghci` file.
+* Various numerical stability improvements were made to the quaternion and projection functions.
 
 1.20.1
 ------
