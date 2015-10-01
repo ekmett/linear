@@ -1,3 +1,5 @@
+* Require `vector` 0.11.0.0.
+
 1.20.2
 ------
 * Modified the `doctest` machinery to work with `stack` and builds to non-standard locations.
