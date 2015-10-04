@@ -54,6 +54,9 @@ import GHC.Generics (Generic)
 #if __GLASGOW_HASKELL__ >= 706
 import GHC.Generics (Generic1)
 #endif
+import qualified Data.Vector.Generic.Mutable as M
+import qualified Data.Vector.Generic as G
+import qualified Data.Vector.Unboxed.Base as U
 import Linear.Epsilon
 import Linear.Metric
 import Linear.Plucker
@@ -252,3 +255,36 @@ relative :: (Additive f, Num a) => Point f a -> Iso' (Point f a) (f a)
 relative p0 = iso (.-. p0) (p0 .+^)
 {-# INLINE relative #-}
 
+data instance U.Vector    (Point f a) =  V_P !(U.Vector    (f a))
+data instance U.MVector s (Point f a) = MV_P !(U.MVector s (f a))
+instance U.Unbox (f a) => U.Unbox (Point f a)
+
+instance U.Unbox (f a) => M.MVector U.MVector (Point f a) where
+  {-# INLINE basicLength #-}
+  {-# INLINE basicUnsafeSlice #-}
+  {-# INLINE basicOverlaps #-}
+  {-# INLINE basicUnsafeNew #-}
+  {-# INLINE basicUnsafeRead #-}
+  {-# INLINE basicUnsafeWrite #-}
+  basicLength (MV_P v) = M.basicLength v
+  basicUnsafeSlice m n (MV_P v) = MV_P (M.basicUnsafeSlice m n v)
+  basicOverlaps (MV_P v) (MV_P u) = M.basicOverlaps v u
+  basicUnsafeNew n = MV_P `liftM` M.basicUnsafeNew n
+  basicUnsafeRead (MV_P v) i = P `liftM` M.basicUnsafeRead v i
+  basicUnsafeWrite (MV_P v) i (P x) = M.basicUnsafeWrite v i x
+#if MIN_VERSION_vector(0,11,0)
+  basicInitialize (MV_P v) = M.basicInitialize v
+  {-# INLINE basicInitialize #-}
+#endif
+
+instance U.Unbox (f a) => G.Vector U.Vector (Point f a) where
+  {-# INLINE basicUnsafeFreeze #-}
+  {-# INLINE basicUnsafeThaw   #-}
+  {-# INLINE basicLength       #-}
+  {-# INLINE basicUnsafeSlice  #-}
+  {-# INLINE basicUnsafeIndexM #-}
+  basicUnsafeFreeze (MV_P v) = V_P `liftM` G.basicUnsafeFreeze v
+  basicUnsafeThaw   ( V_P v) = MV_P `liftM` G.basicUnsafeThaw   v
+  basicLength       ( V_P v) = G.basicLength v
+  basicUnsafeSlice m n (V_P v) = V_P (G.basicUnsafeSlice m n v)
+  basicUnsafeIndexM (V_P v) i = P `liftM` G.basicUnsafeIndexM v i
