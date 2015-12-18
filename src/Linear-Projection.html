@@ -78,181 +78,193 @@
 <a name="line-69"></a>  <span class='hs-keyword'>where</span> <span class='hs-varid'>tanHalfFovy</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>tan</span> <span class='hs-varop'>$</span> <span class='hs-varid'>fovy</span> <span class='hs-varop'>/</span> <span class='hs-num'>2</span>
 <a name="line-70"></a>        <span class='hs-varid'>x</span> <span class='hs-keyglyph'>=</span> <span class='hs-num'>1</span> <span class='hs-varop'>/</span> <span class='hs-layout'>(</span><span class='hs-varid'>aspect</span> <span class='hs-varop'>*</span> <span class='hs-varid'>tanHalfFovy</span><span class='hs-layout'>)</span>
 <a name="line-71"></a>        <span class='hs-varid'>y</span> <span class='hs-keyglyph'>=</span> <span class='hs-num'>1</span> <span class='hs-varop'>/</span> <span class='hs-varid'>tanHalfFovy</span>
-<a name="line-72"></a>        <span class='hs-varid'>z</span> <span class='hs-keyglyph'>=</span> <span class='hs-comment'>-</span><span class='hs-layout'>(</span><span class='hs-varid'>far</span> <span class='hs-varop'>+</span> <span class='hs-varid'>near</span><span class='hs-layout'>)</span> <span class='hs-varop'>/</span> <span class='hs-layout'>(</span><span class='hs-varid'>far</span> <span class='hs-comment'>-</span> <span class='hs-varid'>near</span><span class='hs-layout'>)</span>
-<a name="line-73"></a>        <span class='hs-varid'>w</span> <span class='hs-keyglyph'>=</span> <span class='hs-comment'>-</span><span class='hs-layout'>(</span><span class='hs-num'>2</span> <span class='hs-varop'>*</span> <span class='hs-varid'>far</span> <span class='hs-varop'>*</span> <span class='hs-varid'>near</span><span class='hs-layout'>)</span> <span class='hs-varop'>/</span> <span class='hs-layout'>(</span><span class='hs-varid'>far</span> <span class='hs-comment'>-</span> <span class='hs-varid'>near</span><span class='hs-layout'>)</span>
-<a name="line-74"></a>
-<a name="line-75"></a><a name="inversePerspective"></a><span class='hs-comment'>-- | Build an inverse perspective matrix</span>
-<a name="line-76"></a><span class='hs-definition'>inversePerspective</span>
-<a name="line-77"></a>  <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Floating</span> <span class='hs-varid'>a</span>
-<a name="line-78"></a>  <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ FOV (y direction, in radians)</span>
-<a name="line-79"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Aspect ratio</span>
-<a name="line-80"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Near plane</span>
-<a name="line-81"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Far plane</span>
-<a name="line-82"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>M44</span> <span class='hs-varid'>a</span>
-<a name="line-83"></a><span class='hs-definition'>inversePerspective</span> <span class='hs-varid'>fovy</span> <span class='hs-varid'>aspect</span> <span class='hs-varid'>near</span> <span class='hs-varid'>far</span> <span class='hs-keyglyph'>=</span>
-<a name="line-84"></a>  <span class='hs-conid'>V4</span> <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-varid'>a</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span>   <span class='hs-layout'>)</span>
-<a name="line-85"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-varid'>b</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span>   <span class='hs-layout'>)</span>
-<a name="line-86"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-layout'>(</span><span class='hs-comment'>-</span><span class='hs-num'>1</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
-<a name="line-87"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-varid'>c</span> <span class='hs-varid'>d</span>   <span class='hs-layout'>)</span>
-<a name="line-88"></a>  <span class='hs-keyword'>where</span> <span class='hs-varid'>tanHalfFovy</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>tan</span> <span class='hs-varop'>$</span> <span class='hs-varid'>fovy</span> <span class='hs-varop'>/</span> <span class='hs-num'>2</span>
-<a name="line-89"></a>        <span class='hs-varid'>a</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>aspect</span> <span class='hs-varop'>*</span> <span class='hs-varid'>tanHalfFovy</span>
-<a name="line-90"></a>        <span class='hs-varid'>b</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>tanHalfFovy</span>
-<a name="line-91"></a>        <span class='hs-varid'>c</span> <span class='hs-keyglyph'>=</span> <span class='hs-comment'>-</span><span class='hs-layout'>(</span><span class='hs-varid'>far</span> <span class='hs-comment'>-</span> <span class='hs-varid'>near</span><span class='hs-layout'>)</span> <span class='hs-varop'>/</span> <span class='hs-layout'>(</span><span class='hs-num'>2</span> <span class='hs-varop'>*</span> <span class='hs-varid'>far</span> <span class='hs-varop'>*</span> <span class='hs-varid'>near</span><span class='hs-layout'>)</span>
-<a name="line-92"></a>        <span class='hs-varid'>d</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>far</span> <span class='hs-varop'>+</span> <span class='hs-varid'>near</span><span class='hs-layout'>)</span> <span class='hs-varop'>/</span> <span class='hs-layout'>(</span><span class='hs-num'>2</span> <span class='hs-varop'>*</span> <span class='hs-varid'>far</span> <span class='hs-varop'>*</span> <span class='hs-varid'>near</span><span class='hs-layout'>)</span>
-<a name="line-93"></a>
-<a name="line-94"></a>
-<a name="line-95"></a><a name="frustum"></a><span class='hs-comment'>-- | Build a perspective matrix per the classic @glFrustum@ arguments.</span>
-<a name="line-96"></a><span class='hs-definition'>frustum</span>
-<a name="line-97"></a>  <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Floating</span> <span class='hs-varid'>a</span>
-<a name="line-98"></a>  <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Left</span>
-<a name="line-99"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Right</span>
-<a name="line-100"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Bottom</span>
-<a name="line-101"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Top</span>
-<a name="line-102"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Near</span>
-<a name="line-103"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Far</span>
-<a name="line-104"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>M44</span> <span class='hs-varid'>a</span>
-<a name="line-105"></a><span class='hs-definition'>frustum</span> <span class='hs-varid'>l</span> <span class='hs-varid'>r</span> <span class='hs-varid'>b</span> <span class='hs-varid'>t</span> <span class='hs-varid'>n</span> <span class='hs-varid'>f</span> <span class='hs-keyglyph'>=</span>
-<a name="line-106"></a>  <span class='hs-conid'>V4</span> <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-varid'>x</span> <span class='hs-num'>0</span> <span class='hs-varid'>a</span>    <span class='hs-num'>0</span><span class='hs-layout'>)</span>
-<a name="line-107"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-varid'>y</span> <span class='hs-varid'>e</span>    <span class='hs-num'>0</span><span class='hs-layout'>)</span>
-<a name="line-108"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-varid'>c</span>    <span class='hs-varid'>d</span><span class='hs-layout'>)</span>
-<a name="line-109"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-layout'>(</span><span class='hs-comment'>-</span><span class='hs-num'>1</span><span class='hs-layout'>)</span> <span class='hs-num'>0</span><span class='hs-layout'>)</span>
-<a name="line-110"></a>  <span class='hs-keyword'>where</span>
-<a name="line-111"></a>    <span class='hs-varid'>rml</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>r</span><span class='hs-comment'>-</span><span class='hs-varid'>l</span>
-<a name="line-112"></a>    <span class='hs-varid'>tmb</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>t</span><span class='hs-comment'>-</span><span class='hs-varid'>b</span>
-<a name="line-113"></a>    <span class='hs-varid'>fmn</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>f</span><span class='hs-comment'>-</span><span class='hs-varid'>n</span>
-<a name="line-114"></a>    <span class='hs-varid'>x</span> <span class='hs-keyglyph'>=</span> <span class='hs-num'>2</span><span class='hs-varop'>*</span><span class='hs-varid'>n</span><span class='hs-varop'>/</span><span class='hs-varid'>rml</span>
-<a name="line-115"></a>    <span class='hs-varid'>y</span> <span class='hs-keyglyph'>=</span> <span class='hs-num'>2</span><span class='hs-varop'>*</span><span class='hs-varid'>n</span><span class='hs-varop'>/</span><span class='hs-varid'>tmb</span>
-<a name="line-116"></a>    <span class='hs-varid'>a</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>r</span><span class='hs-varop'>+</span><span class='hs-varid'>l</span><span class='hs-layout'>)</span><span class='hs-varop'>/</span><span class='hs-varid'>rml</span>
-<a name="line-117"></a>    <span class='hs-varid'>e</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>t</span><span class='hs-varop'>+</span><span class='hs-varid'>b</span><span class='hs-layout'>)</span><span class='hs-varop'>/</span><span class='hs-varid'>tmb</span>
-<a name="line-118"></a>    <span class='hs-varid'>c</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>negate</span> <span class='hs-layout'>(</span><span class='hs-varid'>f</span><span class='hs-varop'>+</span><span class='hs-varid'>n</span><span class='hs-layout'>)</span><span class='hs-varop'>/</span><span class='hs-varid'>fmn</span>
-<a name="line-119"></a>    <span class='hs-varid'>d</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-comment'>-</span><span class='hs-num'>2</span><span class='hs-varop'>*</span><span class='hs-varid'>f</span><span class='hs-varop'>*</span><span class='hs-varid'>n</span><span class='hs-layout'>)</span><span class='hs-varop'>/</span><span class='hs-varid'>fmn</span>
-<a name="line-120"></a>
-<a name="line-121"></a><a name="inverseFrustum"></a><span class='hs-definition'>inverseFrustum</span>
-<a name="line-122"></a>  <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Floating</span> <span class='hs-varid'>a</span>
-<a name="line-123"></a>  <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Left</span>
-<a name="line-124"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Right</span>
-<a name="line-125"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Bottom</span>
-<a name="line-126"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Top</span>
-<a name="line-127"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Near</span>
-<a name="line-128"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Far</span>
-<a name="line-129"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>M44</span> <span class='hs-varid'>a</span>
-<a name="line-130"></a><span class='hs-definition'>inverseFrustum</span> <span class='hs-varid'>l</span> <span class='hs-varid'>r</span> <span class='hs-varid'>b</span> <span class='hs-varid'>t</span> <span class='hs-varid'>n</span> <span class='hs-varid'>f</span> <span class='hs-keyglyph'>=</span>
-<a name="line-131"></a>  <span class='hs-conid'>V4</span> <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-varid'>rx</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-varid'>ax</span><span class='hs-layout'>)</span>
-<a name="line-132"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-varid'>ry</span> <span class='hs-num'>0</span> <span class='hs-varid'>by</span><span class='hs-layout'>)</span>
-<a name="line-133"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-layout'>(</span><span class='hs-comment'>-</span><span class='hs-num'>1</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
-<a name="line-134"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-varid'>rd</span> <span class='hs-varid'>cd</span><span class='hs-layout'>)</span>
-<a name="line-135"></a>  <span class='hs-keyword'>where</span>
-<a name="line-136"></a>    <span class='hs-varid'>hrn</span>  <span class='hs-keyglyph'>=</span> <span class='hs-num'>0.5</span><span class='hs-varop'>/</span><span class='hs-varid'>n</span>
-<a name="line-137"></a>    <span class='hs-varid'>hrnf</span> <span class='hs-keyglyph'>=</span> <span class='hs-num'>0.5</span><span class='hs-varop'>/</span><span class='hs-layout'>(</span><span class='hs-varid'>n</span><span class='hs-varop'>*</span><span class='hs-varid'>f</span><span class='hs-layout'>)</span>
-<a name="line-138"></a>    <span class='hs-varid'>rx</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>r</span><span class='hs-comment'>-</span><span class='hs-varid'>l</span><span class='hs-layout'>)</span><span class='hs-varop'>*</span><span class='hs-varid'>hrn</span>
-<a name="line-139"></a>    <span class='hs-varid'>ry</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>t</span><span class='hs-comment'>-</span><span class='hs-varid'>b</span><span class='hs-layout'>)</span><span class='hs-varop'>*</span><span class='hs-varid'>hrn</span>
-<a name="line-140"></a>    <span class='hs-varid'>ax</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>r</span><span class='hs-varop'>+</span><span class='hs-varid'>l</span><span class='hs-layout'>)</span><span class='hs-varop'>*</span><span class='hs-varid'>hrn</span>
-<a name="line-141"></a>    <span class='hs-varid'>by</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>t</span><span class='hs-varop'>+</span><span class='hs-varid'>b</span><span class='hs-layout'>)</span><span class='hs-varop'>*</span><span class='hs-varid'>hrn</span>
-<a name="line-142"></a>    <span class='hs-varid'>cd</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>f</span><span class='hs-varop'>+</span><span class='hs-varid'>n</span><span class='hs-layout'>)</span><span class='hs-varop'>*</span><span class='hs-varid'>hrnf</span>
-<a name="line-143"></a>    <span class='hs-varid'>rd</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>n</span><span class='hs-comment'>-</span><span class='hs-varid'>f</span><span class='hs-layout'>)</span><span class='hs-varop'>*</span><span class='hs-varid'>hrnf</span>
-<a name="line-144"></a>
-<a name="line-145"></a><a name="infinitePerspective"></a><span class='hs-comment'>-- | Build a matrix for a symmetric perspective-view frustum with a far plane at infinite</span>
-<a name="line-146"></a><span class='hs-definition'>infinitePerspective</span>
-<a name="line-147"></a>  <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Floating</span> <span class='hs-varid'>a</span>
-<a name="line-148"></a>  <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ FOV (y direction, in radians)</span>
-<a name="line-149"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Aspect Ratio</span>
-<a name="line-150"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Near plane</span>
-<a name="line-151"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>M44</span> <span class='hs-varid'>a</span>
-<a name="line-152"></a><span class='hs-definition'>infinitePerspective</span> <span class='hs-varid'>fovy</span> <span class='hs-varid'>a</span> <span class='hs-varid'>n</span> <span class='hs-keyglyph'>=</span>
-<a name="line-153"></a>  <span class='hs-conid'>V4</span> <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-varid'>x</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span>    <span class='hs-num'>0</span><span class='hs-layout'>)</span>
-<a name="line-154"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-varid'>y</span> <span class='hs-num'>0</span>    <span class='hs-num'>0</span><span class='hs-layout'>)</span>
-<a name="line-155"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-layout'>(</span><span class='hs-comment'>-</span><span class='hs-num'>1</span><span class='hs-layout'>)</span> <span class='hs-varid'>w</span><span class='hs-layout'>)</span>
-<a name="line-156"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-layout'>(</span><span class='hs-comment'>-</span><span class='hs-num'>1</span><span class='hs-layout'>)</span> <span class='hs-num'>0</span><span class='hs-layout'>)</span>
-<a name="line-157"></a>  <span class='hs-keyword'>where</span>
-<a name="line-158"></a>    <span class='hs-varid'>t</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>n</span><span class='hs-varop'>*</span><span class='hs-varid'>tan</span><span class='hs-layout'>(</span><span class='hs-varid'>fovy</span><span class='hs-varop'>/</span><span class='hs-num'>2</span><span class='hs-layout'>)</span>
-<a name="line-159"></a>    <span class='hs-varid'>b</span> <span class='hs-keyglyph'>=</span> <span class='hs-comment'>-</span><span class='hs-varid'>t</span>
-<a name="line-160"></a>    <span class='hs-varid'>l</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>b</span><span class='hs-varop'>*</span><span class='hs-varid'>a</span>
-<a name="line-161"></a>    <span class='hs-varid'>r</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>t</span><span class='hs-varop'>*</span><span class='hs-varid'>a</span>
-<a name="line-162"></a>    <span class='hs-varid'>x</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-num'>2</span><span class='hs-varop'>*</span><span class='hs-varid'>n</span><span class='hs-layout'>)</span><span class='hs-varop'>/</span><span class='hs-layout'>(</span><span class='hs-varid'>r</span><span class='hs-comment'>-</span><span class='hs-varid'>l</span><span class='hs-layout'>)</span>
-<a name="line-163"></a>    <span class='hs-varid'>y</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-num'>2</span><span class='hs-varop'>*</span><span class='hs-varid'>n</span><span class='hs-layout'>)</span><span class='hs-varop'>/</span><span class='hs-layout'>(</span><span class='hs-varid'>t</span><span class='hs-comment'>-</span><span class='hs-varid'>b</span><span class='hs-layout'>)</span>
-<a name="line-164"></a>    <span class='hs-varid'>w</span> <span class='hs-keyglyph'>=</span> <span class='hs-comment'>-</span><span class='hs-num'>2</span><span class='hs-varop'>*</span><span class='hs-varid'>n</span>
-<a name="line-165"></a>
-<a name="line-166"></a><a name="inverseInfinitePerspective"></a><span class='hs-definition'>inverseInfinitePerspective</span>
-<a name="line-167"></a>  <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Floating</span> <span class='hs-varid'>a</span>
-<a name="line-168"></a>  <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ FOV (y direction, in radians)</span>
-<a name="line-169"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Aspect Ratio</span>
-<a name="line-170"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Near plane</span>
-<a name="line-171"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>M44</span> <span class='hs-varid'>a</span>
-<a name="line-172"></a><span class='hs-definition'>inverseInfinitePerspective</span> <span class='hs-varid'>fovy</span> <span class='hs-varid'>a</span> <span class='hs-varid'>n</span> <span class='hs-keyglyph'>=</span>
-<a name="line-173"></a>  <span class='hs-conid'>V4</span> <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-varid'>rx</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span>  <span class='hs-num'>0</span><span class='hs-layout'>)</span>
-<a name="line-174"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-varid'>ry</span> <span class='hs-num'>0</span>  <span class='hs-num'>0</span><span class='hs-layout'>)</span>
-<a name="line-175"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span>  <span class='hs-num'>0</span>  <span class='hs-layout'>(</span><span class='hs-comment'>-</span><span class='hs-num'>1</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
-<a name="line-176"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span>  <span class='hs-varid'>rw</span> <span class='hs-layout'>(</span><span class='hs-comment'>-</span><span class='hs-varid'>rw</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
-<a name="line-177"></a>  <span class='hs-keyword'>where</span>
-<a name="line-178"></a>    <span class='hs-varid'>t</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>n</span><span class='hs-varop'>*</span><span class='hs-varid'>tan</span><span class='hs-layout'>(</span><span class='hs-varid'>fovy</span><span class='hs-varop'>/</span><span class='hs-num'>2</span><span class='hs-layout'>)</span>
-<a name="line-179"></a>    <span class='hs-varid'>b</span> <span class='hs-keyglyph'>=</span> <span class='hs-comment'>-</span><span class='hs-varid'>t</span>
-<a name="line-180"></a>    <span class='hs-varid'>l</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>b</span><span class='hs-varop'>*</span><span class='hs-varid'>a</span>
-<a name="line-181"></a>    <span class='hs-varid'>r</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>t</span><span class='hs-varop'>*</span><span class='hs-varid'>a</span>
-<a name="line-182"></a>    <span class='hs-varid'>hrn</span> <span class='hs-keyglyph'>=</span> <span class='hs-num'>0.5</span><span class='hs-varop'>/</span><span class='hs-varid'>n</span>
-<a name="line-183"></a>    <span class='hs-varid'>rx</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>r</span><span class='hs-comment'>-</span><span class='hs-varid'>l</span><span class='hs-layout'>)</span><span class='hs-varop'>*</span><span class='hs-varid'>hrn</span>
-<a name="line-184"></a>    <span class='hs-varid'>ry</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>t</span><span class='hs-comment'>-</span><span class='hs-varid'>b</span><span class='hs-layout'>)</span><span class='hs-varop'>*</span><span class='hs-varid'>hrn</span>
-<a name="line-185"></a>    <span class='hs-varid'>rw</span> <span class='hs-keyglyph'>=</span> <span class='hs-comment'>-</span><span class='hs-varid'>hrn</span>
-<a name="line-186"></a>
-<a name="line-187"></a><a name="ortho"></a><span class='hs-comment'>-- | Build an orthographic perspective matrix from 6 clipping planes.</span>
-<a name="line-188"></a><span class='hs-comment'>-- This matrix takes the region delimited by these planes and maps it</span>
-<a name="line-189"></a><span class='hs-comment'>-- to normalized device coordinates between [-1,1]</span>
-<a name="line-190"></a><span class='hs-comment'>--</span>
-<a name="line-191"></a><span class='hs-comment'>-- This call is designed to mimic the parameters to the OpenGL @glOrtho@</span>
-<a name="line-192"></a><span class='hs-comment'>-- call, so it has a slightly strange convention: Notably: the near and</span>
-<a name="line-193"></a><span class='hs-comment'>-- far planes are negated.</span>
-<a name="line-194"></a><span class='hs-comment'>--</span>
-<a name="line-195"></a><span class='hs-comment'>-- Consequently:</span>
-<a name="line-196"></a><span class='hs-comment'>--</span>
-<a name="line-197"></a><span class='hs-comment'>-- @</span>
-<a name="line-198"></a><span class='hs-comment'>-- 'ortho' l r b t n f !* 'V4' l b (-n) 1 = 'V4' (-1) (-1) (-1) 1</span>
-<a name="line-199"></a><span class='hs-comment'>-- 'ortho' l r b t n f !* 'V4' r t (-f) 1 = 'V4' 1 1 1 1</span>
-<a name="line-200"></a><span class='hs-comment'>-- @</span>
-<a name="line-201"></a><span class='hs-comment'>--</span>
-<a name="line-202"></a><span class='hs-comment'>-- Examples:</span>
-<a name="line-203"></a><span class='hs-comment'>--</span>
-<a name="line-204"></a><span class='hs-comment'>-- &gt;&gt;&gt; ortho 1 2 3 4 5 6 !* V4 1 3 (-5) 1</span>
-<a name="line-205"></a><span class='hs-comment'>-- V4 (-1.0) (-1.0) (-1.0) 1.0</span>
+<a name="line-72"></a>        <span class='hs-varid'>fpn</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>far</span> <span class='hs-varop'>+</span> <span class='hs-varid'>near</span>
+<a name="line-73"></a>        <span class='hs-varid'>fmn</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>far</span> <span class='hs-comment'>-</span> <span class='hs-varid'>near</span>
+<a name="line-74"></a>        <span class='hs-varid'>oon</span> <span class='hs-keyglyph'>=</span> <span class='hs-num'>1</span><span class='hs-varop'>/</span><span class='hs-varid'>near</span>
+<a name="line-75"></a>        <span class='hs-varid'>oof</span> <span class='hs-keyglyph'>=</span> <span class='hs-num'>1</span><span class='hs-varop'>/</span><span class='hs-varid'>far</span>
+<a name="line-76"></a>        <span class='hs-comment'>-- z = 1 / (near/fpn - far/fpn) -- would be better by .5 bits</span>
+<a name="line-77"></a>        <span class='hs-varid'>z</span> <span class='hs-keyglyph'>=</span> <span class='hs-comment'>-</span><span class='hs-varid'>fpn</span><span class='hs-varop'>/</span><span class='hs-varid'>fmn</span>
+<a name="line-78"></a>        <span class='hs-varid'>w</span> <span class='hs-keyglyph'>=</span> <span class='hs-num'>1</span><span class='hs-varop'>/</span><span class='hs-layout'>(</span><span class='hs-varid'>oof</span><span class='hs-comment'>-</span><span class='hs-varid'>oon</span><span class='hs-layout'>)</span> <span class='hs-comment'>-- 13 bits error reduced to 0.17</span>
+<a name="line-79"></a>        <span class='hs-comment'>-- w = -(2 * far * near) / fmn</span>
+<a name="line-80"></a>
+<a name="line-81"></a><span class='hs-cpp'>#ifdef HERBIE</span>
+<a name="line-82"></a><span class='hs-comment'>{-# ANN perspective "NoHerbie" #-}</span>
+<a name="line-83"></a><span class='hs-cpp'>#endif</span>
+<a name="line-84"></a>
+<a name="line-85"></a><a name="inversePerspective"></a><span class='hs-comment'>-- | Build an inverse perspective matrix</span>
+<a name="line-86"></a><span class='hs-definition'>inversePerspective</span>
+<a name="line-87"></a>  <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Floating</span> <span class='hs-varid'>a</span>
+<a name="line-88"></a>  <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ FOV (y direction, in radians)</span>
+<a name="line-89"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Aspect ratio</span>
+<a name="line-90"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Near plane</span>
+<a name="line-91"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Far plane</span>
+<a name="line-92"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>M44</span> <span class='hs-varid'>a</span>
+<a name="line-93"></a><span class='hs-definition'>inversePerspective</span> <span class='hs-varid'>fovy</span> <span class='hs-varid'>aspect</span> <span class='hs-varid'>near</span> <span class='hs-varid'>far</span> <span class='hs-keyglyph'>=</span>
+<a name="line-94"></a>  <span class='hs-conid'>V4</span> <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-varid'>a</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span>   <span class='hs-layout'>)</span>
+<a name="line-95"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-varid'>b</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span>   <span class='hs-layout'>)</span>
+<a name="line-96"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-layout'>(</span><span class='hs-comment'>-</span><span class='hs-num'>1</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
+<a name="line-97"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-varid'>c</span> <span class='hs-varid'>d</span>   <span class='hs-layout'>)</span>
+<a name="line-98"></a>  <span class='hs-keyword'>where</span> <span class='hs-varid'>tanHalfFovy</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>tan</span> <span class='hs-varop'>$</span> <span class='hs-varid'>fovy</span> <span class='hs-varop'>/</span> <span class='hs-num'>2</span>
+<a name="line-99"></a>        <span class='hs-varid'>a</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>aspect</span> <span class='hs-varop'>*</span> <span class='hs-varid'>tanHalfFovy</span>
+<a name="line-100"></a>        <span class='hs-varid'>b</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>tanHalfFovy</span>
+<a name="line-101"></a>        <span class='hs-varid'>c</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>oon</span> <span class='hs-comment'>-</span> <span class='hs-varid'>oof</span>
+<a name="line-102"></a>        <span class='hs-varid'>d</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>oon</span> <span class='hs-varop'>+</span> <span class='hs-varid'>oof</span>
+<a name="line-103"></a>        <span class='hs-varid'>oon</span> <span class='hs-keyglyph'>=</span> <span class='hs-num'>1</span><span class='hs-varop'>/</span><span class='hs-varid'>near</span>
+<a name="line-104"></a>        <span class='hs-varid'>oof</span> <span class='hs-keyglyph'>=</span> <span class='hs-num'>1</span><span class='hs-varop'>/</span><span class='hs-varid'>far</span>
+<a name="line-105"></a>
+<a name="line-106"></a>
+<a name="line-107"></a><a name="frustum"></a><span class='hs-comment'>-- | Build a perspective matrix per the classic @glFrustum@ arguments.</span>
+<a name="line-108"></a><span class='hs-definition'>frustum</span>
+<a name="line-109"></a>  <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Floating</span> <span class='hs-varid'>a</span>
+<a name="line-110"></a>  <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Left</span>
+<a name="line-111"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Right</span>
+<a name="line-112"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Bottom</span>
+<a name="line-113"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Top</span>
+<a name="line-114"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Near</span>
+<a name="line-115"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Far</span>
+<a name="line-116"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>M44</span> <span class='hs-varid'>a</span>
+<a name="line-117"></a><span class='hs-definition'>frustum</span> <span class='hs-varid'>l</span> <span class='hs-varid'>r</span> <span class='hs-varid'>b</span> <span class='hs-varid'>t</span> <span class='hs-varid'>n</span> <span class='hs-varid'>f</span> <span class='hs-keyglyph'>=</span>
+<a name="line-118"></a>  <span class='hs-conid'>V4</span> <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-varid'>x</span> <span class='hs-num'>0</span> <span class='hs-varid'>a</span>    <span class='hs-num'>0</span><span class='hs-layout'>)</span>
+<a name="line-119"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-varid'>y</span> <span class='hs-varid'>e</span>    <span class='hs-num'>0</span><span class='hs-layout'>)</span>
+<a name="line-120"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-varid'>c</span>    <span class='hs-varid'>d</span><span class='hs-layout'>)</span>
+<a name="line-121"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-layout'>(</span><span class='hs-comment'>-</span><span class='hs-num'>1</span><span class='hs-layout'>)</span> <span class='hs-num'>0</span><span class='hs-layout'>)</span>
+<a name="line-122"></a>  <span class='hs-keyword'>where</span>
+<a name="line-123"></a>    <span class='hs-varid'>rml</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>r</span><span class='hs-comment'>-</span><span class='hs-varid'>l</span>
+<a name="line-124"></a>    <span class='hs-varid'>tmb</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>t</span><span class='hs-comment'>-</span><span class='hs-varid'>b</span>
+<a name="line-125"></a>    <span class='hs-varid'>fmn</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>f</span><span class='hs-comment'>-</span><span class='hs-varid'>n</span>
+<a name="line-126"></a>    <span class='hs-varid'>x</span> <span class='hs-keyglyph'>=</span> <span class='hs-num'>2</span><span class='hs-varop'>*</span><span class='hs-varid'>n</span><span class='hs-varop'>/</span><span class='hs-varid'>rml</span>
+<a name="line-127"></a>    <span class='hs-varid'>y</span> <span class='hs-keyglyph'>=</span> <span class='hs-num'>2</span><span class='hs-varop'>*</span><span class='hs-varid'>n</span><span class='hs-varop'>/</span><span class='hs-varid'>tmb</span>
+<a name="line-128"></a>    <span class='hs-varid'>a</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>r</span><span class='hs-varop'>+</span><span class='hs-varid'>l</span><span class='hs-layout'>)</span><span class='hs-varop'>/</span><span class='hs-varid'>rml</span>
+<a name="line-129"></a>    <span class='hs-varid'>e</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>t</span><span class='hs-varop'>+</span><span class='hs-varid'>b</span><span class='hs-layout'>)</span><span class='hs-varop'>/</span><span class='hs-varid'>tmb</span>
+<a name="line-130"></a>    <span class='hs-varid'>c</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>negate</span> <span class='hs-layout'>(</span><span class='hs-varid'>f</span><span class='hs-varop'>+</span><span class='hs-varid'>n</span><span class='hs-layout'>)</span><span class='hs-varop'>/</span><span class='hs-varid'>fmn</span>
+<a name="line-131"></a>    <span class='hs-varid'>d</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-comment'>-</span><span class='hs-num'>2</span><span class='hs-varop'>*</span><span class='hs-varid'>f</span><span class='hs-varop'>*</span><span class='hs-varid'>n</span><span class='hs-layout'>)</span><span class='hs-varop'>/</span><span class='hs-varid'>fmn</span>
+<a name="line-132"></a>
+<a name="line-133"></a><a name="inverseFrustum"></a><span class='hs-definition'>inverseFrustum</span>
+<a name="line-134"></a>  <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Floating</span> <span class='hs-varid'>a</span>
+<a name="line-135"></a>  <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Left</span>
+<a name="line-136"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Right</span>
+<a name="line-137"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Bottom</span>
+<a name="line-138"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Top</span>
+<a name="line-139"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Near</span>
+<a name="line-140"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Far</span>
+<a name="line-141"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>M44</span> <span class='hs-varid'>a</span>
+<a name="line-142"></a><span class='hs-definition'>inverseFrustum</span> <span class='hs-varid'>l</span> <span class='hs-varid'>r</span> <span class='hs-varid'>b</span> <span class='hs-varid'>t</span> <span class='hs-varid'>n</span> <span class='hs-varid'>f</span> <span class='hs-keyglyph'>=</span>
+<a name="line-143"></a>  <span class='hs-conid'>V4</span> <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-varid'>rx</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-varid'>ax</span><span class='hs-layout'>)</span>
+<a name="line-144"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-varid'>ry</span> <span class='hs-num'>0</span> <span class='hs-varid'>by</span><span class='hs-layout'>)</span>
+<a name="line-145"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-layout'>(</span><span class='hs-comment'>-</span><span class='hs-num'>1</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
+<a name="line-146"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-varid'>rd</span> <span class='hs-varid'>cd</span><span class='hs-layout'>)</span>
+<a name="line-147"></a>  <span class='hs-keyword'>where</span>
+<a name="line-148"></a>    <span class='hs-varid'>hrn</span>  <span class='hs-keyglyph'>=</span> <span class='hs-num'>0.5</span><span class='hs-varop'>/</span><span class='hs-varid'>n</span>
+<a name="line-149"></a>    <span class='hs-varid'>hrnf</span> <span class='hs-keyglyph'>=</span> <span class='hs-num'>0.5</span><span class='hs-varop'>/</span><span class='hs-layout'>(</span><span class='hs-varid'>n</span><span class='hs-varop'>*</span><span class='hs-varid'>f</span><span class='hs-layout'>)</span>
+<a name="line-150"></a>    <span class='hs-varid'>rx</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>r</span><span class='hs-comment'>-</span><span class='hs-varid'>l</span><span class='hs-layout'>)</span><span class='hs-varop'>*</span><span class='hs-varid'>hrn</span>
+<a name="line-151"></a>    <span class='hs-varid'>ry</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>t</span><span class='hs-comment'>-</span><span class='hs-varid'>b</span><span class='hs-layout'>)</span><span class='hs-varop'>*</span><span class='hs-varid'>hrn</span>
+<a name="line-152"></a>    <span class='hs-varid'>ax</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>r</span><span class='hs-varop'>+</span><span class='hs-varid'>l</span><span class='hs-layout'>)</span><span class='hs-varop'>*</span><span class='hs-varid'>hrn</span>
+<a name="line-153"></a>    <span class='hs-varid'>by</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>t</span><span class='hs-varop'>+</span><span class='hs-varid'>b</span><span class='hs-layout'>)</span><span class='hs-varop'>*</span><span class='hs-varid'>hrn</span>
+<a name="line-154"></a>    <span class='hs-varid'>cd</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>f</span><span class='hs-varop'>+</span><span class='hs-varid'>n</span><span class='hs-layout'>)</span><span class='hs-varop'>*</span><span class='hs-varid'>hrnf</span>
+<a name="line-155"></a>    <span class='hs-varid'>rd</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>n</span><span class='hs-comment'>-</span><span class='hs-varid'>f</span><span class='hs-layout'>)</span><span class='hs-varop'>*</span><span class='hs-varid'>hrnf</span>
+<a name="line-156"></a>
+<a name="line-157"></a><a name="infinitePerspective"></a><span class='hs-comment'>-- | Build a matrix for a symmetric perspective-view frustum with a far plane at infinite</span>
+<a name="line-158"></a><span class='hs-definition'>infinitePerspective</span>
+<a name="line-159"></a>  <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Floating</span> <span class='hs-varid'>a</span>
+<a name="line-160"></a>  <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ FOV (y direction, in radians)</span>
+<a name="line-161"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Aspect Ratio</span>
+<a name="line-162"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Near plane</span>
+<a name="line-163"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>M44</span> <span class='hs-varid'>a</span>
+<a name="line-164"></a><span class='hs-definition'>infinitePerspective</span> <span class='hs-varid'>fovy</span> <span class='hs-varid'>a</span> <span class='hs-varid'>n</span> <span class='hs-keyglyph'>=</span>
+<a name="line-165"></a>  <span class='hs-conid'>V4</span> <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-varid'>x</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span>    <span class='hs-num'>0</span><span class='hs-layout'>)</span>
+<a name="line-166"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-varid'>y</span> <span class='hs-num'>0</span>    <span class='hs-num'>0</span><span class='hs-layout'>)</span>
+<a name="line-167"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-layout'>(</span><span class='hs-comment'>-</span><span class='hs-num'>1</span><span class='hs-layout'>)</span> <span class='hs-varid'>w</span><span class='hs-layout'>)</span>
+<a name="line-168"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-layout'>(</span><span class='hs-comment'>-</span><span class='hs-num'>1</span><span class='hs-layout'>)</span> <span class='hs-num'>0</span><span class='hs-layout'>)</span>
+<a name="line-169"></a>  <span class='hs-keyword'>where</span>
+<a name="line-170"></a>    <span class='hs-varid'>t</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>n</span><span class='hs-varop'>*</span><span class='hs-varid'>tan</span><span class='hs-layout'>(</span><span class='hs-varid'>fovy</span><span class='hs-varop'>/</span><span class='hs-num'>2</span><span class='hs-layout'>)</span>
+<a name="line-171"></a>    <span class='hs-varid'>b</span> <span class='hs-keyglyph'>=</span> <span class='hs-comment'>-</span><span class='hs-varid'>t</span>
+<a name="line-172"></a>    <span class='hs-varid'>l</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>b</span><span class='hs-varop'>*</span><span class='hs-varid'>a</span>
+<a name="line-173"></a>    <span class='hs-varid'>r</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>t</span><span class='hs-varop'>*</span><span class='hs-varid'>a</span>
+<a name="line-174"></a>    <span class='hs-varid'>x</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-num'>2</span><span class='hs-varop'>*</span><span class='hs-varid'>n</span><span class='hs-layout'>)</span><span class='hs-varop'>/</span><span class='hs-layout'>(</span><span class='hs-varid'>r</span><span class='hs-comment'>-</span><span class='hs-varid'>l</span><span class='hs-layout'>)</span>
+<a name="line-175"></a>    <span class='hs-varid'>y</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-num'>2</span><span class='hs-varop'>*</span><span class='hs-varid'>n</span><span class='hs-layout'>)</span><span class='hs-varop'>/</span><span class='hs-layout'>(</span><span class='hs-varid'>t</span><span class='hs-comment'>-</span><span class='hs-varid'>b</span><span class='hs-layout'>)</span>
+<a name="line-176"></a>    <span class='hs-varid'>w</span> <span class='hs-keyglyph'>=</span> <span class='hs-comment'>-</span><span class='hs-num'>2</span><span class='hs-varop'>*</span><span class='hs-varid'>n</span>
+<a name="line-177"></a>
+<a name="line-178"></a><a name="inverseInfinitePerspective"></a><span class='hs-definition'>inverseInfinitePerspective</span>
+<a name="line-179"></a>  <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Floating</span> <span class='hs-varid'>a</span>
+<a name="line-180"></a>  <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ FOV (y direction, in radians)</span>
+<a name="line-181"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Aspect Ratio</span>
+<a name="line-182"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Near plane</span>
+<a name="line-183"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>M44</span> <span class='hs-varid'>a</span>
+<a name="line-184"></a><span class='hs-definition'>inverseInfinitePerspective</span> <span class='hs-varid'>fovy</span> <span class='hs-varid'>a</span> <span class='hs-varid'>n</span> <span class='hs-keyglyph'>=</span>
+<a name="line-185"></a>  <span class='hs-conid'>V4</span> <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-varid'>rx</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span>  <span class='hs-num'>0</span><span class='hs-layout'>)</span>
+<a name="line-186"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-varid'>ry</span> <span class='hs-num'>0</span>  <span class='hs-num'>0</span><span class='hs-layout'>)</span>
+<a name="line-187"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span>  <span class='hs-num'>0</span>  <span class='hs-layout'>(</span><span class='hs-comment'>-</span><span class='hs-num'>1</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
+<a name="line-188"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span>  <span class='hs-varid'>rw</span> <span class='hs-layout'>(</span><span class='hs-comment'>-</span><span class='hs-varid'>rw</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
+<a name="line-189"></a>  <span class='hs-keyword'>where</span>
+<a name="line-190"></a>    <span class='hs-varid'>t</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>n</span><span class='hs-varop'>*</span><span class='hs-varid'>tan</span><span class='hs-layout'>(</span><span class='hs-varid'>fovy</span><span class='hs-varop'>/</span><span class='hs-num'>2</span><span class='hs-layout'>)</span>
+<a name="line-191"></a>    <span class='hs-varid'>b</span> <span class='hs-keyglyph'>=</span> <span class='hs-comment'>-</span><span class='hs-varid'>t</span>
+<a name="line-192"></a>    <span class='hs-varid'>l</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>b</span><span class='hs-varop'>*</span><span class='hs-varid'>a</span>
+<a name="line-193"></a>    <span class='hs-varid'>r</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>t</span><span class='hs-varop'>*</span><span class='hs-varid'>a</span>
+<a name="line-194"></a>    <span class='hs-varid'>hrn</span> <span class='hs-keyglyph'>=</span> <span class='hs-num'>0.5</span><span class='hs-varop'>/</span><span class='hs-varid'>n</span>
+<a name="line-195"></a>    <span class='hs-varid'>rx</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>r</span><span class='hs-comment'>-</span><span class='hs-varid'>l</span><span class='hs-layout'>)</span><span class='hs-varop'>*</span><span class='hs-varid'>hrn</span>
+<a name="line-196"></a>    <span class='hs-varid'>ry</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>(</span><span class='hs-varid'>t</span><span class='hs-comment'>-</span><span class='hs-varid'>b</span><span class='hs-layout'>)</span><span class='hs-varop'>*</span><span class='hs-varid'>hrn</span>
+<a name="line-197"></a>    <span class='hs-varid'>rw</span> <span class='hs-keyglyph'>=</span> <span class='hs-comment'>-</span><span class='hs-varid'>hrn</span>
+<a name="line-198"></a>
+<a name="line-199"></a><a name="ortho"></a><span class='hs-comment'>-- | Build an orthographic perspective matrix from 6 clipping planes.</span>
+<a name="line-200"></a><span class='hs-comment'>-- This matrix takes the region delimited by these planes and maps it</span>
+<a name="line-201"></a><span class='hs-comment'>-- to normalized device coordinates between [-1,1]</span>
+<a name="line-202"></a><span class='hs-comment'>--</span>
+<a name="line-203"></a><span class='hs-comment'>-- This call is designed to mimic the parameters to the OpenGL @glOrtho@</span>
+<a name="line-204"></a><span class='hs-comment'>-- call, so it has a slightly strange convention: Notably: the near and</span>
+<a name="line-205"></a><span class='hs-comment'>-- far planes are negated.</span>
 <a name="line-206"></a><span class='hs-comment'>--</span>
-<a name="line-207"></a><span class='hs-comment'>-- &gt;&gt;&gt; ortho 1 2 3 4 5 6 !* V4 2 4 (-6) 1</span>
-<a name="line-208"></a><span class='hs-comment'>-- V4 1.0 1.0 1.0 1.0</span>
-<a name="line-209"></a><span class='hs-definition'>ortho</span>
-<a name="line-210"></a>  <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Fractional</span> <span class='hs-varid'>a</span>
-<a name="line-211"></a>  <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Left</span>
-<a name="line-212"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Right</span>
-<a name="line-213"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Bottom</span>
-<a name="line-214"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Top</span>
-<a name="line-215"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Near</span>
-<a name="line-216"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Far</span>
-<a name="line-217"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>M44</span> <span class='hs-varid'>a</span>
-<a name="line-218"></a><span class='hs-definition'>ortho</span> <span class='hs-varid'>l</span> <span class='hs-varid'>r</span> <span class='hs-varid'>b</span> <span class='hs-varid'>t</span> <span class='hs-varid'>n</span> <span class='hs-varid'>f</span> <span class='hs-keyglyph'>=</span>
-<a name="line-219"></a>  <span class='hs-conid'>V4</span> <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-layout'>(</span><span class='hs-comment'>-</span><span class='hs-num'>2</span><span class='hs-varop'>*</span><span class='hs-varid'>x</span><span class='hs-layout'>)</span> <span class='hs-num'>0</span>      <span class='hs-num'>0</span>     <span class='hs-layout'>(</span><span class='hs-layout'>(</span><span class='hs-varid'>r</span><span class='hs-varop'>+</span><span class='hs-varid'>l</span><span class='hs-layout'>)</span><span class='hs-varop'>*</span><span class='hs-varid'>x</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
-<a name="line-220"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span>      <span class='hs-layout'>(</span><span class='hs-comment'>-</span><span class='hs-num'>2</span><span class='hs-varop'>*</span><span class='hs-varid'>y</span><span class='hs-layout'>)</span> <span class='hs-num'>0</span>     <span class='hs-layout'>(</span><span class='hs-layout'>(</span><span class='hs-varid'>t</span><span class='hs-varop'>+</span><span class='hs-varid'>b</span><span class='hs-layout'>)</span><span class='hs-varop'>*</span><span class='hs-varid'>y</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
-<a name="line-221"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span>      <span class='hs-num'>0</span>      <span class='hs-layout'>(</span><span class='hs-num'>2</span><span class='hs-varop'>*</span><span class='hs-varid'>z</span><span class='hs-layout'>)</span> <span class='hs-layout'>(</span><span class='hs-layout'>(</span><span class='hs-varid'>f</span><span class='hs-varop'>+</span><span class='hs-varid'>n</span><span class='hs-layout'>)</span><span class='hs-varop'>*</span><span class='hs-varid'>z</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
-<a name="line-222"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span>      <span class='hs-num'>0</span>      <span class='hs-num'>0</span>     <span class='hs-num'>1</span><span class='hs-layout'>)</span>
-<a name="line-223"></a>  <span class='hs-keyword'>where</span> <span class='hs-varid'>x</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>recip</span><span class='hs-layout'>(</span><span class='hs-varid'>l</span><span class='hs-comment'>-</span><span class='hs-varid'>r</span><span class='hs-layout'>)</span>
-<a name="line-224"></a>        <span class='hs-varid'>y</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>recip</span><span class='hs-layout'>(</span><span class='hs-varid'>b</span><span class='hs-comment'>-</span><span class='hs-varid'>t</span><span class='hs-layout'>)</span>
-<a name="line-225"></a>        <span class='hs-varid'>z</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>recip</span><span class='hs-layout'>(</span><span class='hs-varid'>n</span><span class='hs-comment'>-</span><span class='hs-varid'>f</span><span class='hs-layout'>)</span>
-<a name="line-226"></a>
-<a name="line-227"></a><a name="inverseOrtho"></a><span class='hs-comment'>-- | Build an inverse orthographic perspective matrix from 6 clipping planes</span>
-<a name="line-228"></a><span class='hs-definition'>inverseOrtho</span>
-<a name="line-229"></a>  <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Fractional</span> <span class='hs-varid'>a</span>
-<a name="line-230"></a>  <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Left</span>
-<a name="line-231"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Right</span>
-<a name="line-232"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Bottom</span>
-<a name="line-233"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Top</span>
-<a name="line-234"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Near</span>
-<a name="line-235"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Far</span>
-<a name="line-236"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>M44</span> <span class='hs-varid'>a</span>
-<a name="line-237"></a><span class='hs-definition'>inverseOrtho</span> <span class='hs-varid'>l</span> <span class='hs-varid'>r</span> <span class='hs-varid'>b</span> <span class='hs-varid'>t</span> <span class='hs-varid'>n</span> <span class='hs-varid'>f</span> <span class='hs-keyglyph'>=</span>
-<a name="line-238"></a>  <span class='hs-conid'>V4</span> <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-varid'>x</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-varid'>c</span><span class='hs-layout'>)</span>
-<a name="line-239"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-varid'>y</span> <span class='hs-num'>0</span> <span class='hs-varid'>d</span><span class='hs-layout'>)</span>
-<a name="line-240"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-varid'>z</span> <span class='hs-varid'>e</span><span class='hs-layout'>)</span>
-<a name="line-241"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-num'>1</span><span class='hs-layout'>)</span>
-<a name="line-242"></a>  <span class='hs-keyword'>where</span> <span class='hs-varid'>x</span> <span class='hs-keyglyph'>=</span> <span class='hs-num'>0.5</span><span class='hs-varop'>*</span><span class='hs-layout'>(</span><span class='hs-varid'>r</span><span class='hs-comment'>-</span><span class='hs-varid'>l</span><span class='hs-layout'>)</span>
-<a name="line-243"></a>        <span class='hs-varid'>y</span> <span class='hs-keyglyph'>=</span> <span class='hs-num'>0.5</span><span class='hs-varop'>*</span><span class='hs-layout'>(</span><span class='hs-varid'>t</span><span class='hs-comment'>-</span><span class='hs-varid'>b</span><span class='hs-layout'>)</span>
-<a name="line-244"></a>        <span class='hs-varid'>z</span> <span class='hs-keyglyph'>=</span> <span class='hs-num'>0.5</span><span class='hs-varop'>*</span><span class='hs-layout'>(</span><span class='hs-varid'>n</span><span class='hs-comment'>-</span><span class='hs-varid'>f</span><span class='hs-layout'>)</span>
-<a name="line-245"></a>        <span class='hs-varid'>c</span> <span class='hs-keyglyph'>=</span> <span class='hs-num'>0.5</span><span class='hs-varop'>*</span><span class='hs-layout'>(</span><span class='hs-varid'>l</span><span class='hs-varop'>+</span><span class='hs-varid'>r</span><span class='hs-layout'>)</span>
-<a name="line-246"></a>        <span class='hs-varid'>d</span> <span class='hs-keyglyph'>=</span> <span class='hs-num'>0.5</span><span class='hs-varop'>*</span><span class='hs-layout'>(</span><span class='hs-varid'>b</span><span class='hs-varop'>+</span><span class='hs-varid'>t</span><span class='hs-layout'>)</span>
-<a name="line-247"></a>        <span class='hs-varid'>e</span> <span class='hs-keyglyph'>=</span> <span class='hs-comment'>-</span><span class='hs-num'>0.5</span><span class='hs-varop'>*</span><span class='hs-layout'>(</span><span class='hs-varid'>n</span><span class='hs-varop'>+</span><span class='hs-varid'>f</span><span class='hs-layout'>)</span>
+<a name="line-207"></a><span class='hs-comment'>-- Consequently:</span>
+<a name="line-208"></a><span class='hs-comment'>--</span>
+<a name="line-209"></a><span class='hs-comment'>-- @</span>
+<a name="line-210"></a><span class='hs-comment'>-- 'ortho' l r b t n f !* 'V4' l b (-n) 1 = 'V4' (-1) (-1) (-1) 1</span>
+<a name="line-211"></a><span class='hs-comment'>-- 'ortho' l r b t n f !* 'V4' r t (-f) 1 = 'V4' 1 1 1 1</span>
+<a name="line-212"></a><span class='hs-comment'>-- @</span>
+<a name="line-213"></a><span class='hs-comment'>--</span>
+<a name="line-214"></a><span class='hs-comment'>-- Examples:</span>
+<a name="line-215"></a><span class='hs-comment'>--</span>
+<a name="line-216"></a><span class='hs-comment'>-- &gt;&gt;&gt; ortho 1 2 3 4 5 6 !* V4 1 3 (-5) 1</span>
+<a name="line-217"></a><span class='hs-comment'>-- V4 (-1.0) (-1.0) (-1.0) 1.0</span>
+<a name="line-218"></a><span class='hs-comment'>--</span>
+<a name="line-219"></a><span class='hs-comment'>-- &gt;&gt;&gt; ortho 1 2 3 4 5 6 !* V4 2 4 (-6) 1</span>
+<a name="line-220"></a><span class='hs-comment'>-- V4 1.0 1.0 1.0 1.0</span>
+<a name="line-221"></a><span class='hs-definition'>ortho</span>
+<a name="line-222"></a>  <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Fractional</span> <span class='hs-varid'>a</span>
+<a name="line-223"></a>  <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Left</span>
+<a name="line-224"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Right</span>
+<a name="line-225"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Bottom</span>
+<a name="line-226"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Top</span>
+<a name="line-227"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Near</span>
+<a name="line-228"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Far</span>
+<a name="line-229"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>M44</span> <span class='hs-varid'>a</span>
+<a name="line-230"></a><span class='hs-definition'>ortho</span> <span class='hs-varid'>l</span> <span class='hs-varid'>r</span> <span class='hs-varid'>b</span> <span class='hs-varid'>t</span> <span class='hs-varid'>n</span> <span class='hs-varid'>f</span> <span class='hs-keyglyph'>=</span>
+<a name="line-231"></a>  <span class='hs-conid'>V4</span> <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-layout'>(</span><span class='hs-comment'>-</span><span class='hs-num'>2</span><span class='hs-varop'>*</span><span class='hs-varid'>x</span><span class='hs-layout'>)</span> <span class='hs-num'>0</span>      <span class='hs-num'>0</span>     <span class='hs-layout'>(</span><span class='hs-layout'>(</span><span class='hs-varid'>r</span><span class='hs-varop'>+</span><span class='hs-varid'>l</span><span class='hs-layout'>)</span><span class='hs-varop'>*</span><span class='hs-varid'>x</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
+<a name="line-232"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span>      <span class='hs-layout'>(</span><span class='hs-comment'>-</span><span class='hs-num'>2</span><span class='hs-varop'>*</span><span class='hs-varid'>y</span><span class='hs-layout'>)</span> <span class='hs-num'>0</span>     <span class='hs-layout'>(</span><span class='hs-layout'>(</span><span class='hs-varid'>t</span><span class='hs-varop'>+</span><span class='hs-varid'>b</span><span class='hs-layout'>)</span><span class='hs-varop'>*</span><span class='hs-varid'>y</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
+<a name="line-233"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span>      <span class='hs-num'>0</span>      <span class='hs-layout'>(</span><span class='hs-num'>2</span><span class='hs-varop'>*</span><span class='hs-varid'>z</span><span class='hs-layout'>)</span> <span class='hs-layout'>(</span><span class='hs-layout'>(</span><span class='hs-varid'>f</span><span class='hs-varop'>+</span><span class='hs-varid'>n</span><span class='hs-layout'>)</span><span class='hs-varop'>*</span><span class='hs-varid'>z</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
+<a name="line-234"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span>      <span class='hs-num'>0</span>      <span class='hs-num'>0</span>     <span class='hs-num'>1</span><span class='hs-layout'>)</span>
+<a name="line-235"></a>  <span class='hs-keyword'>where</span> <span class='hs-varid'>x</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>recip</span><span class='hs-layout'>(</span><span class='hs-varid'>l</span><span class='hs-comment'>-</span><span class='hs-varid'>r</span><span class='hs-layout'>)</span>
+<a name="line-236"></a>        <span class='hs-varid'>y</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>recip</span><span class='hs-layout'>(</span><span class='hs-varid'>b</span><span class='hs-comment'>-</span><span class='hs-varid'>t</span><span class='hs-layout'>)</span>
+<a name="line-237"></a>        <span class='hs-varid'>z</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>recip</span><span class='hs-layout'>(</span><span class='hs-varid'>n</span><span class='hs-comment'>-</span><span class='hs-varid'>f</span><span class='hs-layout'>)</span>
+<a name="line-238"></a>
+<a name="line-239"></a><a name="inverseOrtho"></a><span class='hs-comment'>-- | Build an inverse orthographic perspective matrix from 6 clipping planes</span>
+<a name="line-240"></a><span class='hs-definition'>inverseOrtho</span>
+<a name="line-241"></a>  <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Fractional</span> <span class='hs-varid'>a</span>
+<a name="line-242"></a>  <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Left</span>
+<a name="line-243"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Right</span>
+<a name="line-244"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Bottom</span>
+<a name="line-245"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Top</span>
+<a name="line-246"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Near</span>
+<a name="line-247"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-comment'>-- ^ Far</span>
+<a name="line-248"></a>  <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>M44</span> <span class='hs-varid'>a</span>
+<a name="line-249"></a><span class='hs-definition'>inverseOrtho</span> <span class='hs-varid'>l</span> <span class='hs-varid'>r</span> <span class='hs-varid'>b</span> <span class='hs-varid'>t</span> <span class='hs-varid'>n</span> <span class='hs-varid'>f</span> <span class='hs-keyglyph'>=</span>
+<a name="line-250"></a>  <span class='hs-conid'>V4</span> <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-varid'>x</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-varid'>c</span><span class='hs-layout'>)</span>
+<a name="line-251"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-varid'>y</span> <span class='hs-num'>0</span> <span class='hs-varid'>d</span><span class='hs-layout'>)</span>
+<a name="line-252"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-varid'>z</span> <span class='hs-varid'>e</span><span class='hs-layout'>)</span>
+<a name="line-253"></a>     <span class='hs-layout'>(</span><span class='hs-conid'>V4</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-num'>0</span> <span class='hs-num'>1</span><span class='hs-layout'>)</span>
+<a name="line-254"></a>  <span class='hs-keyword'>where</span> <span class='hs-varid'>x</span> <span class='hs-keyglyph'>=</span> <span class='hs-num'>0.5</span><span class='hs-varop'>*</span><span class='hs-layout'>(</span><span class='hs-varid'>r</span><span class='hs-comment'>-</span><span class='hs-varid'>l</span><span class='hs-layout'>)</span>
+<a name="line-255"></a>        <span class='hs-varid'>y</span> <span class='hs-keyglyph'>=</span> <span class='hs-num'>0.5</span><span class='hs-varop'>*</span><span class='hs-layout'>(</span><span class='hs-varid'>t</span><span class='hs-comment'>-</span><span class='hs-varid'>b</span><span class='hs-layout'>)</span>
+<a name="line-256"></a>        <span class='hs-varid'>z</span> <span class='hs-keyglyph'>=</span> <span class='hs-num'>0.5</span><span class='hs-varop'>*</span><span class='hs-layout'>(</span><span class='hs-varid'>n</span><span class='hs-comment'>-</span><span class='hs-varid'>f</span><span class='hs-layout'>)</span>
+<a name="line-257"></a>        <span class='hs-varid'>c</span> <span class='hs-keyglyph'>=</span> <span class='hs-num'>0.5</span><span class='hs-varop'>*</span><span class='hs-layout'>(</span><span class='hs-varid'>l</span><span class='hs-varop'>+</span><span class='hs-varid'>r</span><span class='hs-layout'>)</span>
+<a name="line-258"></a>        <span class='hs-varid'>d</span> <span class='hs-keyglyph'>=</span> <span class='hs-num'>0.5</span><span class='hs-varop'>*</span><span class='hs-layout'>(</span><span class='hs-varid'>b</span><span class='hs-varop'>+</span><span class='hs-varid'>t</span><span class='hs-layout'>)</span>
+<a name="line-259"></a>        <span class='hs-varid'>e</span> <span class='hs-keyglyph'>=</span> <span class='hs-comment'>-</span><span class='hs-num'>0.5</span><span class='hs-varop'>*</span><span class='hs-layout'>(</span><span class='hs-varid'>n</span><span class='hs-varop'>+</span><span class='hs-varid'>f</span><span class='hs-layout'>)</span>
 </pre></body>
 </html>
