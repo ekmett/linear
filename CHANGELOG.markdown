@@ -1,7 +1,8 @@
 1.20.3
 ------
-* Require `vector` 0.11.0.0.
+* Support `vector` 0.11.0.0.
 * Support `cereal` 0.5
+* You can now unboxed vectors of `V n` vectors.
 
 1.20.2
 ------
