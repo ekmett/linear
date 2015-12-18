@@ -206,7 +206,7 @@ instance Foldable (V n) where
   product (V as) = V.product as
   {-# INLINE product #-}
 #endif
-  
+
 
 instance FoldableWithIndex Int (V n) where
   ifoldMap f (V as) = ifoldMap f as
@@ -488,9 +488,14 @@ instance (Dim n, U.Unbox a) => M.MVector U.MVector (V n a) where
   basicUnsafeRead (MV_VN _ v) i =
     liftM V $ V.generateM d (\j -> M.basicUnsafeRead v (d*i+j))
     where d = reflectDim (Proxy :: Proxy n)
-  basicUnsafeWrite (MV_VN _ v) i (V vn) =
-    V.imapM_ (\j -> M.basicUnsafeWrite v (d*i+j)) vn
-    where d = reflectDim (Proxy :: Proxy n)
+  basicUnsafeWrite (MV_VN _ v0) i0 (V vn0) = let d0 = V.length vn0 in go v0 vn0 d0 (d0*i0) i0
+   where
+    go v vn d o i
+      | i >= d = return ()
+      | otherwise = do
+        a <- G.basicUnsafeIndexM vn i
+        M.basicUnsafeWrite v o a
+        go v vn d (o+1) (i-1)
 #if MIN_VERSION_vector(0,11,0)
   basicInitialize (MV_VN _ v) = M.basicInitialize v
   {-# INLINE basicInitialize #-}
