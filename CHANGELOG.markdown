@@ -1,3 +1,7 @@
+1.20.4
+------
+* Compatibility with `base-orphans` 0.5
+
 1.20.3
 ------
 * Support `vector` 0.11.0.0.
