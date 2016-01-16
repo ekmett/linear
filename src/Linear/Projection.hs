@@ -71,8 +71,8 @@ perspective fovy aspect near far =
         y = 1 / tanHalfFovy
         fpn = far + near
         fmn = far - near
-        oon = 1/near
-        oof = 1/far
+        oon = 0.5/near
+        oof = 0.5/far
         -- z = 1 / (near/fpn - far/fpn) -- would be better by .5 bits
         z = -fpn/fmn
         w = 1/(oof-oon) -- 13 bits error reduced to 0.17
@@ -100,8 +100,8 @@ inversePerspective fovy aspect near far =
         b = tanHalfFovy
         c = oon - oof
         d = oon + oof
-        oon = 1/near
-        oof = 1/far
+        oon = 0.5/near
+        oof = 0.5/far
 
 
 -- | Build a perspective matrix per the classic @glFrustum@ arguments.
