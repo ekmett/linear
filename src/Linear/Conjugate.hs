@@ -1,7 +1,7 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE DefaultSignatures #-}
 #if __GLASGOW_HASKELL__ >= 800
-{-# OPTIONS_GHC -fno-warn-redundant-constraints #-} -- *sigh* TrivialConjugate isn't redundant, GHC
+{-# OPTIONS_GHC -fno-warn-redundant-constraints #-}
 #endif
 
 -----------------------------------------------------------------------------
