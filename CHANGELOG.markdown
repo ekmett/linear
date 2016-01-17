@@ -1,6 +1,7 @@
 1.20.5
 ------
 * GHC 8 compatibility
+* Fixed the `perspective` calculation.
 
 1.20.4
 ------
