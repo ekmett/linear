@@ -99,6 +99,9 @@ import Linear.Metric
 import Linear.Vector
 #if (MIN_VERSION_transformers(0,5,0)) || !(MIN_VERSION_transformers(0,4,0))
 import Prelude as P
+#if __GLASGOW_HASKELL__ < 710
+import Data.Monoid
+#endif
 #endif
 
 
