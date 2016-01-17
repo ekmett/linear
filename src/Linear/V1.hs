@@ -21,6 +21,11 @@
 #ifndef MIN_VERSION_vector
 #define MIN_VERSION_vector(x,y,z) 1
 #endif
+
+#ifndef MIN_VERSION_transformers
+#define MIN_VERSION_transformers(x,y,z) 1
+#endif
+
 -----------------------------------------------------------------------------
 -- |
 -- Copyright   :  (C) 2012-2015 Edward Kmett
@@ -348,7 +353,18 @@ instance Serialize a => Serialize (V1 a) where
   put = serializeWith Cereal.put
   get = deserializeWith Cereal.get
 
+#if (MIN_VERSION_transformers(0,5,0)) || !(MIN_VERSION_transformers(0,4,0))
+instance Eq1 V1 where
+  liftEq f (V1 a) (V1 b) = f a b
+instance Ord1 V1 where
+  liftCompare f (V1 a) (V1 b) = f a b
+instance Show1 V1 where
+  liftShowsPrec f _ d (V1 a) = showParen (d >= 10) $ showString "V1 " . f d a
+instance Read1 V1 where
+  liftReadsPrec f _ = readsData $ readsUnaryWith f "V1" V1
+#else
 instance Eq1 V1 where eq1 = (==)
 instance Ord1 V1 where compare1 = compare
 instance Show1 V1 where showsPrec1 = showsPrec
 instance Read1 V1 where readsPrec1 = readsPrec
+#endif

@@ -1,6 +1,6 @@
 name:          linear
 category:      Math, Algebra
-version:       1.20.4
+version:       1.20.5
 license:       BSD3
 cabal-version: >= 1.8
 license-file:  LICENSE
@@ -45,7 +45,7 @@ library
     adjunctions          >= 4     && < 5,
     base                 >= 4.5   && < 5,
     base-orphans         >= 0.5   && < 1,
-    binary               >= 0.5   && < 0.8,
+    binary               >= 0.5   && < 0.9,
     bytes                >= 0.15  && < 1,
     cereal               >= 0.4.1.1 && < 0.6,
     containers           >= 0.4   && < 0.6,
@@ -58,7 +58,7 @@ library
     semigroups           >= 0.9   && < 1,
     semigroupoids        >= 3     && < 6,
     tagged               >= 0.4.4 && < 1,
-    transformers         >= 0.2   && < 0.5,
+    transformers         >= 0.2   && < 0.6,
     transformers-compat  >= 0.4   && < 1,
     unordered-containers >= 0.2.3 && < 0.3,
     vector               >= 0.10  && < 0.12,
@@ -99,6 +99,10 @@ library
   ghc-options: -Wall -fwarn-tabs -O2 -fdicts-cheap -funbox-strict-fields
   hs-source-dirs: src
 
+  -- hack around the buggy unused matches check for class associated types in ghc 8 rc1
+  if impl(ghc >= 8)
+    ghc-options: -fno-warn-unused-matches
+
 -- Verify the results of the examples
 test-suite doctests
   type:           exitcode-stdio-1.0
@@ -127,3 +131,5 @@ test-suite UnitTests
     test-framework-hunit >= 0.3,
     HUnit >= 1.2.5,
     linear
+
+

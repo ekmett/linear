@@ -20,6 +20,10 @@
 #define MIN_VERSION_reflection(x,y,z) 1
 #endif
 
+#ifndef MIN_VERSION_transformers
+#define MIN_VERSION_transformers(x,y,z) 1
+#endif
+
 -----------------------------------------------------------------------------
 -- |
 -- Copyright   :  (C) 2012-2015 Edward Kmett
@@ -93,6 +97,9 @@ import Language.Haskell.TH
 import Linear.Epsilon
 import Linear.Metric
 import Linear.Vector
+#if (MIN_VERSION_transformers(0,5,0)) || !(MIN_VERSION_transformers(0,4,0))
+import Prelude as P
+#endif
 
 
 #ifdef HLINT
@@ -462,10 +469,36 @@ instance (Dim n, Serialize a) => Serialize (V n a) where
   put = serializeWith Cereal.put
   get = deserializeWith Cereal.get
 
+#if (MIN_VERSION_transformers(0,5,0)) || !(MIN_VERSION_transformers(0,4,0))
+instance Eq1 (V n) where
+  liftEq f0 (V as0) (V bs0) = go f0 (V.toList as0) (V.toList bs0) where
+    go _ [] [] = True
+    go f (a:as) (b:bs) = f a b && go f as bs
+    go _ _ _ = False
+
+instance Ord1 (V n) where
+  liftCompare f0 (V as0) (V bs0) = go f0 (V.toList as0) (V.toList bs0) where
+    go f (a:as) (b:bs) = f a b `mappend` go f as bs
+    go _ [] [] = EQ
+    go _ _  [] = GT
+    go _ [] _  = LT
+
+instance Show1 (V n) where
+  liftShowsPrec _ g d (V as) = showParen (d > 10) $ showString "V " . g (V.toList as)
+
+instance Dim n => Read1 (V n) where
+  liftReadsPrec _ g d = readParen (d > 10) $ \r ->
+    [ (V (V.fromList as), r2)  
+    | ("V",r1) <- lex r
+    , (as, r2) <- g r1
+    , P.length as == reflectDim (Proxy :: Proxy n)
+    ]
+#else
 instance Dim n => Eq1 (V n) where eq1 = (==)
 instance Dim n => Ord1 (V n) where compare1 = compare
 instance Dim n => Show1 (V n) where showsPrec1 = showsPrec
 instance Dim n => Read1 (V n) where readsPrec1 = readsPrec
+#endif
 
 
 data instance U.Vector    (V n a) =  V_VN {-# UNPACK #-} !Int !(U.Vector    a)

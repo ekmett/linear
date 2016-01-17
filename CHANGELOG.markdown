@@ -1,3 +1,7 @@
+1.20.5
+------
+* GHC 8 compatibility
+
 1.20.4
 ------
 * Compatibility with `base-orphans` 0.5

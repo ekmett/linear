@@ -10,12 +10,17 @@
 #endif
 
 #ifndef MIN_VERSION_hashable
-#define MIN_VERSION_hashable
+#define MIN_VERSION_hashable(x,y,z) 1
 #endif
 
 #ifndef MIN_VERSION_vector
 #define MIN_VERSION_vector(x,y,z) 1
 #endif
+
+#ifndef MIN_VERSION_transformers
+#define MIN_VERSION_transformers(x,y,z) 1
+#endif
+
 
 -----------------------------------------------------------------------------
 -- |
@@ -220,11 +225,11 @@ instance Hashable (V0 a) where
   hashWithSalt s V0 = s
   {-# INLINE hashWithSalt #-}
 
-instance Epsilon a => Epsilon (V0 a) where
+instance Epsilon (V0 a) where
   nearZero _ = True
   {-# INLINE nearZero #-}
 
-instance Storable a => Storable (V0 a) where
+instance Storable (V0 a) where
   sizeOf _ = 0
   {-# INLINE sizeOf #-}
   alignment _ = 1
@@ -315,7 +320,18 @@ instance Bounded (V0 a) where
 instance NFData (V0 a) where
   rnf V0 = ()
 
+#if (MIN_VERSION_transformers(0,5,0)) || !(MIN_VERSION_transformers(0,4,0))
+instance Eq1 V0   where
+  liftEq _ _ _ = True
+instance Ord1 V0  where
+  liftCompare _ _ _ = EQ
+instance Show1 V0 where
+  liftShowsPrec _ _ = showsPrec
+instance Read1 V0 where
+  liftReadsPrec _ _ = readsPrec
+#else
 instance Eq1 V0   where eq1 = (==)
 instance Ord1 V0  where compare1 = compare
 instance Show1 V0 where showsPrec1 = showsPrec
 instance Read1 V0 where readsPrec1 = readsPrec
+#endif

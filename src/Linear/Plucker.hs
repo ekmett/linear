@@ -12,6 +12,10 @@
 #ifndef MIN_VERSION_vector
 #define MIN_VERSION_vector(x,y,z) 1
 #endif
+
+#ifndef MIN_VERSION_transformers
+#define MIN_VERSION_transformers(x,y,z) 1
+#endif
 -----------------------------------------------------------------------------
 -- |
 -- Copyright   :  (C) 2012-2015 Edward Kmett
@@ -412,7 +416,7 @@ instance Each (Plucker a) (Plucker b) a b where
 -- | Valid Plücker coordinates @p@ will have @'squaredError' p '==' 0@
 --
 -- That said, floating point makes a mockery of this claim, so you may want to use 'nearZero'.
-squaredError :: (Eq a, Num a) => Plucker a -> a
+squaredError :: Num a => Plucker a -> a
 squaredError v = v >< v
 {-# INLINE squaredError #-}
 
@@ -452,7 +456,7 @@ data LinePass = Coplanar
 
 -- | Check how two lines pass each other. @passes l1 l2@ describes
 -- @l2@ when looking down @l1@.
-passes :: (Epsilon a, Num a, Ord a) => Plucker a -> Plucker a -> LinePass
+passes :: (Epsilon a, Ord a) => Plucker a -> Plucker a -> LinePass
 passes a b
   | nearZero s = Coplanar
   | s > 0 = Counterclockwise
@@ -590,7 +594,33 @@ instance Serialize a => Serialize (Plucker a) where
   put = serializeWith Cereal.put
   get = deserializeWith Cereal.get
 
+
+#if (MIN_VERSION_transformers(0,5,0)) || !(MIN_VERSION_transformers(0,4,0))
+instance Eq1 Plucker where
+  liftEq k (Plucker a1 b1 c1 d1 e1 f1)
+           (Plucker a2 b2 c2 d2 e2 f2)
+         = k a1 a2 && k b1 b2 && k c1 c2 && k d1 d2 && k e1 e2 && k f1 f2
+instance Ord1 Plucker where
+  liftCompare k (Plucker a1 b1 c1 d1 e1 f1)
+                (Plucker a2 b2 c2 d2 e2 f2)
+            = k a1 a2 `mappend` k b1 b2 `mappend` k c1 c2 `mappend` k d1 d2 `mappend` k e1 e2 `mappend` k f1 f2
+instance Read1 Plucker where
+  liftReadsPrec k _ z = readParen (z > 10) $ \r ->
+     [ (Plucker a b c d e f, r7)
+     | ("Plucker",r1) <- lex r
+     , (a,r2) <- k 11 r1
+     , (b,r3) <- k 11 r2
+     , (c,r4) <- k 11 r3
+     , (d,r5) <- k 11 r4
+     , (e,r6) <- k 11 r5
+     , (f,r7) <- k 11 r6
+     ]
+instance Show1 Plucker where
+  liftShowsPrec k _ z (Plucker a b c d e f) = showParen (z > 10) $
+     showString "Plucker " . k 11 a . showChar ' ' . k 11 b . showChar ' ' . k 11 c . showChar ' ' . k 11 d . showChar ' ' . k 11 e . showChar ' ' . k 11 f
+#else
 instance Eq1 Plucker where eq1 = (==)
 instance Ord1 Plucker where compare1 = compare
 instance Show1 Plucker where showsPrec1 = showsPrec
 instance Read1 Plucker where readsPrec1 = readsPrec
+#endif
