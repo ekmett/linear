@@ -447,12 +447,12 @@ instance Read1 V3 where
   liftReadsPrec k _ d = readParen (d > 10) $ \r ->
      [ (V3 a b c, r4)
      | ("V3",r1) <- lex r
-     , (a,r2) <- k 11 r1 
+     , (a,r2) <- k 11 r1
      , (b,r3) <- k 11 r2
      , (c,r4) <- k 11 r3
      ]
 instance Show1 V3 where
-  liftShowsPrec f _ d (V3 a b c) = showParen (d > 10) $ 
+  liftShowsPrec f _ d (V3 a b c) = showParen (d > 10) $
      showString "V3 " . f 11 a . showChar ' ' . f 11 b . showChar ' ' . f 11 c
 #else
 instance Eq1 V3 where eq1 = (==)

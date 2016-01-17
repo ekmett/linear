@@ -488,7 +488,7 @@ instance Show1 (V n) where
 
 instance Dim n => Read1 (V n) where
   liftReadsPrec _ g d = readParen (d > 10) $ \r ->
-    [ (V (V.fromList as), r2)  
+    [ (V (V.fromList as), r2)
     | ("V",r1) <- lex r
     , (as, r2) <- g r1
     , P.length as == reflectDim (Proxy :: Proxy n)
