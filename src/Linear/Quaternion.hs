@@ -624,7 +624,18 @@ instance Serialize a => Serialize (Quaternion a) where
   put = serializeWith Cereal.put
   get = deserializeWith Cereal.get
 
+#if (MIN_VERSION_transformers(0,5,0)) || !(MIN_VERSION_transformers(0,4,0))
+instance Eq1 Quaternion where
+  liftEq f (Quaternion a b) (Quaternion c d) = f a c && liftEq f b d
+instance Ord1 Quaternion where
+  liftCompare f (Quaternion a b) (Quaternion c d) = f a c `mappend` liftCompare f b d
+instance Show1 Quaternion where
+  liftShowsPrec f g d (Quaternion a b) = showsBinaryWith f (liftShowsPrec f g) "Quaternion" d a b
+instance Read1 Quaternion where
+  liftReadsPrec f g = readsData $ readsBinaryWith f (liftReadsPrec f g) "Quaternion" Quaternion
+#else
 instance Eq1 Quaternion where eq1 = (==)
 instance Ord1 Quaternion where compare1 = compare
 instance Show1 Quaternion where showsPrec1 = showsPrec
 instance Read1 Quaternion where readsPrec1 = readsPrec
+#endif
