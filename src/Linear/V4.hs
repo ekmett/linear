@@ -425,12 +425,14 @@ instance Storable a => Storable (V4 a) where
     where ptr' = castPtr ptr
   {-# INLINE peek #-}
 
--- | Convert a 3-dimensional affine vector into a 4-dimensional homogeneous vector.
+-- | Convert a 3-dimensional affine vector into a 4-dimensional homogeneous vector,
+-- i.e. sets the @w@ coordinate to 0.
 vector :: Num a => V3 a -> V4 a
 vector (V3 a b c) = V4 a b c 0
 {-# INLINE vector #-}
 
--- | Convert a 3-dimensional affine point into a 4-dimensional homogeneous vector.
+-- | Convert a 3-dimensional affine point into a 4-dimensional homogeneous vector,
+-- i.e. sets the @w@ coordinate to 1.
 point :: Num a => V3 a -> V4 a
 point (V3 a b c) = V4 a b c 1
 {-# INLINE point #-}
