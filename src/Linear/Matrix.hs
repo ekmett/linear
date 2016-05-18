@@ -343,7 +343,7 @@ det44 (V4 (V4 i00 i01 i02 i03)
 --
 -- >>> inv22 $ V2 (V2 1 2) (V2 3 4)
 -- V2 (V2 (-2.0) 1.0) (V2 1.5 (-0.5))
-inv22 :: Floating a => M22 a -> M22 a
+inv22 :: Fractional a => M22 a -> M22 a
 inv22 m@(V2 (V2 a b) (V2 c d)) = (1 / det) *!! V2 (V2 d (-b)) (V2 (-c) a)
   where det = det22 m
 {-# INLINE inv22 #-}
@@ -352,7 +352,7 @@ inv22 m@(V2 (V2 a b) (V2 c d)) = (1 / det) *!! V2 (V2 d (-b)) (V2 (-c) a)
 --
 -- >>> inv33 $ V3 (V3 1 2 4) (V3 4 2 2) (V3 1 1 1)
 -- V3 (V3 0.0 0.5 (-1.0)) (V3 (-0.5) (-0.75) 3.5) (V3 0.5 0.25 (-1.5))
-inv33 :: Floating a => M33 a -> M33 a
+inv33 :: Fractional a => M33 a -> M33 a
 inv33 m@(V3 (V3 a b c)
             (V3 d e f)
             (V3 g h i))
