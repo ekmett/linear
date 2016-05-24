@@ -397,7 +397,7 @@ angle a = V2 (cos a) (sin a)
 -- >>> crossZ (V2 1 0) (V2 0 1)
 -- 1
 crossZ :: Num a => V2 a -> V2 a -> a
-crossZ (V2 x1 y1) (V2 x2 y2) = (x1 * y2) - (y1 * x2)
+crossZ (V2 x1 y1) (V2 x2 y2) = x1*y2 - y1*x2
 {-# INLINE crossZ #-}
 
 instance Bounded a => Bounded (V2 a) where
