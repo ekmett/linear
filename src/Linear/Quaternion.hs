@@ -261,7 +261,7 @@ instance RealFloat a => Fractional (Quaternion a) where
                    (r0*q3-r1*q2+r2*q1-r3*q0))
                ^/ (r0*r0 + r1*r1 + r2*r2 + r3*r3)
   {-# INLINE (/) #-}
-  recip q = q ^/ quadrance q
+  recip (Quaternion e v) = Quaternion e (negate v) ^/ quadrance q
   {-# INLINE recip #-}
   fromRational x = Quaternion (fromRational x) 0
   {-# INLINE fromRational #-}
