@@ -167,7 +167,7 @@ adjoint = collect (fmap conjugate)
 type M22 a = V2 (V2 a)
 -- | A 2x3 matrix with row-major representation
 type M23 a = V2 (V3 a)
--- | A 2x3 matrix with row-major representation
+-- | A 2x4 matrix with row-major representation
 type M24 a = V2 (V4 a)
 -- | A 3x2 matrix with row-major representation
 type M32 a = V3 (V2 a)
