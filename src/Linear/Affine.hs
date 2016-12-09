@@ -12,7 +12,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 #endif
 {-# LANGUAGE DeriveDataTypeable #-}
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ < 708
+#if defined(__GLASGOW_HASKELL__)
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 #endif
@@ -33,6 +33,9 @@ import Control.Monad (liftM)
 import Control.Lens
 import Data.Binary as Binary
 import Data.Bytes.Serial
+#if __GLASGOW_HASKELL__ >= 708
+import Data.Coerce
+#endif
 import Data.Complex (Complex)
 import Data.Data
 import Data.Distributive
@@ -190,17 +193,47 @@ instance Wrapped (Point f a) where
   _Wrapped' = _Point
   {-# INLINE _Wrapped' #-}
 
+#if __GLASGOW_HASKELL__ >= 708
+-- These are stolen from Data.Profunctor.Unsafe
+(.#) :: Coercible b a => (b -> c) -> (a -> b) -> a -> c
+f .# _ = coerce f
+{-# INLINE (.#) #-}
+
+(#.) :: Coercible c b => (b -> c) -> (a -> b) -> a -> c
+(#.) _ = coerce (\x -> x :: b) :: forall a b. Coercible b a => a -> b
+{-# INLINE (#.) #-}
+#else
+(.#), (#.) :: (b -> c) -> (a -> b) -> a -> c
+(.#) = (.)
+{-# INLINE (.#) #-}
+(#.) = (.)
+{-# INLINE (#.) #-}
+#endif
+
+unP :: Point f a -> f a
+unP (P x) = x
+{-# INLINE unP #-}
+
+-- We can't use GND to derive 'Bind' because 'join' causes
+-- role troubles. However, GHC 7.8 and above let us use
+-- explicit coercions for (>>-).
 instance Bind f => Bind (Point f) where
-  join (P m) = P $ join $ fmap (\(P m')->m') m
+#if __GLASGOW_HASKELL__ >= 708
+  (>>-) = ((P .) . (. (unP .))) #. (>>-) .# unP
+#else
+  P m >>- f = P $ m >>- unP . f
+#endif
+  join (P m) = P $ m >>- \(P m') -> m'
 
 instance Distributive f => Distributive (Point f) where
   distribute = P . collect (\(P p) -> p)
+  collect = (P .) #. collect .# (unP .)
 
 instance Representable f => Representable (Point f) where
   type Rep (Point f) = Rep f
-  tabulate f = P (tabulate f)
+  tabulate = P #. tabulate
   {-# INLINE tabulate #-}
-  index (P xs) = Rep.index xs
+  index = Rep.index .# unP
   {-# INLINE index #-}
 
 type instance Index (Point f a) = Index (f a)
@@ -238,11 +271,11 @@ instance R4 f => R4 (Point f) where
 
 instance Additive f => Affine (Point f) where
   type Diff (Point f) = f
-  P x .-. P y = x ^-^ y
+  (.-.) = (. unP) #. (^-^) .# unP
   {-# INLINE (.-.) #-}
-  P x .+^ v = P (x ^+^ v)
+  (.+^) = (P .) #. (^+^) .# unP
   {-# INLINE (.+^) #-}
-  P x .-^ v = P (x ^-^ v)
+  (.-^) = (P .) #. (^-^) .# unP
   {-# INLINE (.-^) #-}
 
 -- | Vector spaces have origins.

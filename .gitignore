@@ -11,3 +11,4 @@ wip
 *.hi
 *~
 *#
+.stack-work/
