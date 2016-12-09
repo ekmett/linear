@@ -255,8 +255,8 @@ relative :: (Additive f, Num a) => Point f a -> Iso' (Point f a) (f a)
 relative p0 = iso (.-. p0) (p0 .+^)
 {-# INLINE relative #-}
 
-data instance U.Vector    (Point f a) =  V_P !(U.Vector    (f a))
-data instance U.MVector s (Point f a) = MV_P !(U.MVector s (f a))
+newtype instance U.Vector    (Point f a) =  V_P (U.Vector    (f a))
+newtype instance U.MVector s (Point f a) = MV_P (U.MVector s (f a))
 instance U.Unbox (f a) => U.Unbox (Point f a)
 
 instance U.Unbox (f a) => M.MVector U.MVector (Point f a) where
