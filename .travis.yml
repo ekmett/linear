@@ -80,6 +80,7 @@ install:
 script:
  - cabal configure -v2 --enable-tests --enable-benchmarks  # -v2 provides useful information for debugging
  - cabal build # this builds all libraries and executables (including tests/benchmarks)
+ - cabal test
  - cabal sdist   # tests that a source-distribution can be generated
  - export SRC_TGZ=$(cabal info . | awk '{print $2 ".tar.gz";exit}') ;
    cd dist/;
