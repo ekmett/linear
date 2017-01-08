@@ -1,6 +1,8 @@
 linear
 ======
 
+[![Hackage](https://img.shields.io/hackage/v/linear.svg)](https://hackage.haskell.org/package/linear) [![Build Status](https://secure.travis-ci.org/ekmett/linear.svg)](http://travis-ci.org/ekmett/linear)
+
 Highly polymorphic vector space operations on sparse and free vector spaces.
 
 Contact Information
