@@ -38,7 +38,13 @@ flag herbie
 
 source-repository head
   type: git
-  location: git://github.com/ekmett/linear.git
+  location: https://github.com/ekmett/linear
+
+custom-setup
+  setup-depends:
+    base          >= 4 && < 5,
+    Cabal,
+    cabal-doctest >= 1 && < 1.1
 
 library
   build-depends:
@@ -111,9 +117,7 @@ test-suite doctests
   hs-source-dirs: tests
   build-depends:
     base,
-    directory >= 1.0 && < 1.4,
-    doctest   >= 0.8 && < 0.12,
-    filepath  >= 1.3 && < 1.5,
+    doctest        >= 0.11.1 && < 0.12,
     lens,
     simple-reflect >= 0.3.1
 
