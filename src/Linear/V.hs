@@ -10,6 +10,8 @@
 #if __GLASGOW_HASKELL__ >= 707
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE PolyKinds #-}
+#endif
+#if __GLASGOW_HASKELL__ >= 707
 {-# LANGUAGE RoleAnnotations #-}
 #define USE_TYPE_LITS 1
 #endif

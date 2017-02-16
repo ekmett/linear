@@ -1,7 +1,7 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE DefaultSignatures #-}
-#if __GLASGOW_HASKELL__ >= 707
+#if __GLASGOW_HASKELL__ >= 706
 {-# LANGUAGE PolyKinds #-}
 #endif
 #if __GLASGOW_HASKELL__ >= 702 && __GLASGOW_HASKELL__ < 710
