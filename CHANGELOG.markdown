@@ -3,6 +3,8 @@ next
 * Revamp `Setup.hs` to use `cabal-doctest`. This makes it build
   with `Cabal-1.25`, and makes the `doctest`s work with `cabal new-build` and
   sandboxes.
+* Enable `PolyKinds` in `Linear.Trace`. Also enable `PolyKinds` when GHC 7.6 or
+  later is used (previously, it was GHC 7.8 or later).
 
 1.20.5
 ------
