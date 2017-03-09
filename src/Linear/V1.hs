@@ -8,10 +8,12 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE ScopedTypeVariables #-}
--- {-# OPTIONS_GHC -fno-warn-name-shadowing #-}
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE DeriveGeneric #-}
+#endif
+#if __GLASGOW_HASKELL__ >= 707
+{-# LANGUAGE DataKinds #-}
 #endif
 
 #ifndef MIN_VERSION_hashable
@@ -60,12 +62,16 @@ import Data.Functor.Classes
 import Data.Functor.Rep
 import Data.Hashable
 import Data.Semigroup.Foldable
+#if __GLASGOW_HASKELL__ >= 707
+import qualified Data.Vector as V
+import Linear.V
+#endif
 import Foreign.Storable (Storable)
 import GHC.Arr (Ix(..))
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+#if __GLASGOW_HASKELL__ >= 702
 import GHC.Generics (Generic)
 #endif
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
+#if __GLASGOW_HASKELL__ >= 706
 import GHC.Generics (Generic1)
 #endif
 import Linear.Metric
@@ -111,6 +117,13 @@ newtype V1 a = V1 a
            ,Generic1
 #endif
            )
+
+#if __GLASGOW_HASKELL__ >= 707
+instance Finite V1 where
+  type Size V1 = 1
+  toV (V1 a) = V (V.singleton a)
+  fromV (V v) = V1 (v V.! 0)
+#endif
 
 instance Foldable1 V1 where
   foldMap1 f (V1 a) = f a

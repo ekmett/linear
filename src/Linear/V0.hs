@@ -4,9 +4,14 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+
+#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE Trustworthy #-}
+#endif
+
+#if __GLASGOW_HASKELL__ >= 707
+{-# LANGUAGE DataKinds #-}
 #endif
 
 #ifndef MIN_VERSION_hashable
@@ -54,11 +59,14 @@ import Data.Hashable
 import Data.Ix
 import Data.Semigroup
 import Data.Serialize -- cereal
+#if __GLASGOW_HASKELL__ >= 707
+import qualified Data.Vector as V
+#endif
 import Foreign.Storable (Storable(..))
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 import GHC.Generics (Generic)
 #endif
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
+#if __GLASGOW_HASKELL__ >= 706
 import GHC.Generics (Generic1)
 #endif
 import qualified Data.Vector.Generic.Mutable as M
@@ -67,6 +75,9 @@ import qualified Data.Vector.Unboxed.Base as U
 import Linear.Metric
 import Linear.Epsilon
 import Linear.Vector
+#if __GLASGOW_HASKELL__ >= 707
+import Linear.V
+#endif
 import Prelude hiding (sum)
 
 -- $setup
@@ -88,6 +99,13 @@ data V0 a = V0 deriving (Eq,Ord,Show,Read,Ix,Enum,Data,Typeable
                         ,Generic1
 #endif
                         )
+
+#if __GLASGOW_HASKELL__ >= 707
+instance Finite V0 where
+  type Size V0 = 0
+  toV _ = V V.empty
+  fromV _ = V0
+#endif
 
 instance Serial1 V0 where
   serializeWith _ = serialize

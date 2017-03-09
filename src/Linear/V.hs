@@ -2,6 +2,7 @@
 {-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE Rank2Types #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE EmptyDataDecls #-}
@@ -52,6 +53,8 @@ module Linear.V
   , reifyVectorNat
 #endif
   , fromVector
+  , Finite(..)
+  , _V, _V'
   ) where
 
 #if __GLASGOW_HASKELL__ < 710
@@ -119,6 +122,20 @@ type role V nominal representational
 #endif
 
 
+class Finite v where
+  type Size (v :: * -> *) :: Nat -- this should allow kind k, for Reifies k Int
+  toV :: v a -> V (Size v) a
+  default toV :: Foldable v => v a -> V (Size v) a
+  toV = V . V.fromList . Foldable.toList
+  fromV :: V (Size v) a -> v a
+
+
+_V :: (Finite u, Finite v) => Iso (V (Size u) a) (V (Size v) b) (u a) (v b)
+_V = iso fromV toV
+
+_V' :: Finite v => Iso (V (Size v) a) (V (Size v) b) (v a) (v b)
+_V' = iso fromV toV
+
 newtype V n a = V { toVector :: V.Vector a } deriving (Eq,Ord,Show,Read,Typeable,NFData
                                                       , Generic
 -- GHC bug: https://ghc.haskell.org/trac/ghc/ticket/8468
@@ -126,6 +143,12 @@ newtype V n a = V { toVector :: V.Vector a } deriving (Eq,Ord,Show,Read,Typeable
                                                       ,Generic1
 #endif
                                                       )
+
+instance Finite (V (n :: Nat)) where
+  type Size (V n) = n
+  toV = id
+  fromV = id
+
 dim :: forall n a. Dim n => V n a -> Int
 dim _ = reflectDim (Proxy :: Proxy n)
 {-# INLINE dim #-}
@@ -160,7 +183,7 @@ reifyVectorNat v f = reifyNat (fromIntegral $ V.length v) $ \(Proxy :: Proxy n) 
 
 reifyDim :: Int -> (forall (n :: *). Dim n => Proxy n -> r) -> r
 reifyDim i f = R.reify i (go f) where
-  go :: Reifies n Int => (Proxy (ReifiedDim n) -> a) -> proxy n -> a
+  go :: (Proxy (ReifiedDim n) -> a) -> proxy n -> a
   go g _ = g Proxy
 {-# INLINE reifyDim #-}
 
@@ -218,7 +241,6 @@ instance Foldable (V n) where
   product (V as) = V.product as
   {-# INLINE product #-}
 #endif
-
 
 instance FoldableWithIndex Int (V n) where
   ifoldMap f (V as) = ifoldMap f as
