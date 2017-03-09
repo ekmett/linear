@@ -5,9 +5,12 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE TypeFamilies #-}
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE DeriveGeneric #-}
+#endif
+#if __GLASGOW_HASKELL__ >= 707
+{-# LANGUAGE DataKinds #-}
 #endif
 
 #ifndef MIN_VERSION_vector
@@ -62,20 +65,26 @@ import Data.Serialize as Cereal
 import GHC.Arr (Ix(..))
 import qualified Data.Foldable as F
 import Data.Monoid
-import Foreign.Ptr (castPtr, plusPtr)
-import Foreign.Storable (Storable(..))
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
-import GHC.Generics (Generic)
-#endif
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
-import GHC.Generics (Generic1)
+#if __GLASGOW_HASKELL__ >= 707
+import qualified Data.Vector as V
 #endif
 import qualified Data.Vector.Generic.Mutable as M
 import qualified Data.Vector.Generic as G
 import qualified Data.Vector.Unboxed.Base as U
+import Foreign.Ptr (castPtr, plusPtr)
+import Foreign.Storable (Storable(..))
+#if __GLASGOW_HASKELL__ >= 702
+import GHC.Generics (Generic)
+#endif
+#if __GLASGOW_HASKELL__ >= 706
+import GHC.Generics (Generic1)
+#endif
 import Linear.Epsilon
 import Linear.Conjugate
 import Linear.Metric
+#if __GLASGOW_HASKELL__ >= 707
+import Linear.V
+#endif
 import Linear.V3
 import Linear.Vector
 import Prelude hiding (any)
@@ -92,6 +101,13 @@ data Quaternion a = Quaternion !a {-# UNPACK #-}!(V3 a)
                              ,Generic1
 #endif
                              )
+
+#if __GLASGOW_HASKELL__ >= 707
+instance Finite Quaternion where
+  type Size Quaternion = 4
+  toV (Quaternion a (V3 b c d)) = V (V.fromListN 4 [a, b, c, d])
+  fromV (V v) = Quaternion (v V.! 0) (V3 (v V.! 1) (v V.! 2) (v V.! 3))
+#endif
 
 instance Functor Quaternion where
   fmap f (Quaternion e v) = Quaternion (f e) (fmap f v)

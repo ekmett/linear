@@ -4,9 +4,12 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE GADTs #-}
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE DeriveGeneric #-}
+#endif
+#if __GLASGOW_HASKELL__ >= 707
+{-# LANGUAGE DataKinds #-}
 #endif
 
 #ifndef MIN_VERSION_vector
@@ -70,21 +73,26 @@ import Data.Hashable
 import Data.Semigroup
 import Data.Semigroup.Foldable
 import Data.Serialize as Cereal
-import Foreign.Ptr (castPtr)
-import Foreign.Storable (Storable(..))
-import GHC.Arr (Ix(..))
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
-import GHC.Generics (Generic)
-#endif
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
-import GHC.Generics (Generic1)
+#if __GLASGOW_HASKELL__ >= 707
+import qualified Data.Vector as V
 #endif
 import qualified Data.Vector.Generic.Mutable as M
 import qualified Data.Vector.Generic as G
 import qualified Data.Vector.Unboxed.Base as U
-
+import Foreign.Ptr (castPtr)
+import Foreign.Storable (Storable(..))
+import GHC.Arr (Ix(..))
+#if __GLASGOW_HASKELL__ >= 702
+import GHC.Generics (Generic)
+#endif
+#if __GLASGOW_HASKELL__ >= 706
+import GHC.Generics (Generic1)
+#endif
 import Linear.Epsilon
 import Linear.Metric
+#if __GLASGOW_HASKELL__ >= 707
+import Linear.V
+#endif
 import Linear.V2
 import Linear.V3
 import Linear.V4
@@ -94,13 +102,20 @@ import Linear.Vector
 
 -- | Plücker coordinates for lines in a 3-dimensional space.
 data Plucker a = Plucker !a !a !a !a !a !a deriving (Eq,Ord,Show,Read
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+#if __GLASGOW_HASKELL__ >= 702
                                                     ,Generic
 #endif
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
+#if __GLASGOW_HASKELL__ >= 706
                                                     ,Generic1
 #endif
                                                     )
+
+#if __GLASGOW_HASKELL__ >= 707
+instance Finite Plucker where
+  type Size Plucker = 6
+  toV (Plucker a b c d e f) = V (V.fromListN 6 [a,b,c,d,e,f])
+  fromV (V v) = Plucker (v V.! 0) (v V.! 1) (v V.! 2) (v V.! 3) (v V.! 4) (v V.! 5)
+#endif
 
 instance Functor Plucker where
   fmap g (Plucker a b c d e f) = Plucker (g a) (g b) (g c) (g d) (g e) (g f)

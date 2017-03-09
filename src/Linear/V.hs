@@ -53,8 +53,10 @@ module Linear.V
   , reifyVectorNat
 #endif
   , fromVector
+#if __GLASGOW_HASKELL__ >= 707
   , Finite(..)
   , _V, _V'
+#endif
   ) where
 
 #if __GLASGOW_HASKELL__ < 710
@@ -67,6 +69,9 @@ import Control.Monad.Zip
 import Control.Lens as Lens
 import Data.Binary as Binary
 import Data.Bytes.Serial
+#if __GLASGOW_HASKELL__ >= 707
+import Data.Complex
+#endif
 import Data.Data
 import Data.Distributive
 import Data.Foldable as Foldable
@@ -119,8 +124,6 @@ class Dim n where
 
 #if __GLASGOW_HASKELL__ >= 707
 type role V nominal representational
-#endif
-
 
 class Finite v where
   type Size (v :: * -> *) :: Nat -- this should allow kind k, for Reifies k Int
@@ -129,12 +132,17 @@ class Finite v where
   toV = V . V.fromList . Foldable.toList
   fromV :: V (Size v) a -> v a
 
+instance Finite Complex where
+  type Size Complex = 2
+  toV (a :+ b) = V (V.fromListN 2 [a, b])
+  fromV (V v) = (v V.! 0) :+ (v V.! 1)
 
 _V :: (Finite u, Finite v) => Iso (V (Size u) a) (V (Size v) b) (u a) (v b)
 _V = iso fromV toV
 
 _V' :: Finite v => Iso (V (Size v) a) (V (Size v) b) (v a) (v b)
 _V' = iso fromV toV
+#endif
 
 newtype V n a = V { toVector :: V.Vector a } deriving (Eq,Ord,Show,Read,Typeable,NFData
                                                       , Generic

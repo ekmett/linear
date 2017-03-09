@@ -50,6 +50,9 @@ import Data.Ix
 import Data.Map (Map)
 import Data.Serialize as Cereal
 import Data.Vector (Vector)
+import qualified Data.Vector.Generic.Mutable as M
+import qualified Data.Vector.Generic as G
+import qualified Data.Vector.Unboxed.Base as U
 import Foreign.Storable
 #if __GLASGOW_HASKELL__ >= 702
 import GHC.Generics (Generic)
@@ -57,9 +60,6 @@ import GHC.Generics (Generic)
 #if __GLASGOW_HASKELL__ >= 706
 import GHC.Generics (Generic1)
 #endif
-import qualified Data.Vector.Generic.Mutable as M
-import qualified Data.Vector.Generic as G
-import qualified Data.Vector.Unboxed.Base as U
 import Linear.Epsilon
 import Linear.Metric
 import Linear.Plucker
@@ -151,6 +151,13 @@ newtype Point f a = P (f a)
            , Typeable, Data
 #endif
            )
+
+#if __GLASGOW_HASKELL__ >= 707
+instance Finite f => Finite (Point f) where
+  type Size (Point f) = Size f
+  toV (P v) = toV v
+  fromV v = P (fromV v)
+#endif
 
 instance NFData (f a) => NFData (Point f a) where
   rnf (P x) = rnf x
