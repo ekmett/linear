@@ -116,7 +116,7 @@ data V2 a = V2 !a !a deriving
 #if __GLASGOW_HASKELL__ >= 707
 instance Finite V2 where
   type Size V2 = 2
-  toV (V2 a b) = V (V.fromList [a,b])
+  toV (V2 a b) = V (V.fromListN 2 [a,b])
   fromV (V v) = V2 (v V.! 0) (v V.! 1)
 #endif
 

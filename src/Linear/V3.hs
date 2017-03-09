@@ -5,9 +5,12 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE CPP #-}
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE DeriveGeneric #-}
+#endif
+#if __GLASGOW_HASKELL__ >= 707
+{-# LANGUAGE DataKinds #-}
 #endif
 
 #ifndef MIN_VERSION_vector
@@ -59,20 +62,26 @@ import Data.Hashable
 import Data.Semigroup
 import Data.Semigroup.Foldable
 import Data.Serialize as Cereal -- cereal
-import Foreign.Ptr (castPtr)
-import Foreign.Storable (Storable(..))
-import GHC.Arr (Ix(..))
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
-import GHC.Generics (Generic)
-#endif
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
-import GHC.Generics (Generic1)
+#if __GLASGOW_HASKELL__ >= 707
+import qualified Data.Vector as V
 #endif
 import qualified Data.Vector.Generic.Mutable as M
 import qualified Data.Vector.Generic as G
 import qualified Data.Vector.Unboxed.Base as U
+import Foreign.Ptr (castPtr)
+import Foreign.Storable (Storable(..))
+import GHC.Arr (Ix(..))
+#if __GLASGOW_HASKELL__ >= 702
+import GHC.Generics (Generic)
+#endif
+#if __GLASGOW_HASKELL__ >= 706
+import GHC.Generics (Generic1)
+#endif
 import Linear.Epsilon
 import Linear.Metric
+#if __GLASGOW_HASKELL__ >= 707
+import Linear.V
+#endif
 import Linear.V2
 import Linear.Vector
 
@@ -80,14 +89,20 @@ import Linear.Vector
 
 -- | A 3-dimensional vector
 data V3 a = V3 !a !a !a deriving (Eq,Ord,Show,Read,Data,Typeable
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+#if __GLASGOW_HASKELL__ >= 702
                                  ,Generic
 #endif
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
+#if __GLASGOW_HASKELL__ >= 706
                                  ,Generic1
 #endif
                                  )
 
+#if __GLASGOW_HASKELL__ >= 707
+instance Finite V3 where
+  type Size V3 = 3 
+  toV (V3 a b c) = V (V.fromListN 3 [a,b,c])
+  fromV (V v) = V3 (v V.! 0) (v V.! 1) (v V.! 2)
+#endif
 
 instance Functor V3 where
   fmap f (V3 a b c) = V3 (f a) (f b) (f c)

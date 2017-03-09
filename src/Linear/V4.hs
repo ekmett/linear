@@ -5,9 +5,12 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE CPP #-}
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE DeriveGeneric #-}
+#endif
+#if __GLASGOW_HASKELL__ >= 707
+{-# LANGUAGE DataKinds #-}
 #endif
 
 #ifndef MIN_VERSION_vector
@@ -65,20 +68,26 @@ import Data.Hashable
 import Data.Semigroup
 import Data.Semigroup.Foldable
 import Data.Serialize as Cereal
-import Foreign.Ptr (castPtr)
-import Foreign.Storable (Storable(..))
-import GHC.Arr (Ix(..))
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
-import GHC.Generics (Generic)
-#endif
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
-import GHC.Generics (Generic1)
+#if __GLASGOW_HASKELL__ >= 707
+import qualified Data.Vector as V
 #endif
 import qualified Data.Vector.Generic.Mutable as M
 import qualified Data.Vector.Generic as G
 import qualified Data.Vector.Unboxed.Base as U
+import Foreign.Ptr (castPtr)
+import Foreign.Storable (Storable(..))
+import GHC.Arr (Ix(..))
+#if __GLASGOW_HASKELL__ >= 702
+import GHC.Generics (Generic)
+#endif
+#if __GLASGOW_HASKELL__ >= 706
+import GHC.Generics (Generic1)
+#endif
 import Linear.Epsilon
 import Linear.Metric
+#if __GLASGOW_HASKELL__ >= 707
+import Linear.V
+#endif
 import Linear.V2
 import Linear.V3
 import Linear.Vector
@@ -87,13 +96,20 @@ import Linear.Vector
 
 -- | A 4-dimensional vector.
 data V4 a = V4 !a !a !a !a deriving (Eq,Ord,Show,Read,Data,Typeable
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
+#if __GLASGOW_HASKELL__ >= 702
                                     ,Generic
 #endif
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
+#if __GLASGOW_HASKELL__ >= 706
                                     ,Generic1
 #endif
                                     )
+
+#if __GLASGOW_HASKELL__ >= 707
+instance Finite V4 where
+  type Size V4 = 4
+  toV (V4 a b c d) = V (V.fromListN 4 [a,b,c,d])
+  fromV (V v) = V4 (v V.! 0) (v V.! 1) (v V.! 2) (v V.! 3)
+#endif
 
 instance Functor V4 where
   fmap f (V4 a b c d) = V4 (f a) (f b) (f c) (f d)
