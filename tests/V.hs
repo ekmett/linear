@@ -11,10 +11,10 @@ import Test.HUnit
 import Control.DeepSeq (rnf)
 import qualified Data.Vector.Unboxed as U (fromList)
 import Linear.V (V)
-#endif
 
 v10 :: V 10 Int
 v10 = return 5
+#endif
 
 tests :: Test
 tests = test [
