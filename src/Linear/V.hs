@@ -142,6 +142,11 @@ _V = iso fromV toV
 
 _V' :: Finite v => Iso (V (Size v) a) (V (Size v) b) (v a) (v b)
 _V' = iso fromV toV
+
+instance Finite (V (n :: Nat)) where
+  type Size (V n) = n
+  toV = id
+  fromV = id
 #endif
 
 newtype V n a = V { toVector :: V.Vector a } deriving (Eq,Ord,Show,Read,Typeable,NFData
@@ -151,11 +156,6 @@ newtype V n a = V { toVector :: V.Vector a } deriving (Eq,Ord,Show,Read,Typeable
                                                       ,Generic1
 #endif
                                                       )
-
-instance Finite (V (n :: Nat)) where
-  type Size (V n) = n
-  toV = id
-  fromV = id
 
 dim :: forall n a. Dim n => V n a -> Int
 dim _ = reflectDim (Proxy :: Proxy n)
