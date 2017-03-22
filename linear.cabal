@@ -124,7 +124,9 @@ test-suite doctests
 test-suite UnitTests
   type:           exitcode-stdio-1.0
   main-is:        UnitTests.hs
-  other-modules:  Plucker, Binary, V
+  other-modules:  Plucker, Binary
+  if impl(ghc >= 7.7)
+    other-modules: V
   ghc-options:    -Wall -threaded
   hs-source-dirs: tests
   build-depends:
