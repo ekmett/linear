@@ -124,16 +124,18 @@ test-suite doctests
 test-suite UnitTests
   type:           exitcode-stdio-1.0
   main-is:        UnitTests.hs
-  other-modules:  Plucker, Binary
+  other-modules:  Plucker, Binary, V
   ghc-options:    -Wall -threaded
   hs-source-dirs: tests
   build-depends:
     base,
     binary,
     bytestring,
+    deepseq,
     test-framework >= 0.8,
     test-framework-hunit >= 0.3,
     HUnit >= 1.2.5,
-    linear
-
+    linear,
+    reflection,
+    vector
 
