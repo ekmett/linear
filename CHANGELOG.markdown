@@ -6,6 +6,7 @@ next
 * Enable `PolyKinds` in `Linear.Trace`. Also enable `PolyKinds` when GHC 7.6 or
   later is used (previously, it was GHC 7.8 or later).
 * Fix a segfault arising from the `MVector` instance for `V`
+* Add `Finite` class for conversion between `V` and fixed-size vector types
 
 1.20.5
 ------
