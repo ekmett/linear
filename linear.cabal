@@ -125,15 +125,19 @@ test-suite UnitTests
   type:           exitcode-stdio-1.0
   main-is:        UnitTests.hs
   other-modules:  Plucker, Binary
+  if impl(ghc >= 7.7)
+    other-modules: V
   ghc-options:    -Wall -threaded
   hs-source-dirs: tests
   build-depends:
     base,
     binary,
     bytestring,
+    deepseq,
     test-framework >= 0.8,
     test-framework-hunit >= 0.3,
     HUnit >= 1.2.5,
-    linear
-
+    linear,
+    reflection,
+    vector
 
