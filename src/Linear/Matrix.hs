@@ -107,7 +107,7 @@ infixl 6 !-!
 (!-!) :: (Additive m, Additive n, Num a) => m (n a) -> m (n a) -> m (n a)
 as !-! bs = liftU2 (^-^) as bs
 
-infixl 7 !*
+infixr 7 !*
 -- | Matrix * column vector
 --
 -- >>> V2 (V3 1 2 3) (V3 4 5 6) !* V3 7 8 9
