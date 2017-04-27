@@ -1,6 +1,6 @@
 name:          linear
 category:      Math, Algebra
-version:       1.20.5
+version:       1.20.6
 license:       BSD3
 cabal-version: >= 1.8
 license-file:  LICENSE
