@@ -393,9 +393,9 @@ instance RealFloat a => Floating (Quaternion a) where
   {-# INLINE exp #-}
   log q@(Quaternion e v@(V3 _i j k))
     | qiq == 0 = if e >= 0
-                 then Quaternion (log e) v
-                 else Quaternion (log (negate e)) (V3 pi j k) -- mmm, pi
-    | ai <- sqrt qiq = reimagine (log m) (atan2 m e / ai) q
+                 then Quaternion (log e)          (V3 0  0 0)
+                 else Quaternion (log (negate e)) (V3 pi 0 0) -- Why pi? Leaving this as is.
+    | ai <- sqrt qiq = reimagine (log m) (acos (e / m) / ai) q
     where qiq = qi q
           m = sqrte2pqiq e qiq
   {-# INLINE log #-}
