@@ -142,6 +142,11 @@ _V = iso fromV toV
 
 _V' :: Finite v => Iso (V (Size v) a) (V (Size v) b) (v a) (v b)
 _V' = iso fromV toV
+
+instance Finite (V (n :: Nat)) where
+  type Size (V n) = n
+  toV = id
+  fromV = id
 #endif
 
 newtype V n a = V { toVector :: V.Vector a } deriving (Eq,Ord,Show,Read,Typeable,NFData
@@ -151,11 +156,6 @@ newtype V n a = V { toVector :: V.Vector a } deriving (Eq,Ord,Show,Read,Typeable
                                                       ,Generic1
 #endif
                                                       )
-
-instance Finite (V (n :: Nat)) where
-  type Size (V n) = n
-  toV = id
-  fromV = id
 
 dim :: forall n a. Dim n => V n a -> Int
 dim _ = reflectDim (Proxy :: Proxy n)
@@ -556,14 +556,14 @@ instance (Dim n, U.Unbox a) => M.MVector U.MVector (V n a) where
   basicUnsafeRead (MV_VN _ v) i =
     liftM V $ V.generateM d (\j -> M.basicUnsafeRead v (d*i+j))
     where d = reflectDim (Proxy :: Proxy n)
-  basicUnsafeWrite (MV_VN _ v0) i0 (V vn0) = let d0 = V.length vn0 in go v0 vn0 d0 (d0*i0) i0
+  basicUnsafeWrite (MV_VN _ v0) i (V vn0) = let d0 = V.length vn0 in go v0 vn0 d0 (d0*i) 0
    where
-    go v vn d o i
-      | i >= d = return ()
+    go v vn d o j
+      | j >= d = return ()
       | otherwise = do
-        a <- G.basicUnsafeIndexM vn i
+        a <- G.basicUnsafeIndexM vn j
         M.basicUnsafeWrite v o a
-        go v vn d (o+1) (i-1)
+        go v vn d (o+1) (j+1)
 #if MIN_VERSION_vector(0,11,0)
   basicInitialize (MV_VN _ v) = M.basicInitialize v
   {-# INLINE basicInitialize #-}

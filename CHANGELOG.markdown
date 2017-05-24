@@ -1,10 +1,14 @@
-next
-----
+1.20.6
+------
 * Revamp `Setup.hs` to use `cabal-doctest`. This makes it build
-  with `Cabal-1.25`, and makes the `doctest`s work with `cabal new-build` and
+  with `Cabal-2.0`, and makes the `doctest`s work with `cabal new-build` and
   sandboxes.
+* Make `(1 / x)` and `recip x` agree in the `Fractional` instance for `Quaternion`
+* Use newtype instances for `Point` vectors in `Linear.Affine`
 * Enable `PolyKinds` in `Linear.Trace`. Also enable `PolyKinds` when GHC 7.6 or
   later is used (previously, it was GHC 7.8 or later).
+* Fix a segfault arising from the `MVector` instance for `V`
+* Add `Finite` class for conversion between `V` and fixed-size vector types
 
 1.20.5
 ------
