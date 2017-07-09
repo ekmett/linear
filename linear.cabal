@@ -63,7 +63,7 @@ library
     lens                 >= 4     && < 5,
     reflection           >= 1.3.2 && < 3,
     semigroups           >= 0.9   && < 1,
-    semigroupoids        >= 3     && < 6,
+    semigroupoids        >= 3     && < 5.2.1,
     tagged               >= 0.4.4 && < 1,
     transformers         >= 0.2   && < 0.6,
     transformers-compat  >= 0.4   && < 1,
