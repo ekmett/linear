@@ -1,5 +1,5 @@
-next
-----
+1.20.7
+------
 * Support `semigroupoids-5.2.1` and `doctest-0.12`
 
 1.20.6
