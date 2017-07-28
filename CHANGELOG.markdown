@@ -1,3 +1,7 @@
+next
+----
+* Support `semigroupoids-5.2.1`
+
 1.20.6
 ------
 * Revamp `Setup.hs` to use `cabal-doctest`. This makes it build
