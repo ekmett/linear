@@ -11,6 +11,7 @@
 module Linear.Epsilon
   ( Epsilon(..)
   ) where
+import Data.Complex (Complex, magnitude)
 import Foreign.C.Types (CFloat, CDouble)
 
 -- | Provides a fairly subjective test to see if a quantity is near zero.
@@ -45,3 +46,6 @@ instance Epsilon CFloat where
 -- | @'abs' a '<=' 1e-12@
 instance Epsilon CDouble where
   nearZero a = abs a <= 1e-12
+
+instance (Epsilon a, RealFloat a) => Epsilon (Complex a) where
+  nearZero = nearZero . magnitude
