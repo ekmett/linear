@@ -41,6 +41,7 @@ module Linear.V2
   , ex, ey
   , perp
   , angle
+  , unangle
   , crossZ
   ) where
 
@@ -406,6 +407,13 @@ instance MonadFix V2 where
 
 angle :: Floating a => a -> V2 a
 angle a = V2 (cos a) (sin a)
+
+unangle :: (Floating a, Ord a) => V2 a -> a
+unangle a@(V2 ax ay) =
+  let alpha = asin $ ay / norm a
+  in if ax < 0
+       then pi - alpha
+       else alpha
 
 -- | The Z-component of the cross product of two vectors in the XY-plane.
 --
