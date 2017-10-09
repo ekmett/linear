@@ -108,7 +108,7 @@ import qualified Data.Vector.Unboxed.Base as U
 --data V2 a = V2 !a !a deriving (Eq,Ord,Show,Read,Data,Typeable)
 newtype V1 a = V1 a
   deriving (Eq,Ord,Show,Read,Data,Typeable,
-            Functor,Foldable,Traversable,
+            Functor,Traversable,
             Epsilon,Storable,NFData
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
            ,Generic
@@ -117,6 +117,13 @@ newtype V1 a = V1 a
            ,Generic1
 #endif
            )
+
+instance Foldable V1 where
+  foldMap f (V1 a) = f a
+#if __GLASGOW_HASKELL__ >= 710
+  null _ = False
+  length _ = 1
+#endif
 
 #if __GLASGOW_HASKELL__ >= 707
 instance Finite V1 where

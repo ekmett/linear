@@ -132,6 +132,10 @@ instance Functor V0 where
 instance Foldable V0 where
   foldMap _ V0 = mempty
   {-# INLINE foldMap #-}
+#if __GLASGOW_HASKELL__ >= 710
+  null _ = True
+  length _ = 0
+#endif
 
 instance Traversable V0 where
   traverse _ V0 = pure V0

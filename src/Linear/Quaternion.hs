@@ -202,6 +202,10 @@ instance Foldable Quaternion where
   {-# INLINE foldMap #-}
   foldr f z (Quaternion e v) = f e (F.foldr f z v)
   {-# INLINE foldr #-}
+#if __GLASGOW_HASKELL__ >= 710
+  null _ = False
+  length _ = 4
+#endif
 
 instance Traversable Quaternion where
   traverse f (Quaternion e v) = Quaternion <$> f e <*> traverse f v

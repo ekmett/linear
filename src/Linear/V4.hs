@@ -120,6 +120,10 @@ instance Functor V4 where
 instance Foldable V4 where
   foldMap f (V4 a b c d) = f a `mappend` f b `mappend` f c `mappend` f d
   {-# INLINE foldMap #-}
+#if __GLASGOW_HASKELL__ >= 710
+  null _ = False
+  length _ = 4
+#endif
 
 instance Traversable V4 where
   traverse f (V4 a b c d) = V4 <$> f a <*> f b <*> f c <*> f d

@@ -183,6 +183,10 @@ instance Foldable Plucker where
   foldMap g (Plucker a b c d e f) =
     g a `mappend` g b `mappend` g c `mappend` g d `mappend` g e `mappend` g f
   {-# INLINE foldMap #-}
+#if __GLASGOW_HASKELL__ >= 710
+  null _ = False
+  length _ =  6
+#endif
 
 instance Traversable Plucker where
   traverse g (Plucker a b c d e f) =
