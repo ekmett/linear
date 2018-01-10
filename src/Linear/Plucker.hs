@@ -643,3 +643,21 @@ instance Ord1 Plucker where compare1 = compare
 instance Show1 Plucker where showsPrec1 = showsPrec
 instance Read1 Plucker where readsPrec1 = readsPrec
 #endif
+
+instance Field1 (Plucker a) (Plucker a) a a where
+  _1 f (Plucker x y z u v w) = f x <&> \x' -> Plucker x' y z u v w
+
+instance Field2 (Plucker a) (Plucker a) a a where
+  _2 f (Plucker x y z u v w) = f y <&> \y' -> Plucker x y' z u v w
+
+instance Field3 (Plucker a) (Plucker a) a a where
+  _3 f (Plucker x y z u v w) = f z <&> \z' -> Plucker x y z' u v w
+
+instance Field4 (Plucker a) (Plucker a) a a where
+  _4 f (Plucker x y z u v w) = f u <&> \u' -> Plucker x y z u' v w
+
+instance Field5 (Plucker a) (Plucker a) a a where
+  _5 f (Plucker x y z u v w) = f v <&> \v' -> Plucker x y z u v' w
+
+instance Field6 (Plucker a) (Plucker a) a a where
+  _6 f (Plucker x y z u v w) = f w <&> \w' -> Plucker x y z u v w'

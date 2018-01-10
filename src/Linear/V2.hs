@@ -459,3 +459,9 @@ instance Ord1 V2 where compare1 = compare
 instance Show1 V2 where showsPrec1 = showsPrec
 instance Read1 V2 where readsPrec1 = readsPrec
 #endif
+
+instance Field1 (V2 a) (V2 a) a a where
+  _1 f (V2 x y) = f x <&> \x' -> V2 x' y
+
+instance Field2 (V2 a) (V2 a) a a where
+  _2 f (V2 x y) = f y <&> \y' -> V2 x y'
