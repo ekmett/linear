@@ -590,23 +590,23 @@ vLens i = \f (V v) -> f (v V.! i) <&> \a -> V (v V.// [(i, a)])
 {-# INLINE vLens #-}
 
 #ifdef USE_TYPE_LITS
-instance  1 <= n => Field1  (V n a) (V n a) a a where _1  = vLens  0
-instance  2 <= n => Field2  (V n a) (V n a) a a where _2  = vLens  1
-instance  3 <= n => Field3  (V n a) (V n a) a a where _3  = vLens  2
-instance  4 <= n => Field4  (V n a) (V n a) a a where _4  = vLens  3
-instance  5 <= n => Field5  (V n a) (V n a) a a where _5  = vLens  4
-instance  6 <= n => Field6  (V n a) (V n a) a a where _6  = vLens  5
-instance  7 <= n => Field7  (V n a) (V n a) a a where _7  = vLens  6
-instance  8 <= n => Field8  (V n a) (V n a) a a where _8  = vLens  7
-instance  9 <= n => Field9  (V n a) (V n a) a a where _9  = vLens  8
-instance 10 <= n => Field10 (V n a) (V n a) a a where _10 = vLens  9
-instance 11 <= n => Field11 (V n a) (V n a) a a where _11 = vLens 10
-instance 12 <= n => Field12 (V n a) (V n a) a a where _12 = vLens 11
-instance 13 <= n => Field13 (V n a) (V n a) a a where _13 = vLens 12
-instance 14 <= n => Field14 (V n a) (V n a) a a where _14 = vLens 13
-instance 15 <= n => Field15 (V n a) (V n a) a a where _15 = vLens 14
-instance 16 <= n => Field16 (V n a) (V n a) a a where _16 = vLens 15
-instance 17 <= n => Field17 (V n a) (V n a) a a where _17 = vLens 16
-instance 18 <= n => Field18 (V n a) (V n a) a a where _18 = vLens 17
-instance 19 <= n => Field19 (V n a) (V n a) a a where _19 = vLens 18
+instance ( 1 <= n) => Field1  (V n a) (V n a) a a where _1  = vLens  0
+instance ( 2 <= n) => Field2  (V n a) (V n a) a a where _2  = vLens  1
+instance ( 3 <= n) => Field3  (V n a) (V n a) a a where _3  = vLens  2
+instance ( 4 <= n) => Field4  (V n a) (V n a) a a where _4  = vLens  3
+instance ( 5 <= n) => Field5  (V n a) (V n a) a a where _5  = vLens  4
+instance ( 6 <= n) => Field6  (V n a) (V n a) a a where _6  = vLens  5
+instance ( 7 <= n) => Field7  (V n a) (V n a) a a where _7  = vLens  6
+instance ( 8 <= n) => Field8  (V n a) (V n a) a a where _8  = vLens  7
+instance ( 9 <= n) => Field9  (V n a) (V n a) a a where _9  = vLens  8
+instance (10 <= n) => Field10 (V n a) (V n a) a a where _10 = vLens  9
+instance (11 <= n) => Field11 (V n a) (V n a) a a where _11 = vLens 10
+instance (12 <= n) => Field12 (V n a) (V n a) a a where _12 = vLens 11
+instance (13 <= n) => Field13 (V n a) (V n a) a a where _13 = vLens 12
+instance (14 <= n) => Field14 (V n a) (V n a) a a where _14 = vLens 13
+instance (15 <= n) => Field15 (V n a) (V n a) a a where _15 = vLens 14
+instance (16 <= n) => Field16 (V n a) (V n a) a a where _16 = vLens 15
+instance (17 <= n) => Field17 (V n a) (V n a) a a where _17 = vLens 16
+instance (18 <= n) => Field18 (V n a) (V n a) a a where _18 = vLens 17
+instance (19 <= n) => Field19 (V n a) (V n a) a a where _19 = vLens 18
 #endif
