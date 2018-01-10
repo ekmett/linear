@@ -589,6 +589,7 @@ vLens :: Int -> Lens' (V n a) a
 vLens i = \f (V v) -> f (v V.! i) <&> \a -> V (v V.// [(i, a)])
 {-# INLINE vLens #-}
 
+#ifdef USE_TYPE_LITS
 instance  1 <= n => Field1  (V n a) (V n a) a a where _1  = vLens  0
 instance  2 <= n => Field2  (V n a) (V n a) a a where _2  = vLens  1
 instance  3 <= n => Field3  (V n a) (V n a) a a where _3  = vLens  2
@@ -608,3 +609,4 @@ instance 16 <= n => Field16 (V n a) (V n a) a a where _16 = vLens 15
 instance 17 <= n => Field17 (V n a) (V n a) a a where _17 = vLens 16
 instance 18 <= n => Field18 (V n a) (V n a) a a where _18 = vLens 17
 instance 19 <= n => Field19 (V n a) (V n a) a a where _19 = vLens 18
+#endif

@@ -13,3 +13,4 @@ wip
 *~
 *#
 .stack-work/
+.ghc.environment.*
