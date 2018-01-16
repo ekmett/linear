@@ -659,3 +659,15 @@ instance Ord1 Quaternion where compare1 = compare
 instance Show1 Quaternion where showsPrec1 = showsPrec
 instance Read1 Quaternion where readsPrec1 = readsPrec
 #endif
+
+instance Field1 (Quaternion a) (Quaternion a) a a where
+  _1 f (Quaternion w xyz) = f w <&> \w' -> Quaternion w' xyz
+
+instance Field2 (Quaternion a) (Quaternion a) a a where
+  _2 f (Quaternion w (V3 x y z)) = f x <&> \x' -> Quaternion w (V3 x' y z)
+
+instance Field3 (Quaternion a) (Quaternion a) a a where
+  _3 f (Quaternion w (V3 x y z)) = f y <&> \y' -> Quaternion w (V3 x y' z)
+
+instance Field4 (Quaternion a) (Quaternion a) a a where
+  _4 f (Quaternion w (V3 x y z)) = f z <&> \z' -> Quaternion w (V3 x y z')

@@ -388,3 +388,6 @@ instance Ord1 V1 where compare1 = compare
 instance Show1 V1 where showsPrec1 = showsPrec
 instance Read1 V1 where readsPrec1 = readsPrec
 #endif
+
+instance Field1 (V1 a) (V1 b) a b where
+  _1 f (V1 x) = V1 <$> f x

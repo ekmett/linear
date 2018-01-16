@@ -617,3 +617,15 @@ instance Ord1 V4 where compare1 = compare
 instance Show1 V4 where showsPrec1 = showsPrec
 instance Read1 V4 where readsPrec1 = readsPrec
 #endif
+
+instance Field1 (V4 a) (V4 a) a a where
+  _1 f (V4 x y z w) = f x <&> \x' -> V4 x' y z w
+
+instance Field2 (V4 a) (V4 a) a a where
+  _2 f (V4 x y z w) = f y <&> \y' -> V4 x y' z w
+
+instance Field3 (V4 a) (V4 a) a a where
+  _3 f (V4 x y z w) = f z <&> \z' -> V4 x y z' w
+
+instance Field4 (V4 a) (V4 a) a a where
+  _4 f (V4 x y z w) = f w <&> \w' -> V4 x y z w'

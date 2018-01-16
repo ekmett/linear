@@ -13,7 +13,6 @@ wip
 *~
 *#
 .stack-work/
-.stack-work/
 cabal-dev
 *.chi
 *.chs.h

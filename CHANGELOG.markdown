@@ -1,3 +1,7 @@
+1.20.8
+------
+* Added instance of the lens `Field` classes
+
 1.20.7
 ------
 * Support `semigroupoids-5.2.1` and `doctest-0.12`
