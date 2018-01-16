@@ -362,9 +362,9 @@ pow q t = exp (t *^ log q)
 {-# INLINE pow #-}
 
 sqrte2pqiq :: (Floating a, Ord a) => a -> a -> a
-sqrte2pqiq e qiq -- = sqrt (e*e) + qiq
+sqrte2pqiq e qiq -- = sqrt (e*e + qiq)
   | e < - 1.5097698010472593e153 = -(qiq/e) - e
-  | e < 5.582399551122541e57      = sqrt ((e*e) + qiq) -- direct definition
+  | e < 5.582399551122541e57      = sqrt (e*e + qiq) -- direct definition
   | otherwise                     = (qiq/e) + e
 -- {-# SPECIALIZE sqrte2pqiq :: Double -> Double -> Double #-}
 -- {-# SPECIALIZE sqrte2pqiq :: Float -> Float -> Float #-}
@@ -395,10 +395,10 @@ instance RealFloat a => Floating (Quaternion a) where
     | ai <- sqrt qiq, exe <- exp e = reimagine (exe * cos ai) (exe * (sin ai / ai)) q
     where qiq = qi q
   {-# INLINE exp #-}
-  log q@(Quaternion e v@(V3 _i j k))
+  log q@(Quaternion e v)
     | qiq == 0 = if e >= 0
-                 then Quaternion (log e)          (V3 0  0 0)
-                 else Quaternion (log (negate e)) (V3 pi 0 0) -- Why pi? Leaving this as is.
+                 then Quaternion (log e) v                   -- Using v rather than 0 preserves negative zeros
+                 else Quaternion (negate (log (negate e))) v -- negative scalar: negate quaternion, take log, negate again, preserves negative zeros
     | ai <- sqrt qiq = reimagine (log m) (acos (e / m) / ai) q
     where qiq = qi q
           m = sqrte2pqiq e qiq
@@ -420,7 +420,6 @@ instance RealFloat a => Floating (Quaternion a) where
   cos q@(Quaternion e v)
     | qiq == 0 = Quaternion (cos e) v
     | ai <- sqrt qiq = reimagine (cos e * cosh ai) (- sin e / ai / sinh ai) q -- 0.15 bits error
-                    -- reimagine (cos e * cosh ai) (- sin e * sinh ai / ai) q -- 13.5 bits worse
     where qiq = qi q
   {-# INLINE cos #-}
 
