@@ -20,6 +20,10 @@
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE DeriveGeneric #-}
 
+#ifndef MIN_VERSION_hashable
+#define MIN_VERSION_hashable(x,y,z) 1
+#endif
+
 #ifndef MIN_VERSION_reflection
 #define MIN_VERSION_reflection(x,y,z) 1
 #endif
@@ -79,6 +83,10 @@ import Data.Foldable as Foldable
 import Data.Functor.Bind
 import Data.Functor.Classes
 import Data.Functor.Rep as Rep
+import Data.Hashable
+#if (MIN_VERSION_hashable(1,2,5))
+import Data.Hashable.Lifted
+#endif
 #if __GLASGOW_HASKELL__ < 708
 import Data.Proxy
 #endif
@@ -359,6 +367,19 @@ instance (Dim n, Floating a) => Floating (V n a) where
 instance Dim n => Distributive (V n) where
   distribute f = V $ V.generate (reflectDim (Proxy :: Proxy n)) $ \i -> fmap (\(V v) -> unsafeIndex v i) f
   {-# INLINE distribute #-}
+
+instance Hashable a => Hashable (V n a) where
+  hashWithSalt s0 (V v) =
+    V.foldl' (\s a -> s `hashWithSalt` a) s0 v
+      `hashWithSalt` V.length v
+
+#if (MIN_VERSION_hashable(1,2,5))
+instance Dim n => Hashable1 (V n) where
+  liftHashWithSalt h s0 (V v) =
+    V.foldl' (\s a -> h s a) s0 v
+      `hashWithSalt` V.length v
+  {-# INLINE liftHashWithSalt #-}
+#endif
 
 instance (Dim n, Storable a) => Storable (V n a) where
   sizeOf _ = reflectDim (Proxy :: Proxy n) * sizeOf (undefined:: a)

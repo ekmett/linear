@@ -13,6 +13,10 @@
 {-# LANGUAGE DataKinds #-}
 #endif
 
+#ifndef MIN_VERSION_hashable
+#define MIN_VERSION_hashable(x,y,z) 1
+#endif
+
 #ifndef MIN_VERSION_vector
 #define MIN_VERSION_vector(x,y,z) 1
 #endif
@@ -65,6 +69,9 @@ import Data.Functor.Bind
 import Data.Functor.Classes
 import Data.Functor.Rep
 import Data.Hashable
+#if (MIN_VERSION_hashable(1,2,5))
+import Data.Hashable.Lifted
+#endif
 import Data.Semigroup
 import Data.Semigroup.Foldable
 import Data.Serialize as Cereal
@@ -249,6 +256,12 @@ instance Distributive V4 where
 instance Hashable a => Hashable (V4 a) where
   hashWithSalt s (V4 a b c d) = s `hashWithSalt` a `hashWithSalt` b `hashWithSalt` c `hashWithSalt` d
   {-# INLINE hashWithSalt #-}
+
+#if (MIN_VERSION_hashable(1,2,5))
+instance Hashable1 V4 where
+  liftHashWithSalt h s (V4 a b c d) = s `h` a `h` b `h` c `h` d
+  {-# INLINE liftHashWithSalt #-}
+#endif
 
 -- | A space that distinguishes orthogonal basis vectors '_x', '_y', '_z', '_w'. (It may have more.)
 class R3 t => R4 t where

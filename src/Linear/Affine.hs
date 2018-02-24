@@ -16,6 +16,11 @@
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 #endif
+
+#ifndef MIN_VERSION_hashable
+#define MIN_VERSION_hashable(x,y,z) 1
+#endif
+
 -----------------------------------------------------------------------------
 -- |
 -- License     :  BSD-style (see the file LICENSE)
@@ -45,6 +50,9 @@ import Data.Functor.Classes
 import Data.Functor.Rep as Rep
 import Data.HashMap.Lazy (HashMap)
 import Data.Hashable
+#if (MIN_VERSION_hashable(1,2,5))
+import Data.Hashable.Lifted
+#endif
 import Data.IntMap (IntMap)
 import Data.Ix
 import Data.Map (Map)
@@ -177,6 +185,12 @@ instance Binary (f a) => Binary (Point f a) where
 instance Serialize (f a) => Serialize (Point f a) where
   put (P p) = Cereal.put p
   get = P `liftM` Cereal.get
+
+#if (MIN_VERSION_hashable(1,2,5))
+instance Hashable1 f => Hashable1 (Point f) where
+  liftHashWithSalt h s (P f) = liftHashWithSalt h s f
+  {-# INLINE liftHashWithSalt #-}
+#endif
 
 #if __GLASGOW_HASKELL__ < 708
 instance forall f. Typeable1 f => Typeable1 (Point f) where

@@ -61,6 +61,9 @@ import Data.Functor.Bind
 import Data.Functor.Classes
 import Data.Functor.Rep
 import Data.Hashable
+#if (MIN_VERSION_hashable(1,2,5))
+import Data.Hashable.Lifted
+#endif
 import Data.Semigroup.Foldable
 #if __GLASGOW_HASKELL__ >= 707
 import qualified Data.Vector as V
@@ -235,6 +238,12 @@ instance Hashable a => Hashable (V1 a) where
   hash (V1 a) = hash a
 #endif
   hashWithSalt s (V1 a) = s `hashWithSalt` a
+
+#if (MIN_VERSION_hashable(1,2,5))
+instance Hashable1 V1 where
+  liftHashWithSalt h s (V1 a) = h s a
+  {-# INLINE liftHashWithSalt #-}
+#endif
 
 instance Metric V1 where
   dot (V1 a) (V1 b) = a * b
