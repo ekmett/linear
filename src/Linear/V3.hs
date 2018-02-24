@@ -13,6 +13,10 @@
 {-# LANGUAGE DataKinds #-}
 #endif
 
+#ifndef MIN_VERSION_hashable
+#define MIN_VERSION_hashable(x,y,z) 1
+#endif
+
 #ifndef MIN_VERSION_vector
 #define MIN_VERSION_vector(x,y,z) 1
 #endif
@@ -59,6 +63,9 @@ import Data.Functor.Bind
 import Data.Functor.Classes
 import Data.Functor.Rep
 import Data.Hashable
+#if (MIN_VERSION_hashable(1,2,5))
+import Data.Hashable.Lifted
+#endif
 import Data.Semigroup
 import Data.Semigroup.Foldable
 import Data.Serialize as Cereal -- cereal
@@ -99,7 +106,7 @@ data V3 a = V3 !a !a !a deriving (Eq,Ord,Show,Read,Data,Typeable
 
 #if __GLASGOW_HASKELL__ >= 707
 instance Finite V3 where
-  type Size V3 = 3 
+  type Size V3 = 3
   toV (V3 a b c) = V (V.fromListN 3 [a,b,c])
   fromV (V v) = V3 (v V.! 0) (v V.! 1) (v V.! 2)
 #endif
@@ -229,6 +236,12 @@ instance Floating a => Floating (V3 a) where
 instance Hashable a => Hashable (V3 a) where
   hashWithSalt s (V3 a b c) = s `hashWithSalt` a `hashWithSalt` b `hashWithSalt` c
   {-# INLINE hashWithSalt #-}
+
+#if (MIN_VERSION_hashable(1,2,5))
+instance Hashable1 V3 where
+  liftHashWithSalt h s (V3 a b c) = s `h` a `h` b `h` c
+  {-# INLINE liftHashWithSalt #-}
+#endif
 
 instance Metric V3 where
   dot (V3 a b c) (V3 d e f) = a * d + b * e + c * f

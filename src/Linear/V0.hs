@@ -56,6 +56,9 @@ import Data.Functor.Bind
 import Data.Functor.Classes
 import Data.Functor.Rep
 import Data.Hashable
+#if (MIN_VERSION_hashable(1,2,5))
+import Data.Hashable.Lifted
+#endif
 import Data.Ix
 import Data.Semigroup
 import Data.Serialize -- cereal
@@ -246,6 +249,12 @@ instance Hashable (V0 a) where
 #endif
   hashWithSalt s V0 = s
   {-# INLINE hashWithSalt #-}
+
+#if (MIN_VERSION_hashable(1,2,5))
+instance Hashable1 V0 where
+  liftHashWithSalt _ s V0 = s
+  {-# INLINE liftHashWithSalt #-}
+#endif
 
 instance Epsilon (V0 a) where
   nearZero _ = True

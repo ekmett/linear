@@ -13,6 +13,10 @@
 {-# LANGUAGE DataKinds #-}
 #endif
 
+#ifndef MIN_VERSION_hashable
+#define MIN_VERSION_hashable(x,y,z) 1
+#endif
+
 #ifndef MIN_VERSION_vector
 #define MIN_VERSION_vector(x,y,z) 1
 #endif
@@ -59,6 +63,9 @@ import Data.Functor.Bind
 import Data.Functor.Classes
 import Data.Functor.Rep
 import Data.Hashable
+#if (MIN_VERSION_hashable(1,2,5))
+import Data.Hashable.Lifted
+#endif
 import Data.Semigroup
 import Data.Semigroup.Foldable
 import Data.Serialize as Cereal
@@ -159,6 +166,12 @@ instance Applicative V2 where
 instance Hashable a => Hashable (V2 a) where
   hashWithSalt s (V2 a b) = s `hashWithSalt` a `hashWithSalt` b
   {-# INLINE hashWithSalt #-}
+
+#if (MIN_VERSION_hashable(1,2,5))
+instance Hashable1 V2 where
+  liftHashWithSalt h s (V2 a b) = s `h` a `h` b
+  {-# INLINE liftHashWithSalt #-}
+#endif
 
 instance Additive V2 where
   zero = pure 0

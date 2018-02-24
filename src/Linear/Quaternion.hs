@@ -13,6 +13,10 @@
 {-# LANGUAGE DataKinds #-}
 #endif
 
+#ifndef MIN_VERSION_hashable
+#define MIN_VERSION_hashable(x,y,z) 1
+#endif
+
 #ifndef MIN_VERSION_vector
 #define MIN_VERSION_vector(x,y,z) 1
 #endif
@@ -61,6 +65,9 @@ import Data.Functor.Bind
 import Data.Functor.Classes
 import Data.Functor.Rep
 import Data.Hashable
+#if (MIN_VERSION_hashable(1,2,5))
+import Data.Hashable.Lifted
+#endif
 import Data.Serialize as Cereal
 import GHC.Arr (Ix(..))
 import qualified Data.Foldable as F
@@ -261,6 +268,12 @@ instance RealFloat a => Num (Quaternion a) where
 instance Hashable a => Hashable (Quaternion a) where
   hashWithSalt s (Quaternion a b) = s `hashWithSalt` a `hashWithSalt` b
   {-# INLINE hashWithSalt #-}
+
+#if (MIN_VERSION_hashable(1,2,5))
+instance Hashable1 Quaternion where
+  liftHashWithSalt h s (Quaternion a b) = liftHashWithSalt h (h s a) b
+  {-# INLINE liftHashWithSalt #-}
+#endif
 
 qNaN :: RealFloat a => Quaternion a
 qNaN = Quaternion fNaN (V3 fNaN fNaN fNaN) where fNaN = 0/0
