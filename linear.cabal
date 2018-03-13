@@ -124,7 +124,7 @@ test-suite doctests
   hs-source-dirs: tests
   build-depends:
     base,
-    doctest        >= 0.11.1 && < 0.15,
+    doctest        >= 0.11.1 && < 0.16,
     lens,
     linear,
     simple-reflect >= 0.3.1
