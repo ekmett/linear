@@ -60,7 +60,9 @@ import Data.Hashable
 import Data.Hashable.Lifted
 #endif
 import Data.Ix
+#if !(MIN_VERSION_base(4,11,0))
 import Data.Semigroup
+#endif
 import Data.Serialize -- cereal
 #if __GLASGOW_HASKELL__ >= 707
 import qualified Data.Vector as V

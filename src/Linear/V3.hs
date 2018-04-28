@@ -66,7 +66,9 @@ import Data.Hashable
 #if (MIN_VERSION_hashable(1,2,5))
 import Data.Hashable.Lifted
 #endif
+#if !(MIN_VERSION_base(4,11,0))
 import Data.Semigroup
+#endif
 import Data.Semigroup.Foldable
 import Data.Serialize as Cereal -- cereal
 #if __GLASGOW_HASKELL__ >= 707
