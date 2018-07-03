@@ -113,6 +113,9 @@ library
   ghc-options: -Wall -fwarn-tabs -O2 -fdicts-cheap -funbox-strict-fields
   hs-source-dirs: src
 
+  if impl(ghc >= 7.10)
+    ghc-options: -fno-warn-trustworthy-safe
+
   -- hack around the buggy unused matches check for class associated types in ghc 8 rc1
   if impl(ghc >= 8)
     ghc-options: -fno-warn-unused-matches
