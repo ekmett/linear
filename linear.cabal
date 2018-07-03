@@ -20,6 +20,7 @@ tested-with:   GHC == 7.4.2
              , GHC == 8.0.2
              , GHC == 8.2.2
              , GHC == 8.4.3
+             , GHC == 8.6.1
 extra-source-files:
   .gitignore
   .travis.yml
@@ -61,7 +62,7 @@ library
     binary               >= 0.5   && < 0.9,
     bytes                >= 0.15  && < 1,
     cereal               >= 0.4.1.1 && < 0.6,
-    containers           >= 0.4   && < 0.6,
+    containers           >= 0.4   && < 0.7,
     deepseq              >= 1.1   && < 1.5,
     distributive         >= 0.2.2 && < 1,
     ghc-prim,
