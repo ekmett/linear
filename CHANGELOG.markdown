@@ -1,5 +1,5 @@
-1.20.8
-------
+1.20.8 [2018.07.03]
+-------------------
 * Add instances of the `Field` classes from `lens`.
 * Add `Epsilon` instance for `Complex`.
 * Use specialized implementations of the `null` and `length` methods in
