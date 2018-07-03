@@ -1,6 +1,12 @@
 1.20.8
 ------
-* Added instance of the lens `Field` classes
+* Add instances of the `Field` classes from `lens`.
+* Add `Epsilon` instance for `Complex`.
+* Use specialized implementations of the `null` and `length` methods in
+  `Foldable` instances.
+* Add `Hashable1` instances for data types in `linear`. Also add a
+  `Hashable` instance for `V`.
+* Fix a bug in which `Quaternion`s were incorrectly exponentiated.
 
 1.20.7
 ------
