@@ -3,7 +3,6 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE PolyKinds #-}
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
@@ -27,6 +26,7 @@ module Linear.Matrix
   , M22, M23, M24, M32, M33, M34, M42, M43, M44
   , m33_to_m44, m43_to_m44
   , det22, det33, det44, inv22, inv33, inv44
+  , Invertible(..)
   , identity
   , Trace(..)
   , translation
@@ -351,6 +351,16 @@ det44 (V4 (V4 i00 i01 i02 i03)
   in s0 * c5 - s1 * c4 + s2 * c3 + s3 * c2 - s4 * c1 + s5 * c0
 {-# INLINE det44 #-}
 
+-- |0x0 matrix inverse.
+inv00 :: V0 (V0 a) -> V0 (V0 a)
+inv00 V0 = V0
+{-# INLINE inv00 #-}
+
+-- |1x1 matrix inverse.
+inv11 :: Fractional a => V1 (V1 a) -> V1 (V1 a)
+inv11 (V1 a) = V1 (recip a)
+{-# INLINE inv11 #-}
+
 -- |2x2 matrix inverse.
 --
 -- >>> inv22 $ V2 (V2 1 2) (V2 3 4)
@@ -437,10 +447,10 @@ class Invertible v where
   inv :: Fractional a => v (v a) -> v (v a)
 
 instance Invertible V0 where
-  inv V0 = V0
+  inv = inv00
   {-# INLINE inv #-}
 instance Invertible V1 where
-  inv (V1 a) = V1 (recip a)
+  inv = inv11
   {-# INLINE inv #-}
 instance Invertible V2 where
   inv = inv22
@@ -473,19 +483,19 @@ instance (KnownNat n) => Invertible (V n) where
     p = Proxy :: Proxy n
     in case reflectDim p of
       0 -> case sameNat p (Proxy :: Proxy 0) of
-        Just Refl -> naturally toV (inv @V0 (naturally fromV i))
+        Just Refl -> naturally toV (inv00 (naturally fromV i))
         _ -> error "Mismatch between reified dimensions."
       1 -> case sameNat p (Proxy :: Proxy 1) of
-        Just Refl -> naturally toV (inv @V1 (naturally fromV i))
+        Just Refl -> naturally toV (inv11 (naturally fromV i))
         _ -> error "Mismatch between reified dimensions."
       2 -> case sameNat p (Proxy :: Proxy 2) of
-        Just Refl -> naturally toV (inv @V2 (naturally fromV i))
+        Just Refl -> naturally toV (inv22 (naturally fromV i))
         _ -> error "Mismatch between reified dimensions."
       3 -> case sameNat p (Proxy :: Proxy 3) of
-        Just Refl -> naturally toV (inv @V3 (naturally fromV i))
+        Just Refl -> naturally toV (inv33 (naturally fromV i))
         _ -> error "Mismatch between reified dimensions."
       4 -> case sameNat p (Proxy :: Proxy 4) of
-        Just Refl -> naturally toV (inv @V4 (naturally fromV i))
+        Just Refl -> naturally toV (inv44 (naturally fromV i))
         _ -> error "Mismatch between reified dimensions."
       n -> reifyDimNat (div n 2) (\p1 -> reifyDimNat (div n 2 + mod n 2) (\p2 ->
         naturally (merging p) (inv (naturally (splitting p1 p2) i))))
