@@ -4,6 +4,7 @@ import Test.Framework (defaultMain, testGroup, Test)
 import Test.Framework.Providers.HUnit
 import qualified Plucker
 import qualified Binary
+import qualified Invertible
 #if __GLASGOW_HASKELL__ >= 707
 import qualified V
 #endif
@@ -11,6 +12,7 @@ import qualified V
 tests :: [Test]
 tests = [ testGroup "Plucker" $ hUnitTestToTests Plucker.tests
         , testGroup "Binary" $ hUnitTestToTests Binary.tests
+        , testGroup "Invertible" $ hUnitTestToTests Invertible.tests
 #if __GLASGOW_HASKELL__ >= 707
         , testGroup "V" $ hUnitTestToTests V.tests
 #endif
