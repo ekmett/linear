@@ -1,6 +1,10 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE PolyKinds #-}
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
 #endif
@@ -43,10 +47,18 @@ import Control.Lens.Internal.Context
 import Data.Distributive
 import Data.Foldable as Foldable
 import Data.Functor.Rep
+import Data.Functor.Product
+import Data.Proxy
+import Data.Type.Equality
+import GHC.TypeNats
+import Data.Vector
 import Linear.Quaternion
+import Linear.V0
+import Linear.V1
 import Linear.V2
 import Linear.V3
 import Linear.V4
+import Linear.V
 import Linear.Vector
 import Linear.Conjugate
 import Linear.Trace
@@ -418,3 +430,80 @@ inv44 (V4 (V4 i00 i01 i02 i03)
                        (-i30 * s3 + i31 * s1 - i32 * s0)
                        (i20 * s3 - i21 * s1 + i22 * s0))
 {-# INLINE inv44 #-}
+
+-- | Matrix inverse.
+class Invertible v where
+  -- | Inverse matrix.
+  inv :: Fractional a => v (v a) -> v (v a)
+
+instance Invertible V0 where
+  inv V0 = V0
+  {-# INLINE inv #-}
+instance Invertible V1 where
+  inv (V1 a) = V1 (recip a)
+  {-# INLINE inv #-}
+instance Invertible V2 where
+  inv = inv22
+  {-# INLINE inv #-}
+instance Invertible V3 where
+  inv = inv33
+  {-# INLINE inv #-}
+instance Invertible V4 where
+  inv = inv44
+  {-# INLINE inv #-}
+
+instance (Invertible v, Invertible w, Additive v, Additive w, Foldable v, Foldable w, Distributive v, Distributive w) => Invertible (Product v w) where
+  inv (Pair ab cd) = let
+    a = fmap (\(Pair x _) -> x) ab
+    b = fmap (\(Pair _ x) -> x) ab
+    c = fmap (\(Pair x _) -> x) cd
+    d = fmap (\(Pair _ x) -> x) cd
+    ai = inv a
+    si = inv (d !-! c !*! ai !*! b)
+    a' = ai !+! ai !*! b !*! si !*! c !*! ai
+    b' = (-1) *!! ai !*! b !*! si
+    c' = (-1) *!! si !*! c !*! ai
+    d' = si
+    in transpose (Pair (transpose (Pair a' c')) (transpose (Pair b' d')))
+  {-# INLINE inv #-}
+
+-- | NxN matrix inverse.
+instance (KnownNat n) => Invertible (V n) where
+  inv i = let
+    p = Proxy :: Proxy n
+    in case reflectDim p of
+      0 -> case sameNat p (Proxy :: Proxy 0) of
+        Just Refl -> naturally toV (inv @V0 (naturally fromV i))
+        _ -> error "Mismatch between reified dimensions."
+      1 -> case sameNat p (Proxy :: Proxy 1) of
+        Just Refl -> naturally toV (inv @V1 (naturally fromV i))
+        _ -> error "Mismatch between reified dimensions."
+      2 -> case sameNat p (Proxy :: Proxy 2) of
+        Just Refl -> naturally toV (inv @V2 (naturally fromV i))
+        _ -> error "Mismatch between reified dimensions."
+      3 -> case sameNat p (Proxy :: Proxy 3) of
+        Just Refl -> naturally toV (inv @V3 (naturally fromV i))
+        _ -> error "Mismatch between reified dimensions."
+      4 -> case sameNat p (Proxy :: Proxy 4) of
+        Just Refl -> naturally toV (inv @V4 (naturally fromV i))
+        _ -> error "Mismatch between reified dimensions."
+      n -> reifyDimNat (div n 2) (\p1 -> reifyDimNat (div n 2 + mod n 2) (\p2 ->
+        naturally (merging p) (inv (naturally (splitting p1 p2) i))))
+  {-# INLINE inv #-}
+
+naturally :: Functor w => (forall x . v x -> w x) -> v (v a) -> w (w a)
+naturally f = fmap f . f
+
+splitting :: Proxy n1 -> Proxy n2 -> V n a -> Product (V n1) (V n2) a
+splitting p1 p2 (V v) = let
+  (v1, v2) = Data.Vector.splitAt (div (Data.Vector.length v) 2) v
+  in Pair (unsafeFromVector p1 v1) (unsafeFromVector p2 v2)
+
+merging :: Proxy n -> Product (V n1) (V n2) a -> V n a
+merging p (Pair (V v1) (V v2)) =
+  unsafeFromVector p ((Data.Vector.++) v1 v2)
+
+unsafeFromVector :: Proxy n -> Vector a -> V n a
+unsafeFromVector _ v = V v
+
+
