@@ -36,6 +36,8 @@ module Linear.Vector
 import Control.Applicative
 import Control.Lens
 import Data.Complex
+import Data.Functor.Product
+import Data.Functor.Compose
 #if __GLASGOW_HASKELL__ < 710
 import Data.Foldable as Foldable (Foldable, forM_, foldl')
 #else
@@ -263,6 +265,22 @@ instance Additive Identity where
   liftU2 = liftA2
   {-# INLINE liftU2 #-}
   liftI2 = liftA2
+  {-# INLINE liftI2 #-}
+
+instance (Additive v, Additive w) => Additive (Product v w) where
+  zero = Pair zero zero
+  {-# INLINE zero #-}
+  liftU2 f (Pair v1 w1) (Pair v2 w2) = Pair (liftU2 f v1 v2) (liftU2 f w1 w2)
+  {-# INLINE liftU2 #-}
+  liftI2 f (Pair v1 w1) (Pair v2 w2) = Pair (liftI2 f v1 v2) (liftI2 f w1 w2)
+  {-# INLINE liftI2 #-}
+
+instance (Additive v, Additive w) => Additive (Compose v w) where
+  zero = Compose (outer zero zero)
+  {-# INLINE zero #-}
+  liftU2 f (Compose vw1) (Compose vw2) = Compose (liftU2 (liftU2 f) vw1 vw2)
+  {-# INLINE liftU2 #-}
+  liftI2 f (Compose vw1) (Compose vw2) = Compose (liftI2 (liftI2 f) vw1 vw2)
   {-# INLINE liftI2 #-}
 
 -- | Compute the negation of a vector
