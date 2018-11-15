@@ -51,7 +51,7 @@ import Data.Functor.Product
 import Data.Proxy
 import Data.Type.Equality
 import GHC.TypeNats
-import Data.Vector
+import Data.Vector hiding (fromList)
 import Linear.Quaternion
 import Linear.V0
 import Linear.V1
