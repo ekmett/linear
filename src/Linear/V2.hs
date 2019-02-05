@@ -13,6 +13,10 @@
 {-# LANGUAGE DataKinds #-}
 #endif
 
+#if __GLASGOW_HASKELL__ >= 800
+{-# LANGUAGE DeriveLift #-}
+#endif
+
 #ifndef MIN_VERSION_hashable
 #define MIN_VERSION_hashable(x,y,z) 1
 #endif
@@ -81,6 +85,9 @@ import GHC.Generics (Generic)
 #if __GLASGOW_HASKELL__ >= 706
 import GHC.Generics (Generic1)
 #endif
+#if __GLASGOW_HASKELL__ >= 800
+import Language.Haskell.TH.Syntax (Lift)
+#endif
 import qualified Data.Vector.Generic.Mutable as M
 import qualified Data.Vector.Generic as G
 import qualified Data.Vector.Unboxed.Base as U
@@ -117,6 +124,9 @@ data V2 a = V2 !a !a deriving
 #endif
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
   ,Generic1
+#endif
+#if __GLASGOW_HASKELL__ >= 800
+  ,Lift
 #endif
   )
 

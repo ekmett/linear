@@ -13,6 +13,10 @@
 {-# LANGUAGE DataKinds #-}
 #endif
 
+#if __GLASGOW_HASKELL__ >= 800
+{-# LANGUAGE DeriveLift #-}
+#endif
+
 #ifndef MIN_VERSION_hashable
 #define MIN_VERSION_hashable(x,y,z) 1
 #endif
@@ -86,6 +90,9 @@ import GHC.Generics (Generic)
 #if __GLASGOW_HASKELL__ >= 706
 import GHC.Generics (Generic1)
 #endif
+#if __GLASGOW_HASKELL__ >= 800
+import Language.Haskell.TH.Syntax (Lift)
+#endif
 import Linear.Epsilon
 import Linear.Conjugate
 import Linear.Metric
@@ -106,6 +113,9 @@ data Quaternion a = Quaternion !a {-# UNPACK #-}!(V3 a)
 #endif
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
                              ,Generic1
+#endif
+#if __GLASGOW_HASKELL__ >= 800
+                             ,Lift
 #endif
                              )
 
