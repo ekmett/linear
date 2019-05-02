@@ -1,3 +1,7 @@
+1.20.9 [2019.05.02]
+-------------------
+* Derive `Lift` instances for `Plucker`, `Quaternion`, and `V{0,1,2,3,4}`.
+
 1.20.8 [2018.07.03]
 -------------------
 * Add instances of the `Field` classes from `lens`.
