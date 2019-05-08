@@ -45,6 +45,8 @@ module Linear.Matrix
   , luSolveFinite
   , luInv
   , luInvFinite
+  , luDet
+  , luDetFinite
   ) where
 
 #if __GLASGOW_HASKELL__ < 710
@@ -497,8 +499,7 @@ lu a =
 
 -- | Compute the (L, U) decomposition of a square matrix using Crout's
 --   algorithm, using the vector's 'Finite' instance to provide an index.
-luFinite :: forall m n a.
-            ( Num a
+luFinite :: ( Num a
             , Fractional a
             , Functor m
             , Finite m
@@ -515,24 +516,23 @@ luFinite a =
 
 -- | Solve a linear system with a lower-triangular matrix of coefficients with
 --   forwards substitution.
-forwardSub :: forall m i a.
-               ( Num a
-               , Fractional a
-               , Foldable m
-               , Additive m
-               , Ixed (m a)
-               , Ixed (m (m a))
-               , i ~ Index (m a)
-               , i ~ Index (m (m a))
-               , Eq i
-               , Ord i
-               , Integral i
-               , a ~ IxValue (m a)
-               , m a ~ IxValue (m (m a))
-               )
-            => m (m a)
-            -> m a
-            -> m a
+forwardSub :: ( Num a
+              , Fractional a
+              , Foldable m
+              , Additive m
+              , Ixed (m a)
+              , Ixed (m (m a))
+              , i ~ Index (m a)
+              , i ~ Index (m (m a))
+              , Eq i
+              , Ord i
+              , Integral i
+              , a ~ IxValue (m a)
+              , m a ~ IxValue (m (m a))
+              )
+           => m (m a)
+           -> m a
+           -> m a
 forwardSub a b =
     let n = fromIntegral (length b)
         initX = zero
@@ -564,8 +564,7 @@ forwardSubFinite a b = fromV (forwardSub (fmap toV (toV a)) (toV b))
 
 -- | Solve a linear system with an upper-triangular matrix of coefficients with
 --   backwards substitution.
-backwardSub :: forall m i a.
-               ( Num a
+backwardSub :: ( Num a
                , Fractional a
                , Foldable m
                , Additive m
@@ -603,16 +602,16 @@ backwardSub a b =
 --   backwards substitution, using the vector's 'Finite' instance to provide an
 --   index.
 backwardSubFinite :: ( Num a
-                    , Fractional a
-                    , Foldable m
-                    , n ~ Size m
-                    , KnownNat n
-                    , Additive m
-                    , Finite m
-                    )
-                 => m (m a)
-                 -> m a
-                 -> m a
+                     , Fractional a
+                     , Foldable m
+                     , n ~ Size m
+                     , KnownNat n
+                     , Additive m
+                     , Finite m
+                     )
+                  => m (m a)
+                  -> m a
+                  -> m a
 backwardSubFinite a b = fromV (backwardSub (fmap toV (toV a)) (toV b))
 
 -- | Solve a linear system with LU decomposition.
@@ -698,3 +697,42 @@ luInvFinite :: ( Num a
             => m (m a)
             -> m (m a)
 luInvFinite a = fmap fromV (fromV (luInv (fmap toV (toV a))))
+
+-- | Compute the determinant of a matrix using LU decomposition.
+luDet :: ( Num a
+         , Fractional a
+         , Foldable m
+         , Traversable m
+         , Applicative m
+         , Additive m
+         , Trace m
+         , Ixed (m a)
+         , Ixed (m (m a))
+         , i ~ Index (m a)
+         , i ~ Index (m (m a))
+         , Eq i
+         , Integral i
+         , a ~ IxValue (m a)
+         , m a ~ IxValue (m (m a))
+         , Num (m a)
+         )
+      => m (m a)
+      -> a
+luDet a =
+    let (l, u) = lu a
+        p      = foldl (*) 1
+    in (p (diagonal l)) * (p (diagonal u))
+
+-- | Compute the determinant of a matrix using LU decomposition, using the
+--   vector's 'Finite' instance to provide an index.
+luDetFinite :: ( Num a
+               , Fractional a
+               , Functor m
+               , Finite m
+               , n ~ Size m
+               , KnownNat n
+               , Num (m a)
+               )
+            => m (m a)
+            -> a
+luDetFinite = luDet . fmap toV . toV
