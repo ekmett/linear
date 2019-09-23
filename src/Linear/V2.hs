@@ -99,6 +99,7 @@ import Linear.V
 import Linear.Vector
 import Linear.V1 (R1(..),ex)
 import Prelude hiding (sum)
+import System.Random
 
 -- $setup
 -- >>> import Control.Lens
@@ -136,6 +137,16 @@ instance Finite V2 where
   toV (V2 a b) = V (V.fromListN 2 [a,b])
   fromV (V v) = V2 (v V.! 0) (v V.! 1)
 #endif
+
+instance Random a => Random (V2 a) where
+  random g = case random g of
+   (a, g') -> case random g' of
+     (b, g'') -> (V2 a b, g'')
+  {-# inline random #-}
+  randomR (V2 a b, V2 c d) g = case randomR (a, c) g of
+    (x, g') -> case randomR (b, d) g' of
+      (y, g'') -> (V2 x y, g'')
+  {-# inline randomR #-}
 
 instance Functor V2 where
   fmap f (V2 a b) = V2 (f a) (f b)

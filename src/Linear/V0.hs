@@ -90,6 +90,7 @@ import Linear.Vector
 #if __GLASGOW_HASKELL__ >= 707
 import Linear.V
 #endif
+import System.Random
 import Prelude hiding (sum)
 
 -- $setup
@@ -121,6 +122,14 @@ instance Finite V0 where
   toV _ = V V.empty
   fromV _ = V0
 #endif
+
+instance Random (V0 a) where
+  random g = (V0, g)
+  randomR _ g = (V0, g)
+  randomRs _ _ = repeat V0
+  randoms _ = repeat V0
+  randomRIO _ = pure V0
+  randomIO = pure V0
 
 instance Serial1 V0 where
   serializeWith _ = serialize

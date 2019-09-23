@@ -80,6 +80,7 @@ import Linear.V2
 import Linear.V3
 import Linear.V4
 import Linear.Vector
+import System.Random
 
 #ifdef HLINT
 {-# ANN module "HLint: ignore Unused LANGUAGE pragma" #-}
@@ -155,7 +156,7 @@ newtype Point f a = P (f a)
            , Eq1, Ord1, Show1, Read1
            , Traversable, Apply, Additive, Metric
            , Fractional , Num, Ix, Storable, Epsilon
-           , Hashable
+           , Random, Hashable
 #if __GLASGOW_HASKELL__ >= 702
            , Generic
 #endif

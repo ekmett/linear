@@ -100,6 +100,7 @@ import Linear.V
 #endif
 import Linear.V2
 import Linear.Vector
+import System.Random
 
 {-# ANN module "HLint: ignore Reduce duplication" #-}
 
@@ -136,6 +137,16 @@ instance Foldable V3 where
   null _ = False
   length _ = 3
 #endif
+
+instance Random a => Random (V3 a) where
+  random g = case random g of
+    (a, g') -> case random g' of
+      (b, g'') -> case random g'' of
+        (c, g''') -> (V3 a b c, g''')
+  randomR (V3 a b c, V3 a' b' c') g = case randomR (a,a') g of
+    (a'', g') -> case randomR (b,b') g' of
+      (b'', g'') -> case randomR (c,c') g'' of
+        (c'', g''') -> (V3 a'' b'' c'', g''')
 
 instance Traversable V3 where
   traverse f (V3 a b c) = V3 <$> f a <*> f b <*> f c

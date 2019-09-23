@@ -104,6 +104,7 @@ import Linear.V2
 import Linear.V3
 import Linear.V4
 import Linear.Vector
+import System.Random
 
 {-# ANN module "HLint: ignore Reduce duplication" #-}
 
@@ -126,6 +127,22 @@ instance Finite Plucker where
   toV (Plucker a b c d e f) = V (V.fromListN 6 [a,b,c,d,e,f])
   fromV (V v) = Plucker (v V.! 0) (v V.! 1) (v V.! 2) (v V.! 3) (v V.! 4) (v V.! 5)
 #endif
+
+instance Random a => Random (Plucker a) where
+  random g = case random g of
+    (a, g1) -> case random g1 of
+      (b, g2) -> case random g2 of
+        (c, g3) -> case random g3 of
+          (d, g4) -> case random g4 of
+            (e, g5) -> case random g5 of
+              (f, g6) -> (Plucker a b c d e f, g6)
+  randomR (Plucker a b c d e f, Plucker a' b' c' d' e' f') g = case randomR (a,a') g of
+    (a'', g1) -> case randomR (b,b') g1 of
+      (b'', g2) -> case randomR (c,c') g2 of
+        (c'', g3) -> case randomR (d,d') g3 of
+          (d'', g4) -> case randomR (e,e') g4 of
+            (e'', g5) -> case randomR (f,f') g5 of
+              (f'', g6) -> (Plucker a'' b'' c'' d'' e'' f'', g6)
 
 instance Functor Plucker where
   fmap g (Plucker a b c d e f) = Plucker (g a) (g b) (g c) (g d) (g e) (g f)

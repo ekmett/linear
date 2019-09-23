@@ -70,6 +70,7 @@ import Control.Applicative
 import Control.DeepSeq (NFData)
 import Control.Monad
 import Control.Monad.Fix
+import Control.Monad.Trans.State
 import Control.Monad.Zip
 import Control.Lens as Lens
 import Data.Binary as Binary
@@ -122,6 +123,7 @@ import Prelude as P
 import Data.Monoid
 #endif
 #endif
+import System.Random
 
 
 #ifdef HLINT
@@ -175,6 +177,10 @@ instance KnownNat n => Dim (n :: Nat) where
   reflectDim = fromInteger . natVal
   {-# INLINE reflectDim #-}
 #endif
+
+instance (Dim n, Random a) => Random (V n a) where
+  random = runState (V <$> V.replicateM (reflectDim (Proxy :: Proxy n)) (state random))
+  randomR (V ls,V hs) = runState (V <$> V.zipWithM (\l h -> state $ randomR (l,h)) ls hs)
 
 data ReifiedDim (s :: *)
 

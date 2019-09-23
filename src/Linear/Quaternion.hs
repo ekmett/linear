@@ -102,6 +102,7 @@ import Linear.V
 import Linear.V3
 import Linear.Vector
 import Prelude hiding (any)
+import System.Random
 
 {-# ANN module "HLint: ignore Reduce duplication" #-}
 
@@ -125,6 +126,14 @@ instance Finite Quaternion where
   toV (Quaternion a (V3 b c d)) = V (V.fromListN 4 [a, b, c, d])
   fromV (V v) = Quaternion (v V.! 0) (V3 (v V.! 1) (v V.! 2) (v V.! 3))
 #endif
+
+instance Random a => Random (Quaternion a) where
+  random g = case random g of
+    (a, g') -> case random g' of
+      (b, g'') -> (Quaternion a b, g'')
+  randomR (Quaternion a b, Quaternion c d) g = case randomR (a,c) g of
+    (e, g') -> case randomR (b,d) g' of
+      (f, g'') -> (Quaternion e f, g'')
 
 instance Functor Quaternion where
   fmap f (Quaternion e v) = Quaternion (f e) (fmap f v)

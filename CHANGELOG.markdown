@@ -1,10 +1,12 @@
-next
-----
+1.21 [unreleased]
+-----------------
 * Add instances for direct products (`Product`) and tensor products (`Compose`) of
   other vector spaces. This makes is much more convenient to do things like treat
   a matrix temporarily as a vector through Compose, or to consider things like
   Gauss-Jordan elimination, which wants augmented structures.
 * Add `frobenius` for computing the Frobenius norm of a matrix.
+* Added `Random` instances for `System.Random`. We had an indirect dependency
+  through `vector` anyways.
 
 1.20.9 [2019.05.02]
 -------------------

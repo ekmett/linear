@@ -107,6 +107,7 @@ import Linear.V
 import Linear.V2
 import Linear.V3
 import Linear.Vector
+import System.Random
 
 {-# ANN module "HLint: ignore Reduce duplication" #-}
 
@@ -143,6 +144,18 @@ instance Foldable V4 where
   null _ = False
   length _ = 4
 #endif
+
+instance Random a => Random (V4 a) where
+  random g = case random g of
+    (a, g') -> case random g' of
+      (b, g'') -> case random g'' of
+        (c, g''') -> case random g''' of
+          (d, g'''') -> (V4 a b c d, g'''')
+  randomR (V4 a b c d, V4 a' b' c' d') g = case randomR (a,a') g of
+    (a'', g') -> case randomR (b,b') g' of
+      (b'', g'') -> case randomR (c,c') g'' of
+        (c'', g''') -> case randomR (d,d') g''' of
+          (d'', g'''') -> (V4 a'' b'' c'' d'', g'''')
 
 instance Traversable V4 where
   traverse f (V4 a b c d) = V4 <$> f a <*> f b <*> f c <*> f d
