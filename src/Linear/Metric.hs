@@ -21,6 +21,7 @@ module Linear.Metric
 import Control.Applicative
 import Data.Foldable as Foldable
 import Data.Functor.Identity
+import Data.Functor.Product
 import Data.Vector (Vector)
 import Data.IntMap (IntMap)
 import Data.Map (Map)
@@ -66,6 +67,12 @@ class Additive f => Metric f where
   signorm :: Floating a => f a -> f a
   signorm v = fmap (/m) v where
     m = norm v
+
+instance (Metric f, Metric g) => Metric (Product f g) where
+  dot (Pair a b) (Pair c d) = dot a c + dot b d
+  quadrance (Pair a b) = quadrance a + quadrance b
+  qd (Pair a b) (Pair c d) = qd a c + qd b d
+  distance p q = sqrt (qd p q)
 
 instance Metric Identity where
   dot (Identity x) (Identity y) = x * y

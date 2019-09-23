@@ -47,6 +47,7 @@ import Data.Distributive
 import Data.Foldable as Foldable
 import Data.Functor.Bind
 import Data.Functor.Classes
+import Data.Functor.Product
 import Data.Functor.Rep as Rep
 import Data.HashMap.Lazy (HashMap)
 import Data.Hashable
@@ -106,6 +107,12 @@ class Additive (Diff p) => Affine p where
   (.-^) :: Num a => p a -> Diff p a -> p a
   p .-^ v = p .+^ negated v
   {-# INLINE (.-^) #-}
+
+instance (Affine f, Affine g) => Affine (Product f g) where
+  type Diff (Product f g) = Product (Diff f) (Diff g)
+  Pair a b .-. Pair c d = Pair (a .-. c) (b .-. d)
+  Pair a b .+^ Pair c d = Pair (a .+^ c) (b .+^ d)
+  Pair a b .-^ Pair c d = Pair (a .+^ c) (b .+^ d)
 
 -- | Compute the quadrance of the difference (the square of the distance)
 qdA :: (Affine p, Foldable (Diff p), Num a) => p a -> p a -> a

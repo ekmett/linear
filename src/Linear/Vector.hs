@@ -41,6 +41,7 @@ import Data.Foldable as Foldable (Foldable, forM_, foldl')
 #else
 import Data.Foldable as Foldable (forM_, foldl')
 #endif
+import Data.Functor.Product
 import Data.HashMap.Lazy as HashMap
 import Data.Hashable
 import Data.IntMap as IntMap
@@ -171,6 +172,14 @@ class Functor f => Additive f where
   {-# INLINE liftI2 #-}
 #endif
 #endif
+
+instance (Additive f, Additive g) => Additive (Product f g) where
+  zero = Pair zero zero
+  liftU2 f (Pair a b) (Pair c d) = Pair (liftU2 f a c) (liftU2 f b d)
+  liftI2 f (Pair a b) (Pair c d) = Pair (liftI2 f a c) (liftI2 f b d)
+  Pair a b ^+^ Pair c d = Pair (a ^+^ c) (b ^+^ d)
+  Pair a b ^-^ Pair c d = Pair (a ^-^ c) (b ^-^ d)
+  lerp alpha (Pair a b) (Pair c d) = Pair (lerp alpha a c) (lerp alpha b d)
 
 instance Additive ZipList where
   zero = ZipList []
