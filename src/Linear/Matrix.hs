@@ -1,5 +1,7 @@
+{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
@@ -33,6 +35,18 @@ module Linear.Matrix
   , _m22, _m23, _m24
   , _m32, _m33, _m34
   , _m42, _m43, _m44
+  , lu
+  , luFinite
+  , forwardSub
+  , forwardSubFinite
+  , backwardSub
+  , backwardSubFinite
+  , luSolve
+  , luSolveFinite
+  , luInv
+  , luInvFinite
+  , luDet
+  , luDetFinite
   ) where
 
 #if __GLASGOW_HASKELL__ < 710
@@ -43,7 +57,9 @@ import Control.Lens.Internal.Context
 import Data.Distributive
 import Data.Foldable as Foldable
 import Data.Functor.Rep
+import GHC.TypeLits
 import Linear.Quaternion
+import Linear.V
 import Linear.V2
 import Linear.V3
 import Linear.V4
@@ -418,3 +434,305 @@ inv44 (V4 (V4 i00 i01 i02 i03)
                        (-i30 * s3 + i31 * s1 - i32 * s0)
                        (i20 * s3 - i21 * s1 + i22 * s0))
 {-# INLINE inv44 #-}
+
+-- | Compute the (L, U) decomposition of a square matrix using Crout's
+--   algorithm. The 'Index' of the vectors must be 'Integral'.
+lu :: ( Num a
+      , Fractional a
+      , Foldable m
+      , Traversable m
+      , Applicative m
+      , Additive m
+      , Ixed (m a)
+      , Ixed (m (m a))
+      , i ~ Index (m a)
+      , i ~ Index (m (m a))
+      , Eq i
+      , Integral i
+      , a ~ IxValue (m a)
+      , m a ~ IxValue (m (m a))
+      , Num (m a)
+      )
+   => m (m a)
+   -> (m (m a), m (m a))
+lu a =
+    let n = fromIntegral (length a)
+        initU = identity
+        initL = zero
+        buildLVal !i !j !l !u =
+            let go !k !s
+                    | k == j = s
+                    | otherwise = go (k+1)
+                                     ( s
+                                      + ( (l ^?! ix i ^?! ix k)
+                                        * (u ^?! ix k ^?! ix j)
+                                        )
+                                      )
+                s' = go 0 0
+            in l & (ix i . ix j) .~ ((a ^?! ix i ^?! ix j) - s')
+        buildL !i !j !l !u
+            | i == n = l
+            | otherwise = buildL (i+1) j (buildLVal i j l u) u
+        buildUVal !i !j !l !u =
+            let go !k !s
+                    | k == j = s
+                    | otherwise = go (k+1)
+                                     ( s
+                                     + ( (l ^?! ix j ^?! ix k)
+                                       * (u ^?! ix k ^?! ix i)
+                                       )
+                                     )
+                s' = go 0 0
+            in u & (ix j . ix i) .~ ( ((a ^?! ix j ^?! ix i) - s')
+                                    / (l ^?! ix j ^?! ix j)
+                                    )
+        buildU !i !j !l !u
+            | i == n = u
+            | otherwise = buildU (i+1) j l (buildUVal i j l u)
+        buildLU !j !l !u
+            | j == n = (l, u)
+            | otherwise =
+                let l' = buildL j j l u
+                    u' = buildU j j l' u
+                in buildLU (j+1) l' u'
+    in buildLU 0 initL initU
+
+-- | Compute the (L, U) decomposition of a square matrix using Crout's
+--   algorithm, using the vector's 'Finite' instance to provide an index.
+luFinite :: ( Num a
+            , Fractional a
+            , Functor m
+            , Finite m
+            , n ~ Size m
+            , KnownNat n
+            , Num (m a)
+            )
+         => m (m a)
+         -> (m (m a), m (m a))
+luFinite a =
+    bimap (fmap fromV . fromV)
+          (fmap fromV . fromV)
+          (lu (fmap toV (toV a)))
+
+-- | Solve a linear system with a lower-triangular matrix of coefficients with
+--   forwards substitution.
+forwardSub :: ( Num a
+              , Fractional a
+              , Foldable m
+              , Additive m
+              , Ixed (m a)
+              , Ixed (m (m a))
+              , i ~ Index (m a)
+              , i ~ Index (m (m a))
+              , Eq i
+              , Ord i
+              , Integral i
+              , a ~ IxValue (m a)
+              , m a ~ IxValue (m (m a))
+              )
+           => m (m a)
+           -> m a
+           -> m a
+forwardSub a b =
+    let n = fromIntegral (length b)
+        initX = zero
+        coeff !i !j !s !x
+            | j == i = s
+            | otherwise = coeff i (j+1) (s + ((a ^?! ix i ^?! ix j) * (x ^?! ix j))) x
+        go !i !x
+            | i == n = x
+            | otherwise = go (i + 1) (x & ix i .~ ( ((b ^?! ix i) - coeff i 0 0 x)
+                                                  / (a ^?! ix i ^?! ix i)
+                                                  ))
+    in go 0 initX
+
+-- | Solve a linear system with a lower-triangular matrix of coefficients with
+--   forwards substitution, using the vector's 'Finite' instance to provide an
+--   index.
+forwardSubFinite :: ( Num a
+                    , Fractional a
+                    , Foldable m
+                    , n ~ Size m
+                    , KnownNat n
+                    , Additive m
+                    , Finite m
+                    )
+                 => m (m a)
+                 -> m a
+                 -> m a
+forwardSubFinite a b = fromV (forwardSub (fmap toV (toV a)) (toV b))
+
+-- | Solve a linear system with an upper-triangular matrix of coefficients with
+--   backwards substitution.
+backwardSub :: ( Num a
+               , Fractional a
+               , Foldable m
+               , Additive m
+               , Ixed (m a)
+               , Ixed (m (m a))
+               , i ~ Index (m a)
+               , i ~ Index (m (m a))
+               , Eq i
+               , Ord i
+               , Integral i
+               , a ~ IxValue (m a)
+               , m a ~ IxValue (m (m a))
+               )
+            => m (m a)
+            -> m a
+            -> m a
+backwardSub a b =
+    let n = fromIntegral (length b)
+        initX = zero
+        coeff !i !j !s !x
+            | j == n = s
+            | otherwise = coeff i
+                                (j+1)
+                                (s + ((a ^?! ix i ^?! ix j) * (x ^?! ix j)))
+                                x
+        go !i !x
+            | i < 0 = x
+            | otherwise = go (i-1)
+                             (x & ix i .~ ( ((b ^?! ix i) - coeff i (i+1) 0 x)
+                                          / (a ^?! ix i ^?! ix i)
+                                          ))
+    in go (n-1) initX
+
+-- | Solve a linear system with an upper-triangular matrix of coefficients with
+--   backwards substitution, using the vector's 'Finite' instance to provide an
+--   index.
+backwardSubFinite :: ( Num a
+                     , Fractional a
+                     , Foldable m
+                     , n ~ Size m
+                     , KnownNat n
+                     , Additive m
+                     , Finite m
+                     )
+                  => m (m a)
+                  -> m a
+                  -> m a
+backwardSubFinite a b = fromV (backwardSub (fmap toV (toV a)) (toV b))
+
+-- | Solve a linear system with LU decomposition.
+luSolve :: ( Num a
+           , Fractional a
+           , Foldable m
+           , Traversable m
+           , Applicative m
+           , Additive m
+           , Ixed (m a)
+           , Ixed (m (m a))
+           , i ~ Index (m a)
+           , i ~ Index (m (m a))
+           , Eq i
+           , Integral i
+           , a ~ IxValue (m a)
+           , m a ~ IxValue (m (m a))
+           , Num (m a)
+           )
+        => m (m a)
+        -> m a
+        -> m a
+luSolve a b =
+    let (l, u) = lu a
+    in backwardSub u (forwardSub l b)
+
+-- | Solve a linear system with LU decomposition, using the vector's 'Finite'
+--   instance to provide an index.
+luSolveFinite :: ( Num a
+                 , Fractional a
+                 , Functor m
+                 , Finite m
+                 , n ~ Size m
+                 , KnownNat n
+                 , Num (m a)
+                 )
+              => m (m a)
+              -> m a
+              -> m a
+luSolveFinite a b = fromV (luSolve (fmap toV (toV a)) (toV b))
+
+-- | Invert a matrix with LU decomposition.
+luInv :: ( Num a
+         , Fractional a
+         , Foldable m
+         , Traversable m
+         , Applicative m
+         , Additive m
+         , Distributive m
+         , Ixed (m a)
+         , Ixed (m (m a))
+         , i ~ Index (m a)
+         , i ~ Index (m (m a))
+         , Eq i
+         , Integral i
+         , a ~ IxValue (m a)
+         , m a ~ IxValue (m (m a))
+         , Num (m a)
+         )
+      => m (m a)
+      -> m (m a)
+luInv a =
+    let n = fromIntegral (length a)
+        initA' = zero
+        (l, u) = lu a
+        go !i !a'
+            | i == n = a'
+            | otherwise = let e   = zero & ix i .~ 1
+                              a'r = backwardSub u (forwardSub l e)
+                          in go (i+1) (a' & ix i .~ a'r)
+    in transpose (go 0 initA')
+
+-- | Invert a matrix with LU decomposition, using the vector's 'Finite' instance
+--   to provide an index.
+luInvFinite :: ( Num a
+               , Fractional a
+               , Functor m
+               , Finite m
+               , n ~ Size m
+               , KnownNat n
+               , Num (m a)
+               )
+            => m (m a)
+            -> m (m a)
+luInvFinite a = fmap fromV (fromV (luInv (fmap toV (toV a))))
+
+-- | Compute the determinant of a matrix using LU decomposition.
+luDet :: ( Num a
+         , Fractional a
+         , Foldable m
+         , Traversable m
+         , Applicative m
+         , Additive m
+         , Trace m
+         , Ixed (m a)
+         , Ixed (m (m a))
+         , i ~ Index (m a)
+         , i ~ Index (m (m a))
+         , Eq i
+         , Integral i
+         , a ~ IxValue (m a)
+         , m a ~ IxValue (m (m a))
+         , Num (m a)
+         )
+      => m (m a)
+      -> a
+luDet a =
+    let (l, u) = lu a
+        p      = foldl (*) 1
+    in (p (diagonal l)) * (p (diagonal u))
+
+-- | Compute the determinant of a matrix using LU decomposition, using the
+--   vector's 'Finite' instance to provide an index.
+luDetFinite :: ( Num a
+               , Fractional a
+               , Functor m
+               , Finite m
+               , n ~ Size m
+               , KnownNat n
+               , Num (m a)
+               )
+            => m (m a)
+            -> a
+luDetFinite = luDet . fmap toV . toV
