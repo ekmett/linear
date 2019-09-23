@@ -110,4 +110,3 @@ normalize v = if nearZero l || nearZero (1-l) then v else fmap (/sqrt l) v
 -- | @project u v@ computes the projection of @v@ onto @u@.
 project :: (Metric v, Fractional a) => v a -> v a -> v a
 project u v = ((v `dot` u) / quadrance u) *^ u
-

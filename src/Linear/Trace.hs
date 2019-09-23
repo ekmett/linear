@@ -20,6 +20,7 @@
 ---------------------------------------------------------------------------
 module Linear.Trace
   ( Trace(..)
+  , frobenius
   ) where
 
 import Control.Monad as Monad
@@ -31,6 +32,7 @@ import Linear.V4
 import Linear.Plucker
 import Linear.Quaternion
 import Linear.V
+import Linear.Vector
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ > 704
 import Data.Complex
 #endif
@@ -116,3 +118,7 @@ instance (Distributive g, Trace g, Trace f) => Trace (Compose g f) where
   {-# INLINE trace #-}
   diagonal = Compose . fmap diagonal . diagonal . fmap distribute . getCompose . fmap getCompose
   {-# INLINE diagonal #-}
+
+-- | Compute the <http://mathworld.wolfram.com/FrobeniusNorm.html Frobenius norm> of a matrix.
+frobenius :: (Num a, Foldable f, Additive f, Additive g, Distributive g, Trace g) => f (g a) -> a
+frobenius m = trace $ fmap (\ f' -> Foldable.foldl' (^+^) zero $ liftI2 (*^) f' m) (distribute m)
