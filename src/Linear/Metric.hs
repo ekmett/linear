@@ -20,6 +20,7 @@ module Linear.Metric
 
 import Control.Applicative
 import Data.Foldable as Foldable
+import Data.Functor.Compose
 import Data.Functor.Identity
 import Data.Functor.Product
 import Data.Vector (Vector)
@@ -32,6 +33,7 @@ import Linear.Vector
 
 -- $setup
 -- >>> import Linear
+--
 
 -- | Free and sparse inner product/metric spaces.
 class Additive f => Metric f where
@@ -73,6 +75,12 @@ instance (Metric f, Metric g) => Metric (Product f g) where
   quadrance (Pair a b) = quadrance a + quadrance b
   qd (Pair a b) (Pair c d) = qd a c + qd b d
   distance p q = sqrt (qd p q)
+
+instance (Metric f, Metric g) => Metric (Compose f g) where
+  dot (Compose a) (Compose b) = quadrance (liftI2 dot a b)
+  quadrance = quadrance . fmap quadrance . getCompose
+  qd (Compose a) (Compose b) = quadrance (liftI2 qd a b)
+  distance (Compose a) (Compose b) = norm (liftI2 qd a b)
 
 instance Metric Identity where
   dot (Identity x) (Identity y) = x * y

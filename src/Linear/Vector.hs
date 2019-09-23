@@ -2,6 +2,7 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
 #if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
@@ -41,6 +42,7 @@ import Data.Foldable as Foldable (Foldable, forM_, foldl')
 #else
 import Data.Foldable as Foldable (forM_, foldl')
 #endif
+import Data.Functor.Compose
 import Data.Functor.Product
 import Data.HashMap.Lazy as HashMap
 import Data.Hashable
@@ -89,6 +91,14 @@ instance (GAdditive f, GAdditive g) => GAdditive (f :*: g) where
   gliftI2 f (a :*: b) (c :*: d) = gliftI2 f a c :*: gliftI2 f b d
   {-# INLINE gliftI2 #-}
 
+instance (Additive f, GAdditive g) => GAdditive (f :.: g) where
+  gzero = Comp1 $ gzero <$ (zero :: f Int)
+  {-# INLINE gzero #-}
+  gliftU2 f (Comp1 a) (Comp1 b) = Comp1 $ liftU2 (gliftU2 f) a b
+  {-# INLINE gliftU2 #-}
+  gliftI2 f (Comp1 a) (Comp1 b) = Comp1 $ liftI2 (gliftI2 f) a b
+  {-# INLINE gliftI2 #-}
+
 instance Additive f => GAdditive (Rec1 f) where
   gzero = Rec1 zero
   {-# INLINE gzero #-}
@@ -112,7 +122,6 @@ instance GAdditive Par1 where
   gliftI2 f (Par1 a) (Par1 b) = Par1 (f a b)
   {-# INLINE gliftI2 #-}
 #endif
-
 
 -- | A vector is an additive group with additional structure.
 class Functor f => Additive f where
@@ -180,6 +189,18 @@ instance (Additive f, Additive g) => Additive (Product f g) where
   Pair a b ^+^ Pair c d = Pair (a ^+^ c) (b ^+^ d)
   Pair a b ^-^ Pair c d = Pair (a ^-^ c) (b ^-^ d)
   lerp alpha (Pair a b) (Pair c d) = Pair (lerp alpha a c) (lerp alpha b d)
+
+instance (Additive f, Additive g) => Additive (Compose f g) where
+  zero = Compose $ zero <$ (zero :: f Int)
+  {-# INLINE zero #-}
+  Compose a ^+^ Compose b = Compose $ liftU2 (^+^) a b
+  {-# INLINE (^+^) #-}
+  Compose a ^-^ Compose b = Compose $ liftU2 (^-^) a b
+  {-# INLINE (^-^) #-}
+  liftU2 f (Compose a) (Compose b) = Compose $ liftU2 (liftU2 f) a b
+  {-# INLINE liftU2 #-}
+  liftI2 f (Compose a) (Compose b) = Compose $ liftI2 (liftI2 f) a b
+  {-# INLINE liftI2 #-}
 
 instance Additive ZipList where
   zero = ZipList []
