@@ -107,7 +107,9 @@ import Linear.Metric
 #if __GLASGOW_HASKELL__ >= 707
 import Linear.V
 #endif
+import Linear.V2
 import Linear.V3
+import Linear.V4
 import Linear.Vector
 import Prelude hiding (any)
 import System.Random
@@ -719,4 +721,19 @@ instance Monoid a => Monoid (Quaternion a) where
 #if !(MIN_VERSION_base(4,11,0))
   mappend = liftA2 mappend
 #endif
+
+instance R1 Quaternion where
+  _x f (Quaternion w (V3 x y z)) = f x <&> \x' -> Quaternion w (V3 x' y z)
+
+instance R2 Quaternion where
+  _y f (Quaternion w (V3 x y z)) = f y <&> \y' -> Quaternion w (V3 x y' z)
+  _xy f (Quaternion w (V3 x y z)) = f (V2 x y) <&> \(V2 x' y') -> Quaternion w (V3 x' y' z)
+
+instance R3 Quaternion where
+  _z f (Quaternion w (V3 x y z)) = f z <&> \z' -> Quaternion w (V3 x y z')
+  _xyz f (Quaternion w xyz) = Quaternion w <$> f xyz
+
+instance R4 Quaternion where
+  _w f (Quaternion w xyz) = f w <&> \w' -> Quaternion w' xyz
+  _xyzw f (Quaternion w (V3 x y z)) = f (V4 x y z w) <&> \(V4 x' y' z' w') -> Quaternion w' (V3 x' y' z')
 

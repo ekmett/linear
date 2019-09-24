@@ -8,6 +8,8 @@
 * Added `Random` instances for `System.Random`. We had an indirect dependency
   through `vector` anyways.
 * Added "obvious" zipping semigroup and monoid instances to all the representable vector spaces.
+* Added `R1`..`R4` instances to `Quaternion`. `_w` is the scalar component so that
+  `_x`,`_y`,`_z` can be directional.
 
 1.20.9 [2019.05.02]
 -------------------
