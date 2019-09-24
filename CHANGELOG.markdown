@@ -7,6 +7,7 @@
 * Add `frobenius` for computing the Frobenius norm of a matrix.
 * Added `Random` instances for `System.Random`. We had an indirect dependency
   through `vector` anyways.
+* Added "obvious" zipping semigroup and monoid instances to all the representable vector spaces.
 
 1.20.9 [2019.05.02]
 -------------------

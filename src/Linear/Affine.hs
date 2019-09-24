@@ -156,6 +156,7 @@ newtype Point f a = P (f a)
            , Eq1, Ord1, Show1, Read1
            , Traversable, Apply, Additive, Metric
            , Fractional , Num, Ix, Storable, Epsilon
+           , Semigroup, Monoid
            , Random, Hashable
 #if __GLASGOW_HASKELL__ >= 702
            , Generic

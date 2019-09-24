@@ -667,3 +667,13 @@ instance Field3 (V4 a) (V4 a) a a where
 
 instance Field4 (V4 a) (V4 a) a a where
   _4 f (V4 x y z w) = f w <&> \w' -> V4 x y z w'
+
+instance Semigroup a => Semigroup (V4 a) where
+ (<>) = liftA2 (<>)
+
+instance Monoid a => Monoid (V4 a) where
+  mempty = pure mempty
+#if !(MIN_VERSION_base(4,11,0))
+  mappend = liftA2 mappend
+#endif
+

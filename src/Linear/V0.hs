@@ -30,6 +30,9 @@
 #define MIN_VERSION_transformers(x,y,z) 1
 #endif
 
+#ifndef MIN_VERSION_base
+#define MIN_VERSION_base(x,y,z) 1
+#endif
 
 -----------------------------------------------------------------------------
 -- |
@@ -174,6 +177,15 @@ instance Applicative V0 where
   {-# INLINE pure #-}
   V0 <*> V0 = V0
   {-# INLINE (<*>) #-}
+
+instance Semigroup (V0 a) where
+  _ <> _ = V0
+
+instance Monoid (V0 a) where
+  mempty = V0
+#if !(MIN_VERSION_base(4,11,0))
+  mappend _ _ = V0
+#endif
 
 instance Additive V0 where
   zero = V0

@@ -24,6 +24,11 @@
 #ifndef MIN_VERSION_vector
 #define MIN_VERSION_vector(x,y,z) 1
 #endif
+
+#ifndef MIN_VERSION_base
+#define MIN_VERSION_base(x,y,z) 1
+#endif
+
 -----------------------------------------------------------------------------
 -- |
 -- Copyright   :  (C) 2012-2015 Edward Kmett
@@ -71,6 +76,9 @@ import Data.Functor.Rep
 import Data.Hashable
 #if (MIN_VERSION_hashable(1,2,5))
 import Data.Hashable.Lifted
+#endif
+#if !(MIN_VERSION_base(4,11,0))
+import Data.Semigroup
 #endif
 import Data.Serialize as Cereal
 import GHC.Arr (Ix(..))
@@ -702,3 +710,13 @@ instance Field3 (Quaternion a) (Quaternion a) a a where
 
 instance Field4 (Quaternion a) (Quaternion a) a a where
   _4 f (Quaternion w (V3 x y z)) = f z <&> \z' -> Quaternion w (V3 x y z')
+
+instance Semigroup a => Semigroup (Quaternion a) where
+ (<>) = liftA2 (<>)
+
+instance Monoid a => Monoid (Quaternion a) where
+  mempty = pure mempty
+#if !(MIN_VERSION_base(4,11,0))
+  mappend = liftA2 mappend
+#endif
+

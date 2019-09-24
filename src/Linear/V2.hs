@@ -29,6 +29,9 @@
 #define MIN_VERSION_transformers(x,y,z) 1
 #endif
 
+#ifndef MIN_VERSION_base
+#define MIN_VERSION_base(x,y,z) 1
+#endif
 
 -----------------------------------------------------------------------------
 -- |
@@ -499,3 +502,12 @@ instance Field1 (V2 a) (V2 a) a a where
 
 instance Field2 (V2 a) (V2 a) a a where
   _2 f (V2 x y) = f y <&> \y' -> V2 x y'
+
+instance Semigroup a => Semigroup (V2 a) where
+ (<>) = liftA2 (<>)
+
+instance Monoid a => Monoid (V2 a) where
+  mempty = pure mempty
+#if !(MIN_VERSION_base(4,11,0))
+  mappend = liftA2 mappend
+#endif

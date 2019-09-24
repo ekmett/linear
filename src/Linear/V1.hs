@@ -32,6 +32,10 @@
 #define MIN_VERSION_transformers(x,y,z) 1
 #endif
 
+#ifndef MIN_VERSION_base
+#define MIN_VERSION_base(x,y,z) 1
+#endif
+
 -----------------------------------------------------------------------------
 -- |
 -- Copyright   :  (C) 2012-2015 Edward Kmett
@@ -89,6 +93,9 @@ import Linear.Epsilon
 import Linear.Vector
 import Prelude hiding (sum)
 import System.Random
+#if !(MIN_VERSION_base(4,11,0))
+import Data.Semigroup
+#endif
 
 import qualified Data.Vector.Generic.Mutable as M
 import qualified Data.Vector.Generic as G
@@ -418,3 +425,13 @@ instance Read1 V1 where readsPrec1 = readsPrec
 
 instance Field1 (V1 a) (V1 b) a b where
   _1 f (V1 x) = V1 <$> f x
+
+instance Semigroup a => Semigroup (V1 a) where
+ (<>) = liftA2 (<>)
+
+instance Monoid a => Monoid (V1 a) where
+  mempty = pure mempty
+#if !(MIN_VERSION_base(4,11,0))
+  mappend = liftA2 mappend
+#endif
+

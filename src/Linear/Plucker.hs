@@ -688,3 +688,12 @@ instance Field5 (Plucker a) (Plucker a) a a where
 
 instance Field6 (Plucker a) (Plucker a) a a where
   _6 f (Plucker x y z u v w) = f w <&> \w' -> Plucker x y z u v w'
+
+instance Semigroup a => Semigroup (Plucker a) where
+ (<>) = liftA2 (<>)
+
+instance Monoid a => Monoid (Plucker a) where
+  mempty = pure mempty
+#if !(MIN_VERSION_base(4,11,0))
+  mappend = liftA2 mappend
+#endif

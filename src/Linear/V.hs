@@ -32,6 +32,10 @@
 #define MIN_VERSION_transformers(x,y,z) 1
 #endif
 
+#ifndef MIN_VERSION_base
+#define MIN_VERSION_base(x,y,z) 1
+#endif
+
 -----------------------------------------------------------------------------
 -- |
 -- Copyright   :  (C) 2012-2015 Edward Kmett
@@ -64,9 +68,7 @@ module Linear.V
 #endif
   ) where
 
-#if __GLASGOW_HASKELL__ < 710
 import Control.Applicative
-#endif
 import Control.DeepSeq (NFData)
 import Control.Monad
 import Control.Monad.Fix
@@ -119,9 +121,9 @@ import Linear.Metric
 import Linear.Vector
 #if (MIN_VERSION_transformers(0,5,0)) || !(MIN_VERSION_transformers(0,4,0))
 import Prelude as P
-#if __GLASGOW_HASKELL__ < 710
-import Data.Monoid
 #endif
+#if !(MIN_VERSION_base(4,11,0))
+import Data.Semigroup
 #endif
 import System.Random
 
@@ -217,6 +219,15 @@ reifyVector v f = reifyDim (V.length v) $ \(Proxy :: Proxy n) -> f (V v :: V n a
 instance Dim n => Dim (V n a) where
   reflectDim _ = reflectDim (Proxy :: Proxy n)
   {-# INLINE reflectDim #-}
+
+instance (Dim n, Semigroup a) => Semigroup (V n a) where
+ (<>) = liftA2 (<>)
+
+instance (Dim n, Monoid a) => Monoid (V n a) where
+  mempty = pure mempty
+#if !(MIN_VERSION_base(4,11,0))
+  mappend = liftA2 mappend
+#endif
 
 instance Functor (V n) where
   fmap f (V as) = V (fmap f as)
