@@ -1,6 +1,6 @@
 1.21 [unreleased]
 -----------------
-* Add instances for direct products (`Product`) and tensor products (`Compose`) of
+* Add instances for direct sums (`Product`) and tensor products (`Compose`) of
   other vector spaces. This makes is much more convenient to do things like treat
   a matrix temporarily as a vector through Compose, or to consider things like
   Gauss-Jordan elimination, which wants augmented structures.
