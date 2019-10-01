@@ -57,6 +57,12 @@ import Data.Hashable.Lifted
 import Data.IntMap (IntMap)
 import Data.Ix
 import Data.Map (Map)
+#if !(MIN_VERSION_base(4,8,0))
+import Data.Monoid (Monoid(..))
+#endif
+#if !(MIN_VERSION_base(4,11,0))
+import Data.Semigroup (Semigroup)
+#endif
 import Data.Serialize as Cereal
 import Data.Vector (Vector)
 import qualified Data.Vector.Generic.Mutable as M

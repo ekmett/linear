@@ -78,12 +78,14 @@ import Data.Hashable
 import Data.Hashable.Lifted
 #endif
 #if !(MIN_VERSION_base(4,11,0))
-import Data.Semigroup
+import Data.Semigroup (Semigroup(..))
 #endif
 import Data.Serialize as Cereal
 import GHC.Arr (Ix(..))
 import qualified Data.Foldable as F
-import Data.Monoid
+#if !(MIN_VERSION_base(4,8,0))
+import Data.Monoid (Monoid(..))
+#endif
 #if __GLASGOW_HASKELL__ >= 707
 import qualified Data.Vector as V
 #endif
