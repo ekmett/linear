@@ -7,9 +7,12 @@
 * Add `frobenius` for computing the Frobenius norm of a matrix.
 * Added `Random` instances for `System.Random`. We had an indirect dependency
   through `vector` anyways.
-* Added "obvious" zipping semigroup and monoid instances to all the representable vector spaces.
-* Added `R1`..`R4` instances to `Quaternion`. `_w` is the scalar component so that
+* Add "obvious" zipping `Semigroup` and `Monoid` instances to all the
+  representable vector spaces.
+* Add `R1`..`R4` instances to `Quaternion`. `_w` is the scalar component so that
   `_x`,`_y`,`_z` can be directional.
+* Add more solvers to `Linear.Matrix`, available with `base-4.8` or later.
+* Add `unangle` function to `Linear.V2`.
 
 1.20.9 [2019.05.02]
 -------------------
