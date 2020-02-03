@@ -1,4 +1,4 @@
-1.21 [unreleased]
+1.21 [2020.02.03]
 -----------------
 * Add instances for direct sums (`Product`) and tensor products (`Compose`) of
   other vector spaces. This makes is much more convenient to do things like treat
