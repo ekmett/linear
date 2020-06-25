@@ -1,3 +1,7 @@
+1.21.1 [2020.06.25]
+-------------------
+* Allow building with `random-1.2.*`.
+
 1.21 [2020.02.03]
 -----------------
 * Add instances for direct sums (`Product`) and tensor products (`Compose`) of
