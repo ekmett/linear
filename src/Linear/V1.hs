@@ -405,7 +405,6 @@ instance Random a => Random (V1 a) where
   randoms g = V1 <$> randoms g
   randomR (V1 a, V1 b) g = case randomR (a, b) g of (a', g') -> (V1 a', g')
   randomRs (V1 a, V1 b) g = V1 <$> randomRs (a, b) g
-  randomIO = V1 <$> randomIO
 
 #if (MIN_VERSION_transformers(0,5,0)) || !(MIN_VERSION_transformers(0,4,0))
 instance Eq1 V1 where

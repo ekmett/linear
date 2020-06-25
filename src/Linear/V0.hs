@@ -131,8 +131,6 @@ instance Random (V0 a) where
   randomR _ g = (V0, g)
   randomRs _ _ = repeat V0
   randoms _ = repeat V0
-  randomRIO _ = pure V0
-  randomIO = pure V0
 
 instance Serial1 V0 where
   serializeWith _ = serialize
