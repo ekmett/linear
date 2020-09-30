@@ -1,5 +1,5 @@
-next [????.??.??]
------------------
+1.21.2 [2020.09.30]
+-------------------
 * Use `base-orphans-0.8.3` or later. This means that the `Linear.Instances`
   module no longer defines any orphan instances of its own, and the module is
   now a simple shim on top of `Data.Orphans` from `base-orphans`.
