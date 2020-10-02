@@ -1,3 +1,7 @@
+next [????.??.??]
+-----------------
+* Allow building with GHC 9.0.
+
 1.21.2 [2020.09.30]
 -------------------
 * Use `base-orphans-0.8.3` or later. This means that the `Linear.Instances`

@@ -228,7 +228,7 @@ type instance Index (Quaternion a) = E Quaternion
 type instance IxValue (Quaternion a) = a
 
 instance Ixed (Quaternion a) where
-  ix = el
+  ix i = el i
   {-# INLINE ix #-}
 
 instance Each (Quaternion a) (Quaternion b) a b where

@@ -451,7 +451,7 @@ type instance Index (Plucker a) = E Plucker
 type instance IxValue (Plucker a) = a
 
 instance Ixed (Plucker a) where
-  ix = el
+  ix i = el i
   {-# INLINE ix #-}
 
 instance Each (Plucker a) (Plucker b) a b where

@@ -554,7 +554,7 @@ type instance Index (V4 a) = E V4
 type instance IxValue (V4 a) = a
 
 instance Ixed (V4 a) where
-  ix = el
+  ix i = el i
 
 instance Each (V4 a) (V4 b) a b where
   each = traverse

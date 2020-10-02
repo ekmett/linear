@@ -405,7 +405,7 @@ type instance Index (V3 a) = E V3
 type instance IxValue (V3 a) = a
 
 instance Ixed (V3 a) where
-  ix = el
+  ix i = el i
   {-# INLINE ix #-}
 
 instance Each (V3 a) (V3 b) a b where
