@@ -527,19 +527,48 @@ toUV (Plucker a b c d e f) = V2 (V3 a b c) (V3 d e f)
 -- | Checks if two lines coincide in space. In other words, undirected equality.
 coincides :: (Epsilon a, Fractional a) => Plucker a -> Plucker a -> Bool
 coincides p1 p2 = Foldable.all nearZero $ (s *^ p2) - p1
-  where s = maybe 1 getFirst . getOption . fold $ saveDiv <$> p1 <*> p2
-        saveDiv x y | nearZero y = Option Nothing
-                    | otherwise  = Option . Just $ First (x / y)
+  where s = maybe 1 getFirst . getOptionCompat . fold $ saveDiv <$> p1 <*> p2
+        saveDiv x y | nearZero y = optionCompat Nothing
+                    | otherwise  = optionCompat . Just $ First (x / y)
 {-# INLINABLE coincides #-}
 
 -- | Checks if two lines coincide in space, and have the same
 -- orientation.
 coincides' :: (Epsilon a, Fractional a, Ord a) => Plucker a -> Plucker a -> Bool
 coincides' p1 p2 = Foldable.all nearZero ((s *^ p2) - p1) && s > 0
-  where s = maybe 1 getFirst . getOption . fold $ saveDiv <$> p1 <*> p2
-        saveDiv x y | nearZero y = Option Nothing
-                    | otherwise  = Option . Just $ First (x / y)
+  where s = maybe 1 getFirst . getOptionCompat . fold $ saveDiv <$> p1 <*> p2
+        saveDiv x y | nearZero y = optionCompat Nothing
+                    | otherwise  = optionCompat . Just $ First (x / y)
 {-# INLINABLE coincides' #-}
+
+-- The coincides and coincides' functions above require the use of a Maybe type
+-- with the following Monoid instance:
+--
+--   instance Semigroup a => Monoid (Maybe a) where ...
+--
+-- Unfortunately, Maybe has only had such an instance since base-4.11. Prior
+-- to that, its Monoid instance had an instance context of Monoid a, which is
+-- too strong. To compensate, we use CPP to define an OptionCompat type
+-- synonym, which is an alias for Maybe on recent versions of base and an alias
+-- for Data.Semigroup.Option on older versions of base. We don't want to use
+-- Option on recent versions of base, as it is deprecated.
+#if MIN_VERSION_base(4,11,0)
+type OptionCompat = Maybe
+
+optionCompat :: Maybe a -> OptionCompat a
+optionCompat = id
+
+getOptionCompat :: OptionCompat a -> Maybe a
+getOptionCompat = id
+#else
+type OptionCompat = Option
+
+optionCompat :: Maybe a -> OptionCompat a
+optionCompat = Option
+
+getOptionCompat :: OptionCompat a -> Maybe a
+getOptionCompat = getOption
+#endif
 
 -- | The minimum squared distance of a line from the origin.
 quadranceToOrigin :: Fractional a => Plucker a -> a
