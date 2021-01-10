@@ -107,7 +107,10 @@ import qualified Data.Vector.Unboxed.Base as U
 #endif
 
 -- $setup
+-- >>> import Control.Applicative
 -- >>> import Control.Lens
+-- >>> import qualified Data.Foldable as F
+-- >>> let sum xs = F.sum xs
 
 -- | A 1-dimensional vector
 --

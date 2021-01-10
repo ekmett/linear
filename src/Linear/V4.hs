@@ -109,6 +109,9 @@ import Linear.V3
 import Linear.Vector
 import System.Random
 
+-- $setup
+-- >>> import Control.Lens hiding (index)
+
 {-# ANN module "HLint: ignore Reduce duplication" #-}
 
 -- | A 4-dimensional vector.

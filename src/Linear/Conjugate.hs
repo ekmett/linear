@@ -25,6 +25,10 @@ import Data.Int
 import Data.Word
 import Foreign.C.Types (CFloat, CDouble)
 
+-- $setup
+-- >>> import Data.Complex (Complex (..))
+
+
 -- | An involutive ring
 class Num a => Conjugate a where
   -- | Conjugate a value. This defaults to the trivial involution.

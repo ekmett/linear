@@ -97,7 +97,10 @@ import System.Random
 import Prelude hiding (sum)
 
 -- $setup
+-- >>> import Control.Applicative
 -- >>> import Control.Lens
+-- >>> import qualified Data.Foldable as F
+-- >>> let sum xs = F.sum xs
 
 -- | A 0-dimensional vector
 --

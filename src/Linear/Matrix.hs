@@ -72,6 +72,15 @@ import GHC.TypeLits
 import Linear.V
 #endif
 
+-- $setup
+-- >>> import Control.Lens hiding (index)
+-- >>> import Data.Complex (Complex (..))
+-- >>> import Linear.V2
+-- >>> import Linear.V3
+-- >>> import Linear.V
+-- >>> import Data.IntMap
+-- >>> import Debug.SimpleReflect.Vars
+
 #ifdef HLINT
 {-# ANN module "HLint: ignore Reduce duplication" #-}
 #endif
@@ -94,12 +103,6 @@ column l f es = o <$> f i where
    go = l (Context id)
    i = tabulate $ \ e -> ipos $ go (index es e)
    o eb = tabulate $ \ e -> ipeek (index eb e) (go (index es e))
-
--- $setup
--- >>> import Data.Complex
--- >>> import Data.IntMap
--- >>> import Debug.SimpleReflect.Vars
--- >>> import Linear.V
 
 infixl 7 !*!
 -- | Matrix product. This can compute any combination of sparse and dense multiplication.
