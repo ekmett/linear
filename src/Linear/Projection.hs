@@ -35,10 +35,6 @@ import Linear.Metric
 -- >>> import Linear.V2
 -- >>> import Linear.V4
 
-#ifdef HLINT
-{-# ANN module "HLint: ignore Reduce duplication" #-}
-#endif
-
 -- | Build a look at view matrix
 lookAt
   :: (Epsilon a, Floating a)

@@ -88,10 +88,6 @@ import Linear.V4
 import Linear.Vector
 import System.Random
 
-#ifdef HLINT
-{-# ANN module "HLint: ignore Unused LANGUAGE pragma" #-}
-#endif
-
 -- | An affine space is roughly a vector space in which we have
 -- forgotten or at least pretend to have forgotten the origin.
 --

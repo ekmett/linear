@@ -127,11 +127,6 @@ import Data.Semigroup
 #endif
 import System.Random
 
-
-#ifdef HLINT
-{-# ANN module "hlint: ignore Eta reduce" #-}
-#endif
-
 class Dim n where
   reflectDim :: p n -> Int
 

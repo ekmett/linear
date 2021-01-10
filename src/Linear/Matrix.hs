@@ -81,10 +81,6 @@ import Linear.V
 -- >>> import Data.IntMap
 -- >>> import Debug.SimpleReflect.Vars
 
-#ifdef HLINT
-{-# ANN module "HLint: ignore Reduce duplication" #-}
-#endif
-
 -- | This is a generalization of 'Control.Lens.inside' to work over any corepresentable 'Functor'.
 --
 -- @
@@ -248,12 +244,10 @@ m43_to_m44
      (V4 d e f 0)
      (V4 g h i 0)
      (V4 j k l 1)
-{-# ANN m43_to_m44 "HLint: ignore Use camelCase" #-}
 
 -- | Convert a 3x3 matrix to a 4x4 matrix extending it with 0's in the new row and column.
 m33_to_m44 :: Num a => M33 a -> M44 a
 m33_to_m44 (V3 r1 r2 r3) = V4 (vector r1) (vector r2) (vector r3) (point 0)
-{-# ANN m33_to_m44 "HLint: ignore Use camelCase" #-}
 
 -- |The identity matrix for any dimension vector.
 --

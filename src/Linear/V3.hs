@@ -105,8 +105,6 @@ import System.Random
 -- $setup
 -- >>> import Control.Lens hiding (index)
 
-{-# ANN module "HLint: ignore Reduce duplication" #-}
-
 -- | A 3-dimensional vector
 data V3 a = V3 !a !a !a deriving (Eq,Ord,Show,Read,Data,Typeable
 #if __GLASGOW_HASKELL__ >= 702
