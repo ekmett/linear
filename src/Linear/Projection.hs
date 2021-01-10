@@ -30,6 +30,11 @@ import Linear.Matrix
 import Linear.Epsilon
 import Linear.Metric
 
+-- $setup
+-- >>> import Linear.Matrix
+-- >>> import Linear.V2
+-- >>> import Linear.V4
+
 #ifdef HLINT
 {-# ANN module "HLint: ignore Reduce duplication" #-}
 #endif

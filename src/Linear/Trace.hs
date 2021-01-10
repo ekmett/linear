@@ -50,6 +50,7 @@ import Data.Map
 -- >>> import Data.Complex
 -- >>> import Data.IntMap
 -- >>> import Debug.SimpleReflect.Vars
+-- >>> import Linear.V2
 
 class Functor m => Trace m where
   -- | Compute the trace of a matrix
