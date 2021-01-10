@@ -58,8 +58,6 @@ import GHC.Generics
 #endif
 import Linear.Instances ()
 
-{-# ANN module "HLint: ignore Redundant lambda" #-}
-
 -- $setup
 -- >>> import Linear.V2
 
