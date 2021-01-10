@@ -1,7 +1,7 @@
 linear
 ======
 
-[![Hackage](https://img.shields.io/hackage/v/linear.svg)](https://hackage.haskell.org/package/linear) [![Build Status](https://secure.travis-ci.org/ekmett/linear.svg)](http://travis-ci.org/ekmett/linear)
+[![Hackage](https://img.shields.io/hackage/v/linear.svg)](https://hackage.haskell.org/package/linear) [![Build Status](https://github.com/ekmett/linear/workflows/Haskell-CI/badge.svg)](https://github.com/ekmett/linear/actions?query=workflow%3AHaskell-CI)
 
 Highly polymorphic vector space operations on sparse and free vector spaces.
 

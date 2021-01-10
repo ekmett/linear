@@ -25,10 +25,7 @@ tested-with:   GHC == 7.4.2
              , GHC == 8.10.1
 extra-source-files:
   .gitignore
-  .travis.yml
   .vim.custom
-  travis/cabal-apt-install
-  travis/config
   CHANGELOG.markdown
   README.markdown
   Warning.hs
