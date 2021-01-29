@@ -98,7 +98,8 @@ import Data.Serialize as Cereal
 #if __GLASGOW_HASKELL__ < 710
 import Data.Traversable (sequenceA)
 #endif
-import Data.Vector as V
+import qualified Data.Vector as V
+import Data.Vector (Vector)
 import qualified Data.Vector.Generic as G
 import qualified Data.Vector.Unboxed as U
 import qualified Data.Vector.Generic.Mutable as M
@@ -295,15 +296,15 @@ instance Dim n => Applicative (V n) where
   {-# INLINE (<*>) #-}
 
 instance Bind (V n) where
-  V as >>- f = V $ generate (V.length as) $ \i ->
-    toVector (f (as `unsafeIndex` i)) `unsafeIndex` i
+  V as >>- f = V $ V.generate (V.length as) $ \i ->
+    toVector (f (as `V.unsafeIndex` i)) `V.unsafeIndex` i
   {-# INLINE (>>-) #-}
 
 instance Dim n => Monad (V n) where
   return = V . V.replicate (reflectDim (Proxy :: Proxy n))
   {-# INLINE return #-}
-  V as >>= f = V $ generate (reflectDim (Proxy :: Proxy n)) $ \i ->
-    toVector (f (as `unsafeIndex` i)) `unsafeIndex` i
+  V as >>= f = V $ V.generate (reflectDim (Proxy :: Proxy n)) $ \i ->
+    toVector (f (as `V.unsafeIndex` i)) `V.unsafeIndex` i
   {-# INLINE (>>=) #-}
 
 instance Dim n => Additive (V n) where
@@ -377,7 +378,7 @@ instance (Dim n, Floating a) => Floating (V n a) where
     {-# INLINE acosh #-}
 
 instance Dim n => Distributive (V n) where
-  distribute f = V $ V.generate (reflectDim (Proxy :: Proxy n)) $ \i -> fmap (\(V v) -> unsafeIndex v i) f
+  distribute f = V $ V.generate (reflectDim (Proxy :: Proxy n)) $ \i -> fmap (\(V v) -> V.unsafeIndex v i) f
   {-# INLINE distribute #-}
 
 instance Hashable a => Hashable (V n a) where
@@ -399,10 +400,10 @@ instance (Dim n, Storable a) => Storable (V n a) where
   alignment _ = alignment (undefined :: a)
   {-# INLINE alignment #-}
   poke ptr (V xs) = Foldable.forM_ [0..reflectDim (Proxy :: Proxy n)-1] $ \i ->
-    pokeElemOff ptr' i (unsafeIndex xs i)
+    pokeElemOff ptr' i (V.unsafeIndex xs i)
     where ptr' = castPtr ptr
   {-# INLINE poke #-}
-  peek ptr = V <$> generateM (reflectDim (Proxy :: Proxy n)) (peekElemOff ptr')
+  peek ptr = V <$> V.generateM (reflectDim (Proxy :: Proxy n)) (peekElemOff ptr')
     where ptr' = castPtr ptr
   {-# INLINE peek #-}
 
@@ -470,7 +471,7 @@ int n = case quotRem n 2 of
 
 instance Dim n => Representable (V n) where
   type Rep (V n) = Int
-  tabulate = V . generate (reflectDim (Proxy :: Proxy n))
+  tabulate = V . V.generate (reflectDim (Proxy :: Proxy n))
   {-# INLINE tabulate #-}
   index (V xs) i = xs V.! i
   {-# INLINE index #-}
@@ -514,10 +515,10 @@ vDataType = mkDataType "Linear.V.V" [vConstr]
 #endif
 
 instance (Typeable1 (V n), Typeable (V n a), Dim n, Data a) => Data (V n a) where
-  gfoldl f z (V as) = z (V . fromList) `f` V.toList as
+  gfoldl f z (V as) = z (V . V.fromList) `f` V.toList as
   toConstr _ = vConstr
   gunfold k z c = case constrIndex c of
-    1 -> k (z (V . fromList))
+    1 -> k (z (V . V.fromList))
     _ -> error "gunfold"
   dataTypeOf _ = vDataType
   dataCast1 f = gcast1 f

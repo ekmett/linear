@@ -51,8 +51,9 @@ import Data.Map as Map
 #if __GLASGOW_HASKELL__ < 710
 import Data.Monoid (mempty)
 #endif
-import Data.Vector as Vector
-import Data.Vector.Mutable as Mutable
+import qualified Data.Vector as Vector
+import Data.Vector (Vector)
+import qualified Data.Vector.Mutable as Mutable
 #ifdef USE_GHC_GENERICS
 import GHC.Generics
 #endif
@@ -213,10 +214,10 @@ instance Additive Vector where
   {-# INLINE zero #-}
   liftU2 f u v = case compare lu lv of
     LT | lu == 0   -> v
-       | otherwise -> Vector.modify (\ w -> Foldable.forM_ [0..lu-1] $ \i -> unsafeWrite w i $ f (unsafeIndex u i) (unsafeIndex v i)) v
+       | otherwise -> Vector.modify (\ w -> Foldable.forM_ [0..lu-1] $ \i -> Mutable.unsafeWrite w i $ f (Vector.unsafeIndex u i) (Vector.unsafeIndex v i)) v
     EQ -> Vector.zipWith f u v
     GT | lv == 0   -> u
-       | otherwise -> Vector.modify (\ w -> Foldable.forM_ [0..lv-1] $ \i -> unsafeWrite w i $ f (unsafeIndex u i) (unsafeIndex v i)) u
+       | otherwise -> Vector.modify (\ w -> Foldable.forM_ [0..lv-1] $ \i -> Mutable.unsafeWrite w i $ f (Vector.unsafeIndex u i) (Vector.unsafeIndex v i)) u
     where
       lu = Vector.length u
       lv = Vector.length v
