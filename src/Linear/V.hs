@@ -235,7 +235,7 @@ instance FunctorWithIndex Int (V n) where
 instance Foldable (V n) where
   fold (V as) = fold as
   {-# INLINE fold #-}
-  foldMap f (V as) = P.foldMap f as
+  foldMap f (V as) = Foldable.foldMap f as
   {-# INLINE foldMap #-}
   foldr f z (V as) = V.foldr f z as
   {-# INLINE foldr #-}
