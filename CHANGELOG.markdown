@@ -1,5 +1,5 @@
-next [yyyy.mm.dd]
------------------
+1.21.4 [2021.01.29]
+-------------------
 * Allow building with `vector-0.12.2` or later.
 * The build-type has been changed from `Custom` to `Simple`.
   To achieve this, the `doctests` test suite has been removed in favor of using
