@@ -1,3 +1,7 @@
+next [????.??.??]
+-----------------
+* Allow building with `lens-5.*`.
+
 1.21.4 [2021.01.29]
 -------------------
 * Allow building with `vector-0.12.2` or later.

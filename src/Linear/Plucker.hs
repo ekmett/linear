@@ -65,18 +65,21 @@ import Control.DeepSeq (NFData(rnf))
 import Control.Monad (liftM)
 import Control.Monad.Fix
 import Control.Monad.Zip
-import Control.Lens hiding (index, (<.>))
+import Control.Lens as Lens hiding (index, (<.>))
 import Data.Binary as Binary
 import Data.Bytes.Serial
 import Data.Distributive
 import Data.Foldable as Foldable
+import qualified Data.Foldable.WithIndex as WithIndex
 import Data.Functor.Bind
 import Data.Functor.Classes
 import Data.Functor.Rep
+import qualified Data.Functor.WithIndex as WithIndex
 import Data.Hashable
 import Data.Semigroup
 import Data.Semigroup.Foldable
 import Data.Serialize as Cereal
+import qualified Data.Traversable.WithIndex as WithIndex
 #if __GLASGOW_HASKELL__ >= 707
 import qualified Data.Vector as V
 #endif
@@ -431,19 +434,25 @@ e23 = E p23
 e31 = E p31
 e12 = E p12
 
-instance FunctorWithIndex (E Plucker) Plucker where
+instance WithIndex.FunctorWithIndex (E Plucker) Plucker where
   imap f (Plucker a b c d e g) = Plucker (f e01 a) (f e02 b) (f e03 c) (f e23 d) (f e31 e) (f e12 g)
   {-# INLINE imap #-}
 
-instance FoldableWithIndex (E Plucker) Plucker where
+instance WithIndex.FoldableWithIndex (E Plucker) Plucker where
   ifoldMap f (Plucker a b c d e g) = f e01 a `mappend` f e02 b `mappend` f e03 c
                            `mappend` f e23 d `mappend` f e31 e `mappend` f e12 g
   {-# INLINE ifoldMap #-}
 
-instance TraversableWithIndex (E Plucker) Plucker where
+instance WithIndex.TraversableWithIndex (E Plucker) Plucker where
   itraverse f (Plucker a b c d e g) = Plucker <$> f e01 a <*> f e02 b <*> f e03 c
                                               <*> f e23 d <*> f e31 e <*> f e12 g
   {-# INLINE itraverse #-}
+
+#if !MIN_VERSION_lens(5,0,0)
+instance Lens.FunctorWithIndex     (E Plucker) Plucker where imap      = WithIndex.imap
+instance Lens.FoldableWithIndex    (E Plucker) Plucker where ifoldMap  = WithIndex.ifoldMap
+instance Lens.TraversableWithIndex (E Plucker) Plucker where itraverse = WithIndex.itraverse
+#endif
 
 type instance Index (Plucker a) = E Plucker
 type instance IxValue (Plucker a) = a

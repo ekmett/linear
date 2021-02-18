@@ -63,16 +63,18 @@ import Control.DeepSeq (NFData(rnf))
 import Control.Monad (liftM)
 import Control.Monad.Fix
 import Control.Monad.Zip
-import Control.Lens hiding ((<.>))
+import Control.Lens as Lens hiding ((<.>))
 import Data.Binary as Binary
 import Data.Bytes.Serial
 import Data.Complex (Complex((:+)))
 import Data.Data
 import Data.Distributive
 import Data.Foldable
+import qualified Data.Foldable.WithIndex as WithIndex
 import Data.Functor.Bind
 import Data.Functor.Classes
 import Data.Functor.Rep
+import qualified Data.Functor.WithIndex as WithIndex
 import Data.Hashable
 #if (MIN_VERSION_hashable(1,2,5))
 import Data.Hashable.Lifted
@@ -86,6 +88,7 @@ import qualified Data.Foldable as F
 #if !(MIN_VERSION_base(4,8,0))
 import Data.Monoid (Monoid(..))
 #endif
+import qualified Data.Traversable.WithIndex as WithIndex
 #if __GLASGOW_HASKELL__ >= 707
 import qualified Data.Vector as V
 #endif
@@ -210,17 +213,23 @@ instance Representable Quaternion where
   index xs (E l) = view l xs
   {-# INLINE index #-}
 
-instance FunctorWithIndex (E Quaternion) Quaternion where
+instance WithIndex.FunctorWithIndex (E Quaternion) Quaternion where
   imap f (Quaternion a (V3 b c d)) = Quaternion (f ee a) $ V3 (f ei b) (f ej c) (f ek d)
   {-# INLINE imap #-}
 
-instance FoldableWithIndex (E Quaternion) Quaternion where
+instance WithIndex.FoldableWithIndex (E Quaternion) Quaternion where
   ifoldMap f (Quaternion a (V3 b c d)) = f ee a `mappend` f ei b `mappend` f ej c `mappend` f ek d
   {-# INLINE ifoldMap #-}
 
-instance TraversableWithIndex (E Quaternion) Quaternion where
+instance WithIndex.TraversableWithIndex (E Quaternion) Quaternion where
   itraverse f (Quaternion a (V3 b c d)) = Quaternion <$> f ee a <*> (V3 <$> f ei b <*> f ej c <*> f ek d)
   {-# INLINE itraverse #-}
+
+#if !MIN_VERSION_lens(5,0,0)
+instance Lens.FunctorWithIndex     (E Quaternion) Quaternion where imap      = WithIndex.imap
+instance Lens.FoldableWithIndex    (E Quaternion) Quaternion where ifoldMap  = WithIndex.ifoldMap
+instance Lens.TraversableWithIndex (E Quaternion) Quaternion where itraverse = WithIndex.itraverse
+#endif
 
 type instance Index (Quaternion a) = E Quaternion
 type instance IxValue (Quaternion a) = a
