@@ -61,15 +61,17 @@ import Control.DeepSeq (NFData(rnf))
 import Control.Monad (liftM)
 import Control.Monad.Fix
 import Control.Monad.Zip
-import Control.Lens hiding ((<.>))
+import Control.Lens as Lens hiding ((<.>))
 import Data.Binary as Binary
 import Data.Bytes.Serial
 import Data.Data
 import Data.Distributive
 import Data.Foldable
+import qualified Data.Foldable.WithIndex as WithIndex
 import Data.Functor.Bind
 import Data.Functor.Classes
 import Data.Functor.Rep
+import qualified Data.Functor.WithIndex as WithIndex
 import Data.Hashable
 #if (MIN_VERSION_hashable(1,2,5))
 import Data.Hashable.Lifted
@@ -77,6 +79,7 @@ import Data.Hashable.Lifted
 import Data.Semigroup
 import Data.Semigroup.Foldable
 import Data.Serialize as Cereal
+import qualified Data.Traversable.WithIndex as WithIndex
 #if __GLASGOW_HASKELL__ >= 707
 import qualified Data.Vector as V
 #endif
@@ -374,17 +377,23 @@ instance Representable V2 where
   index xs (E l) = view l xs
   {-# INLINE index #-}
 
-instance FunctorWithIndex (E V2) V2 where
+instance WithIndex.FunctorWithIndex (E V2) V2 where
   imap f (V2 a b) = V2 (f ex a) (f ey b)
   {-# INLINE imap #-}
 
-instance FoldableWithIndex (E V2) V2 where
+instance WithIndex.FoldableWithIndex (E V2) V2 where
   ifoldMap f (V2 a b) = f ex a `mappend` f ey b
   {-# INLINE ifoldMap #-}
 
-instance TraversableWithIndex (E V2) V2 where
+instance WithIndex.TraversableWithIndex (E V2) V2 where
   itraverse f (V2 a b) = V2 <$> f ex a <*> f ey b
   {-# INLINE itraverse #-}
+
+#if !MIN_VERSION_lens(5,0,0)
+instance Lens.FunctorWithIndex     (E V2) V2 where imap      = WithIndex.imap
+instance Lens.FoldableWithIndex    (E V2) V2 where ifoldMap  = WithIndex.ifoldMap
+instance Lens.TraversableWithIndex (E V2) V2 where itraverse = WithIndex.itraverse
+#endif
 
 type instance Index (V2 a) = E V2
 type instance IxValue (V2 a) = a

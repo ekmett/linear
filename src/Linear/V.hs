@@ -83,9 +83,11 @@ import Data.Complex
 import Data.Data
 import Data.Distributive
 import Data.Foldable as Foldable
+import qualified Data.Foldable.WithIndex as WithIndex
 import Data.Functor.Bind
 import Data.Functor.Classes
 import Data.Functor.Rep as Rep
+import qualified Data.Functor.WithIndex as WithIndex
 import Data.Hashable
 #if (MIN_VERSION_hashable(1,2,5))
 import Data.Hashable.Lifted
@@ -98,6 +100,7 @@ import Data.Serialize as Cereal
 #if __GLASGOW_HASKELL__ < 710
 import Data.Traversable (sequenceA)
 #endif
+import qualified Data.Traversable.WithIndex as WithIndex
 import qualified Data.Vector as V
 import Data.Vector (Vector)
 import qualified Data.Vector.Generic as G
@@ -229,7 +232,7 @@ instance Functor (V n) where
   fmap f (V as) = V (fmap f as)
   {-# INLINE fmap #-}
 
-instance FunctorWithIndex Int (V n) where
+instance WithIndex.FunctorWithIndex Int (V n) where
   imap f (V as) = V (Lens.imap f as)
   {-# INLINE imap #-}
 
@@ -272,7 +275,7 @@ instance Foldable (V n) where
   {-# INLINE product #-}
 #endif
 
-instance FoldableWithIndex Int (V n) where
+instance WithIndex.FoldableWithIndex Int (V n) where
   ifoldMap f (V as) = ifoldMap f as
   {-# INLINE ifoldMap #-}
 
@@ -280,9 +283,15 @@ instance Traversable (V n) where
   traverse f (V as) = V <$> traverse f as
   {-# INLINE traverse #-}
 
-instance TraversableWithIndex Int (V n) where
+instance WithIndex.TraversableWithIndex Int (V n) where
   itraverse f (V as) = V <$> itraverse f as
   {-# INLINE itraverse #-}
+
+#if !MIN_VERSION_lens(5,0,0)
+instance Lens.FunctorWithIndex     Int (V n) where imap      = WithIndex.imap
+instance Lens.FoldableWithIndex    Int (V n) where ifoldMap  = WithIndex.ifoldMap
+instance Lens.TraversableWithIndex Int (V n) where itraverse = WithIndex.itraverse
+#endif
 
 instance Apply (V n) where
   V as <.> V bs = V (V.zipWith id as bs)

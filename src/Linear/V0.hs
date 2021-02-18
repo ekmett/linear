@@ -51,7 +51,7 @@ module Linear.V0
 
 import Control.Applicative
 import Control.DeepSeq (NFData(rnf))
-import Control.Lens
+import Control.Lens as Lens
 import Control.Monad.Fix
 import Control.Monad.Zip
 import Data.Binary -- binary
@@ -59,9 +59,11 @@ import Data.Bytes.Serial -- bytes
 import Data.Data
 import Data.Distributive
 import Data.Foldable
+import qualified Data.Foldable.WithIndex as WithIndex
 import Data.Functor.Bind
 import Data.Functor.Classes
 import Data.Functor.Rep
+import qualified Data.Functor.WithIndex as WithIndex
 import Data.Hashable
 #if (MIN_VERSION_hashable(1,2,5))
 import Data.Hashable.Lifted
@@ -71,6 +73,7 @@ import Data.Ix
 import Data.Semigroup
 #endif
 import Data.Serialize -- cereal
+import qualified Data.Traversable.WithIndex as WithIndex
 #if __GLASGOW_HASKELL__ >= 707
 import qualified Data.Vector as V
 #endif
@@ -304,17 +307,23 @@ instance Storable (V0 a) where
   peek _ = return V0
   {-# INLINE peek #-}
 
-instance FunctorWithIndex (E V0) V0 where
+instance WithIndex.FunctorWithIndex (E V0) V0 where
   imap _ V0 = V0
   {-# INLINE imap #-}
 
-instance FoldableWithIndex (E V0) V0 where
+instance WithIndex.FoldableWithIndex (E V0) V0 where
   ifoldMap _ V0 = mempty
   {-# INLINE ifoldMap #-}
 
-instance TraversableWithIndex (E V0) V0 where
+instance WithIndex.TraversableWithIndex (E V0) V0 where
   itraverse _ V0 = pure V0
   {-# INLINE itraverse #-}
+
+#if !MIN_VERSION_lens(5,0,0)
+instance Lens.FunctorWithIndex     (E V0) V0 where imap      = WithIndex.imap
+instance Lens.FoldableWithIndex    (E V0) V0 where ifoldMap  = WithIndex.ifoldMap
+instance Lens.TraversableWithIndex (E V0) V0 where itraverse = WithIndex.itraverse
+#endif
 
 instance Representable V0 where
   type Rep V0 = E V0
