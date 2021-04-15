@@ -78,7 +78,7 @@ import Linear.V
 -- >>> import Linear.V2
 -- >>> import Linear.V3
 -- >>> import Linear.V
--- >>> import Data.IntMap
+-- >>> import qualified Data.IntMap as IntMap
 -- >>> import Debug.SimpleReflect.Vars
 
 -- | This is a generalization of 'Control.Lens.inside' to work over any corepresentable 'Functor'.
@@ -106,7 +106,7 @@ infixl 7 !*!
 -- >>> V2 (V3 1 2 3) (V3 4 5 6) !*! V3 (V2 1 2) (V2 3 4) (V2 4 5)
 -- V2 (V2 19 25) (V2 43 58)
 --
--- >>> V2 (fromList [(1,2)]) (fromList [(2,3)]) !*! fromList [(1,V3 0 0 1), (2, V3 0 0 5)]
+-- >>> V2 (IntMap.fromList [(1,2)]) (IntMap.fromList [(2,3)]) !*! IntMap.fromList [(1,V3 0 0 1), (2, V3 0 0 5)]
 -- V2 (V3 0 0 2) (V3 0 0 15)
 (!*!) :: (Functor m, Foldable t, Additive t, Additive n, Num a) => m (t a) -> t (n a) -> m (n a)
 f !*! g = fmap (\ f' -> Foldable.foldl' (^+^) zero $ liftI2 (*^) f' g) f

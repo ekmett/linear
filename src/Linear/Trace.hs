@@ -43,12 +43,11 @@ import Data.Functor.Compose
 import Data.Functor.Product
 import Data.Hashable
 import Data.HashMap.Lazy
-import Data.IntMap
-import Data.Map
+import Data.IntMap (IntMap)
+import Data.Map (Map)
 
 -- $setup
 -- >>> import Data.Complex
--- >>> import Data.IntMap
 -- >>> import Debug.SimpleReflect.Vars
 -- >>> import Linear.V2
 
