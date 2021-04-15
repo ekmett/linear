@@ -310,8 +310,10 @@ instance Bind (V n) where
   {-# INLINE (>>-) #-}
 
 instance Dim n => Monad (V n) where
+#if !(MIN_VERSION_base(4,11,0))
   return = V . V.replicate (reflectDim (Proxy :: Proxy n))
   {-# INLINE return #-}
+#endif
   V as >>= f = V $ V.generate (reflectDim (Proxy :: Proxy n)) $ \i ->
     toVector (f (as `V.unsafeIndex` i)) `V.unsafeIndex` i
   {-# INLINE (>>=) #-}

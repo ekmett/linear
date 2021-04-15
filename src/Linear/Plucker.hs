@@ -180,8 +180,10 @@ instance Bind Plucker where
   {-# INLINE (>>-) #-}
 
 instance Monad Plucker where
+#if !(MIN_VERSION_base(4,11,0))
   return a = Plucker a a a a a a
   {-# INLINE return #-}
+#endif
   Plucker a b c d e f >>= g = Plucker a' b' c' d' e' f' where
     Plucker a' _ _ _ _ _ = g a
     Plucker _ b' _ _ _ _ = g b

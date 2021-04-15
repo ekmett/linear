@@ -190,8 +190,10 @@ instance Bind V3 where
   {-# INLINE (>>-) #-}
 
 instance Monad V3 where
+#if !(MIN_VERSION_base(4,11,0))
   return a = V3 a a a
   {-# INLINE return #-}
+#endif
   V3 a b c >>= f = V3 a' b' c' where
     V3 a' _ _ = f a
     V3 _ b' _ = f b

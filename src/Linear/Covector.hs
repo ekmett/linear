@@ -1,4 +1,4 @@
-{-# LANGUAGE MultiParamTypeClasses, FlexibleInstances, FlexibleContexts #-}
+{-# LANGUAGE CPP, MultiParamTypeClasses, FlexibleInstances, FlexibleContexts #-}
 -----------------------------------------------------------------------------
 -- |
 -- License     :  BSD-style (see the file LICENSE)
@@ -44,7 +44,9 @@ instance Bind (Covector r) where
   Covector m >>- f = Covector $ \k -> m $ \a -> runCovector (f a) k
 
 instance Monad (Covector r) where
+#if !(MIN_VERSION_base(4,11,0))
   return a = Covector $ \k -> k a
+#endif
   Covector m >>= f = Covector $ \k -> m $ \a -> runCovector (f a) k
 
 instance Num r => Alt (Covector r) where

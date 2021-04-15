@@ -204,8 +204,10 @@ instance Bind V0 where
   {-# INLINE (>>-) #-}
 
 instance Monad V0 where
+#if !(MIN_VERSION_base(4,11,0))
   return _ = V0
   {-# INLINE return #-}
+#endif
   V0 >>= _ = V0
   {-# INLINE (>>=) #-}
 
