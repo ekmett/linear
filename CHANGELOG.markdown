@@ -1,3 +1,7 @@
+1.21.6 [2021.07.05]
+-------------------
+* Fix a build error when configured with `-template-haskell`.
+
 1.21.5 [2021.02.18]
 -------------------
 * Allow building with `lens-5.*`.
