@@ -93,7 +93,7 @@ import GHC.Generics (Generic)
 #if __GLASGOW_HASKELL__ >= 706
 import GHC.Generics (Generic1)
 #endif
-#if __GLASGOW_HASKELL__ >= 800
+#if __GLASGOW_HASKELL__ >= 800 && defined(MIN_VERSION_template_haskell)
 import Language.Haskell.TH.Syntax (Lift)
 #endif
 import Linear.Epsilon
@@ -116,7 +116,7 @@ data V3 a = V3 !a !a !a deriving (Eq,Ord,Show,Read,Data,Typeable
 #if __GLASGOW_HASKELL__ >= 706
                                  ,Generic1
 #endif
-#if __GLASGOW_HASKELL__ >= 800
+#if __GLASGOW_HASKELL__ >= 800 && defined(MIN_VERSION_template_haskell)
                                  ,Lift
 #endif
                                  )
