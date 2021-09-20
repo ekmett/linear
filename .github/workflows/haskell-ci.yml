@@ -17,31 +17,6 @@ on:
   - push
   - pull_request
 jobs:
-  irc:
-    name: Haskell-CI (IRC notification)
-    runs-on: ubuntu-18.04
-    needs:
-      - linux
-    if: ${{ always() && (github.repository == 'ekmett/linear') }}
-    strategy:
-      fail-fast: false
-    steps:
-      - name: IRC success notification (irc.freenode.org#haskell-lens)
-        uses: Gottox/irc-message-action@v1.1
-        if: needs.linux.result == 'success'
-        with:
-          channel: "#haskell-lens"
-          message: "\x0313linear\x03/\x0306${{ github.ref }}\x03 \x0314${{ github.sha }}\x03 https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }} The build succeeded."
-          nickname: github-actions
-          server: irc.freenode.org
-      - name: IRC failure notification (irc.freenode.org#haskell-lens)
-        uses: Gottox/irc-message-action@v1.1
-        if: needs.linux.result != 'success'
-        with:
-          channel: "#haskell-lens"
-          message: "\x0313linear\x03/\x0306${{ github.ref }}\x03 \x0314${{ github.sha }}\x03 https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }} The build failed."
-          nickname: github-actions
-          server: irc.freenode.org
   linux:
     name: Haskell-CI - Linux - ${{ matrix.compiler }}
     runs-on: ubuntu-18.04
@@ -140,7 +115,7 @@ jobs:
       - name: cache (tools)
         uses: actions/cache@v2
         with:
-          key: ${{ runner.os }}-${{ matrix.compiler }}-tools-33871eb4
+          key: ${{ runner.os }}-${{ matrix.compiler }}-tools-2b1b586f
           path: ~/.haskell-ci-tools
       - name: install cabal-plan
         run: |
@@ -162,10 +137,10 @@ jobs:
           cabal-docspec --version
       - name: install hlint
         run: |
-          if [ $((HCNUMVER >= 81000 && HCNUMVER < 90000)) -ne 0 ] ; then HLINTVER=$(cd /tmp && (${CABAL} v2-install -v $ARG_COMPILER --dry-run hlint  --constraint='hlint >=3.3 && <3.4' |  perl -ne 'if (/\bhlint-(\d+(\.\d+)*)\b/) { print "$1"; last; }')); echo "HLint version $HLINTVER" ; fi
-          if [ $((HCNUMVER >= 81000 && HCNUMVER < 90000)) -ne 0 ] ; then if [ ! -e $HOME/.haskell-ci-tools/hlint-$HLINTVER/hlint ]; then echo "Downloading HLint version $HLINTVER"; mkdir -p $HOME/.haskell-ci-tools; curl --write-out 'Status Code: %{http_code} Redirects: %{num_redirects} Total time: %{time_total} Total Dsize: %{size_download}\n' --silent --location --output $HOME/.haskell-ci-tools/hlint-$HLINTVER.tar.gz "https://github.com/ndmitchell/hlint/releases/download/v$HLINTVER/hlint-$HLINTVER-x86_64-linux.tar.gz"; tar -xzv -f $HOME/.haskell-ci-tools/hlint-$HLINTVER.tar.gz -C $HOME/.haskell-ci-tools; fi ; fi
-          if [ $((HCNUMVER >= 81000 && HCNUMVER < 90000)) -ne 0 ] ; then mkdir -p $CABAL_DIR/bin && ln -sf "$HOME/.haskell-ci-tools/hlint-$HLINTVER/hlint" $CABAL_DIR/bin/hlint ; fi
-          if [ $((HCNUMVER >= 81000 && HCNUMVER < 90000)) -ne 0 ] ; then hlint --version ; fi
+          if [ $((HCNUMVER >= 90000)) -ne 0 ] ; then HLINTVER=$(cd /tmp && (${CABAL} v2-install -v $ARG_COMPILER --dry-run hlint  --constraint='hlint >=3.3 && <3.4' |  perl -ne 'if (/\bhlint-(\d+(\.\d+)*)\b/) { print "$1"; last; }')); echo "HLint version $HLINTVER" ; fi
+          if [ $((HCNUMVER >= 90000)) -ne 0 ] ; then if [ ! -e $HOME/.haskell-ci-tools/hlint-$HLINTVER/hlint ]; then echo "Downloading HLint version $HLINTVER"; mkdir -p $HOME/.haskell-ci-tools; curl --write-out 'Status Code: %{http_code} Redirects: %{num_redirects} Total time: %{time_total} Total Dsize: %{size_download}\n' --silent --location --output $HOME/.haskell-ci-tools/hlint-$HLINTVER.tar.gz "https://github.com/ndmitchell/hlint/releases/download/v$HLINTVER/hlint-$HLINTVER-x86_64-linux.tar.gz"; tar -xzv -f $HOME/.haskell-ci-tools/hlint-$HLINTVER.tar.gz -C $HOME/.haskell-ci-tools; fi ; fi
+          if [ $((HCNUMVER >= 90000)) -ne 0 ] ; then mkdir -p $CABAL_DIR/bin && ln -sf "$HOME/.haskell-ci-tools/hlint-$HLINTVER/hlint" $CABAL_DIR/bin/hlint ; fi
+          if [ $((HCNUMVER >= 90000)) -ne 0 ] ; then hlint --version ; fi
       - name: checkout
         uses: actions/checkout@v2
         with:
@@ -223,7 +198,7 @@ jobs:
           cabal-docspec $ARG_COMPILER
       - name: hlint
         run: |
-          if [ $((HCNUMVER >= 81000 && HCNUMVER < 90000)) -ne 0 ] ; then (cd ${PKGDIR_linear} && hlint src) ; fi
+          if [ $((HCNUMVER >= 90000)) -ne 0 ] ; then (cd ${PKGDIR_linear} && hlint src) ; fi
       - name: cabal check
         run: |
           cd ${PKGDIR_linear} || false
