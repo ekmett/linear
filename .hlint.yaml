@@ -2,3 +2,4 @@
 - ignore: {name: Avoid lambda}
 - ignore: {name: Redundant lambda}
 - ignore: {name: Unused LANGUAGE pragma}
+- ignore: {name: Eta reduce, within: [Linear.Plucker, Linear.Quaternion, Linear.V, Linear.V0, Linear.V1, Linear.V2, Linear.V3, Linear.V4]}
