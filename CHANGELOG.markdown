@@ -1,3 +1,7 @@
+1.21.7 [2021.09.20]
+-------------------
+* Fix a build error when using `random-1.2.1` or later.
+
 1.21.6 [2021.07.05]
 -------------------
 * Fix a build error when configured with `-template-haskell`.
