@@ -117,7 +117,7 @@ import Linear.V3
 import Linear.V4
 import Linear.Vector
 import Prelude hiding (any)
-import System.Random
+import System.Random (Random(..))
 
 -- | Quaternions
 data Quaternion a = Quaternion !a {-# UNPACK #-}!(V3 a)

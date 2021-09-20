@@ -107,7 +107,7 @@ import Linear.V2
 import Linear.V3
 import Linear.V4
 import Linear.Vector
-import System.Random
+import System.Random (Random(..))
 
 -- | Plücker coordinates for lines in a 3-dimensional space.
 data Plucker a = Plucker !a !a !a !a !a !a deriving (Eq,Ord,Show,Read

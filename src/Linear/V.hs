@@ -129,7 +129,7 @@ import Prelude as P
 #if !(MIN_VERSION_base(4,11,0))
 import Data.Semigroup
 #endif
-import System.Random
+import System.Random (Random(..))
 
 class Dim n where
   reflectDim :: p n -> Int

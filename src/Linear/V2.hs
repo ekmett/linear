@@ -106,7 +106,7 @@ import Linear.V
 import Linear.Vector
 import Linear.V1 (R1(..),ex)
 import Prelude hiding (sum)
-import System.Random
+import System.Random (Random(..))
 
 -- $setup
 -- >>> import Control.Applicative
