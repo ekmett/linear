@@ -96,7 +96,7 @@ import Linear.Vector
 #if __GLASGOW_HASKELL__ >= 707
 import Linear.V
 #endif
-import System.Random
+import System.Random (Random(..))
 import Prelude hiding (sum)
 
 -- $setup

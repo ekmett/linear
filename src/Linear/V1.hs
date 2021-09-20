@@ -95,7 +95,7 @@ import Linear.Metric
 import Linear.Epsilon
 import Linear.Vector
 import Prelude hiding (sum)
-import System.Random
+import System.Random (Random(..))
 #if !(MIN_VERSION_base(4,11,0))
 import Data.Semigroup
 #endif

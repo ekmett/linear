@@ -103,7 +103,7 @@ import Linear.V
 #endif
 import Linear.V2
 import Linear.Vector
-import System.Random
+import System.Random (Random(..))
 
 -- $setup
 -- >>> import Control.Lens hiding (index)

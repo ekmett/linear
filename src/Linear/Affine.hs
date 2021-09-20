@@ -86,7 +86,7 @@ import Linear.V2
 import Linear.V3
 import Linear.V4
 import Linear.Vector
-import System.Random
+import System.Random (Random(..))
 
 -- | An affine space is roughly a vector space in which we have
 -- forgotten or at least pretend to have forgotten the origin.
