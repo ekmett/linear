@@ -4,11 +4,8 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE DefaultSignatures #-}
-#define USE_GHC_GENERICS
-#endif
 -----------------------------------------------------------------------------
 -- |
 -- Copyright   :  (C) 2012-2015 Edward Kmett
@@ -37,26 +34,17 @@ module Linear.Vector
 import Control.Applicative
 import Control.Lens
 import Data.Complex
-#if __GLASGOW_HASKELL__ < 710
-import Data.Foldable as Foldable (Foldable, forM_, foldl')
-#else
 import Data.Foldable as Foldable (forM_, foldl')
-#endif
 import Data.Functor.Compose
 import Data.Functor.Product
 import Data.HashMap.Lazy as HashMap
 import Data.Hashable
 import Data.IntMap as IntMap
 import Data.Map as Map
-#if __GLASGOW_HASKELL__ < 710
-import Data.Monoid (mempty)
-#endif
 import qualified Data.Vector as Vector
 import Data.Vector (Vector)
 import qualified Data.Vector.Mutable as Mutable
-#ifdef USE_GHC_GENERICS
 import GHC.Generics
-#endif
 import Linear.Instances ()
 
 -- $setup
@@ -68,7 +56,6 @@ newtype E t = E { el :: forall x. Lens' (t x) x }
 infixl 6 ^+^, ^-^
 infixl 7 ^*, *^, ^/
 
-#ifdef USE_GHC_GENERICS
 class GAdditive f where
   gzero :: Num a => f a
   gliftU2 :: (a -> a -> a) -> f a -> f a -> f a
@@ -120,17 +107,14 @@ instance GAdditive Par1 where
   {-# INLINE gliftU2 #-}
   gliftI2 f (Par1 a) (Par1 b) = Par1 (f a b)
   {-# INLINE gliftI2 #-}
-#endif
 
 -- | A vector is an additive group with additional structure.
 class Functor f => Additive f where
   -- | The zero vector
   zero :: Num a => f a
-#ifdef USE_GHC_GENERICS
 #ifndef HLINT
   default zero :: (GAdditive (Rep1 f), Generic1 f, Num a) => f a
   zero = to1 gzero
-#endif
 #endif
 
   -- | Compute the sum of two vectors
@@ -159,12 +143,10 @@ class Functor f => Additive f where
   --
   -- * For a sparse vector this is equivalent to 'unionWith'.
   liftU2 :: (a -> a -> a) -> f a -> f a -> f a
-#ifdef USE_GHC_GENERICS
 #ifndef HLINT
   default liftU2 :: Applicative f => (a -> a -> a) -> f a -> f a -> f a
   liftU2 = liftA2
   {-# INLINE liftU2 #-}
-#endif
 #endif
 
   -- | Apply a function to the components of two vectors.
@@ -173,12 +155,10 @@ class Functor f => Additive f where
   --
   -- * For a sparse vector this is equivalent to 'intersectionWith'.
   liftI2 :: (a -> b -> c) -> f a -> f b -> f c
-#ifdef USE_GHC_GENERICS
 #ifndef HLINT
   default liftI2 :: Applicative f => (a -> b -> c) -> f a -> f b -> f c
   liftI2 = liftA2
   {-# INLINE liftI2 #-}
-#endif
 #endif
 
 instance (Additive f, Additive g) => Additive (Product f g) where

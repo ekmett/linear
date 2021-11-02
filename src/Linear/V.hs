@@ -9,14 +9,9 @@
 {-# LANGUAGE EmptyDataDecls #-}
 {-# LANGUAGE MultiParamTypeClasses, FlexibleContexts, FlexibleInstances, UndecidableInstances #-}
 {-# LANGUAGE DeriveDataTypeable #-}
-#if __GLASGOW_HASKELL__ >= 707
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE PolyKinds #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 707
 {-# LANGUAGE RoleAnnotations #-}
-#define USE_TYPE_LITS 1
-#endif
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE DeriveGeneric #-}
 
@@ -57,15 +52,11 @@ module Linear.V
   , Dim(..)
   , reifyDim
   , reifyVector
-#if (MIN_VERSION_reflection(2,0,0)) && __GLASGOW_HASKELL__ >= 708
   , reifyDimNat
   , reifyVectorNat
-#endif
   , fromVector
-#if __GLASGOW_HASKELL__ >= 707
   , Finite(..)
   , _V, _V'
-#endif
   ) where
 
 import Control.Applicative
@@ -77,9 +68,7 @@ import Control.Monad.Zip
 import Control.Lens as Lens
 import Data.Binary as Binary
 import Data.Bytes.Serial
-#if __GLASGOW_HASKELL__ >= 707
 import Data.Complex
-#endif
 import Data.Data
 import Data.Distributive
 import Data.Foldable as Foldable
@@ -89,17 +78,10 @@ import Data.Functor.Classes
 import Data.Functor.Rep as Rep
 import qualified Data.Functor.WithIndex as WithIndex
 import Data.Hashable
-#if (MIN_VERSION_hashable(1,2,5))
 import Data.Hashable.Lifted
-#endif
-#if __GLASGOW_HASKELL__ < 708
-import Data.Proxy
-#endif
+import Data.Kind
 import Data.Reflection as R
 import Data.Serialize as Cereal
-#if __GLASGOW_HASKELL__ < 710
-import Data.Traversable (sequenceA)
-#endif
 import qualified Data.Traversable.WithIndex as WithIndex
 import qualified Data.Vector as V
 import Data.Vector (Vector)
@@ -108,24 +90,15 @@ import qualified Data.Vector.Unboxed as U
 import qualified Data.Vector.Generic.Mutable as M
 import Foreign.Ptr
 import Foreign.Storable
-#ifdef USE_TYPE_LITS
 import GHC.TypeLits
-#endif
-#if __GLASGOW_HASKELL__ >= 702
-import GHC.Generics (Generic)
-#endif
-#if __GLASGOW_HASKELL__ >= 707
-import GHC.Generics (Generic1)
-#endif
+import GHC.Generics (Generic, Generic1)
 #if !(MIN_VERSION_reflection(1,3,0)) && defined(MIN_VERSION_template_haskell)
 import Language.Haskell.TH
 #endif
 import Linear.Epsilon
 import Linear.Metric
 import Linear.Vector
-#if (MIN_VERSION_transformers(0,5,0)) || !(MIN_VERSION_transformers(0,4,0))
 import Prelude as P
-#endif
 #if !(MIN_VERSION_base(4,11,0))
 import Data.Semigroup
 #endif
@@ -134,11 +107,10 @@ import System.Random (Random(..))
 class Dim n where
   reflectDim :: p n -> Int
 
-#if __GLASGOW_HASKELL__ >= 707
 type role V nominal representational
 
 class Finite v where
-  type Size (v :: * -> *) :: Nat -- this should allow kind k, for Reifies k Int
+  type Size (v :: Type -> Type) :: Nat -- this should allow kind k, for Reifies k Int
   toV :: v a -> V (Size v) a
   default toV :: Foldable v => v a -> V (Size v) a
   toV = V . V.fromList . Foldable.toList
@@ -159,31 +131,24 @@ instance Finite (V (n :: Nat)) where
   type Size (V n) = n
   toV = id
   fromV = id
-#endif
 
-newtype V n a = V { toVector :: V.Vector a } deriving (Eq,Ord,Show,Read,Typeable,NFData
-                                                      , Generic
--- GHC bug: https://ghc.haskell.org/trac/ghc/ticket/8468
-#if __GLASGOW_HASKELL__ >= 707
-                                                      ,Generic1
-#endif
+newtype V n a = V { toVector :: V.Vector a } deriving (Eq,Ord,Show,Read,NFData
+                                                      ,Generic,Generic1
                                                       )
 
 dim :: forall n a. Dim n => V n a -> Int
 dim _ = reflectDim (Proxy :: Proxy n)
 {-# INLINE dim #-}
 
-#ifdef USE_TYPE_LITS
 instance KnownNat n => Dim (n :: Nat) where
   reflectDim = fromInteger . natVal
   {-# INLINE reflectDim #-}
-#endif
 
 instance (Dim n, Random a) => Random (V n a) where
   random = runState (V <$> V.replicateM (reflectDim (Proxy :: Proxy n)) (state random))
   randomR (V ls,V hs) = runState (V <$> V.zipWithM (\l h -> state $ randomR (l,h)) ls hs)
 
-data ReifiedDim (s :: *)
+data ReifiedDim (s :: Type)
 
 retagDim :: (Proxy s -> a) -> proxy (ReifiedDim s) -> a
 retagDim f _ = f Proxy
@@ -193,8 +158,6 @@ instance Reifies s Int => Dim (ReifiedDim s) where
   reflectDim = retagDim reflect
   {-# INLINE reflectDim #-}
 
-#if (MIN_VERSION_reflection(2,0,0)) && __GLASGOW_HASKELL__ >= 708
-
 reifyDimNat :: Int -> (forall (n :: Nat). KnownNat n => Proxy n -> r) -> r
 reifyDimNat i f = R.reifyNat (fromIntegral i) f
 {-# INLINE reifyDimNat #-}
@@ -203,15 +166,13 @@ reifyVectorNat :: forall a r. Vector a -> (forall (n :: Nat). KnownNat n => V n 
 reifyVectorNat v f = reifyNat (fromIntegral $ V.length v) $ \(Proxy :: Proxy n) -> f (V v :: V n a)
 {-# INLINE reifyVectorNat #-}
 
-#endif
-
-reifyDim :: Int -> (forall (n :: *). Dim n => Proxy n -> r) -> r
+reifyDim :: Int -> (forall (n :: Type). Dim n => Proxy n -> r) -> r
 reifyDim i f = R.reify i (go f) where
   go :: (Proxy (ReifiedDim n) -> a) -> proxy n -> a
   go g _ = g Proxy
 {-# INLINE reifyDim #-}
 
-reifyVector :: forall a r. Vector a -> (forall (n :: *). Dim n => V n a -> r) -> r
+reifyVector :: forall a r. Vector a -> (forall (n :: Type). Dim n => V n a -> r) -> r
 reifyVector v f = reifyDim (V.length v) $ \(Proxy :: Proxy n) -> f (V v :: V n a)
 {-# INLINE reifyVector #-}
 
@@ -245,18 +206,14 @@ instance Foldable (V n) where
   {-# INLINE foldr #-}
   foldl f z (V as) = V.foldl f z as
   {-# INLINE foldl #-}
-#if __GLASGOW_HASKELL__ >= 706
   foldr' f z (V as) = V.foldr' f z as
   {-# INLINE foldr' #-}
   foldl' f z (V as) = V.foldl' f z as
   {-# INLINE foldl' #-}
-#endif
   foldr1 f (V as) = V.foldr1 f as
   {-# INLINE foldr1 #-}
   foldl1 f (V as) = V.foldl1 f as
   {-# INLINE foldl1 #-}
-
-#if __GLASGOW_HASKELL__ >= 710
   length (V as) = V.length as
   {-# INLINE length #-}
   null (V as) = V.null as
@@ -273,7 +230,6 @@ instance Foldable (V n) where
   {-# INLINE sum #-}
   product (V as) = V.product as
   {-# INLINE product #-}
-#endif
 
 instance WithIndex.FoldableWithIndex Int (V n) where
   ifoldMap f (V as) = ifoldMap f as
@@ -397,13 +353,11 @@ instance Hashable a => Hashable (V n a) where
     V.foldl' (\s a -> s `hashWithSalt` a) s0 v
       `hashWithSalt` V.length v
 
-#if (MIN_VERSION_hashable(1,2,5))
 instance Dim n => Hashable1 (V n) where
   liftHashWithSalt h s0 (V v) =
     V.foldl' (\s a -> h s a) s0 v
       `hashWithSalt` V.length v
   {-# INLINE liftHashWithSalt #-}
-#endif
 
 instance (Dim n, Storable a) => Storable (V n a) where
   sizeOf _ = reflectDim (Proxy :: Proxy n) * sizeOf (undefined:: a)
@@ -521,11 +475,7 @@ vDataType :: DataType
 vDataType = mkDataType "Linear.V.V" [vConstr]
 {-# NOINLINE vDataType #-}
 
-#if __GLASGOW_HASKELL__ >= 708
-#define Typeable1 Typeable
-#endif
-
-instance (Typeable1 (V n), Typeable (V n a), Dim n, Data a) => Data (V n a) where
+instance (Typeable (V n), Typeable (V n a), Dim n, Data a) => Data (V n a) where
   gfoldl f z (V as) = z (V . V.fromList) `f` V.toList as
   toConstr _ = vConstr
   gunfold k z c = case constrIndex c of
@@ -550,7 +500,6 @@ instance (Dim n, Serialize a) => Serialize (V n a) where
   put = serializeWith Cereal.put
   get = deserializeWith Cereal.get
 
-#if (MIN_VERSION_transformers(0,5,0)) || !(MIN_VERSION_transformers(0,4,0))
 instance Eq1 (V n) where
   liftEq f0 (V as0) (V bs0) = go f0 (V.toList as0) (V.toList bs0) where
     go _ [] [] = True
@@ -574,13 +523,6 @@ instance Dim n => Read1 (V n) where
     , (as, r2) <- g r1
     , P.length as == reflectDim (Proxy :: Proxy n)
     ]
-#else
-instance Dim n => Eq1 (V n) where eq1 = (==)
-instance Dim n => Ord1 (V n) where compare1 = compare
-instance Dim n => Show1 (V n) where showsPrec1 = showsPrec
-instance Dim n => Read1 (V n) where readsPrec1 = readsPrec
-#endif
-
 
 data instance U.Vector    (V n a) =  V_VN {-# UNPACK #-} !Int !(U.Vector    a)
 data instance U.MVector s (V n a) = MV_VN {-# UNPACK #-} !Int !(U.MVector s a)
@@ -610,10 +552,8 @@ instance (Dim n, U.Unbox a) => M.MVector U.MVector (V n a) where
         a <- G.basicUnsafeIndexM vn j
         M.basicUnsafeWrite v o a
         go v vn d (o+1) (j+1)
-#if MIN_VERSION_vector(0,11,0)
   basicInitialize (MV_VN _ v) = M.basicInitialize v
   {-# INLINE basicInitialize #-}
-#endif
 
 instance (Dim n, U.Unbox a) => G.Vector U.Vector (V n a) where
   {-# INLINE basicUnsafeFreeze #-}
@@ -634,7 +574,6 @@ vLens :: Int -> Lens' (V n a) a
 vLens i = \f (V v) -> f (v V.! i) <&> \a -> V (v V.// [(i, a)])
 {-# INLINE vLens #-}
 
-#ifdef USE_TYPE_LITS
 instance ( 1 <= n) => Field1  (V n a) (V n a) a a where _1  = vLens  0
 instance ( 2 <= n) => Field2  (V n a) (V n a) a a where _2  = vLens  1
 instance ( 3 <= n) => Field3  (V n a) (V n a) a a where _3  = vLens  2
@@ -654,4 +593,3 @@ instance (16 <= n) => Field16 (V n a) (V n a) a a where _16 = vLens 15
 instance (17 <= n) => Field17 (V n a) (V n a) a a where _17 = vLens 16
 instance (18 <= n) => Field18 (V n a) (V n a) a a where _18 = vLens 17
 instance (19 <= n) => Field19 (V n a) (V n a) a a where _19 = vLens 18
-#endif

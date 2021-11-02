@@ -1,9 +1,5 @@
-{-# LANGUAGE CPP #-}
 module Binary (tests) where
 
-#if !(MIN_VERSION_base(4,8,0))
-import Control.Applicative
-#endif
 import Data.Binary.Put
 import Data.Binary.Get
 import Linear

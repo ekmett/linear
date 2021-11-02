@@ -8,17 +8,10 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE DeriveGeneric #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 707
 {-# LANGUAGE DataKinds #-}
-#endif
-
-#if __GLASGOW_HASKELL__ >= 800
 {-# LANGUAGE DeriveLift #-}
-#endif
 
 #ifndef MIN_VERSION_hashable
 #define MIN_VERSION_hashable(x,y,z) 1
@@ -71,24 +64,15 @@ import Data.Functor.Classes
 import Data.Functor.Rep
 import qualified Data.Functor.WithIndex as WithIndex
 import Data.Hashable
-#if (MIN_VERSION_hashable(1,2,5))
 import Data.Hashable.Lifted
-#endif
 import Data.Semigroup.Foldable
 import qualified Data.Traversable.WithIndex as WithIndex
-#if __GLASGOW_HASKELL__ >= 707
 import qualified Data.Vector as V
 import Linear.V
-#endif
 import Foreign.Storable (Storable)
 import GHC.Arr (Ix(..))
-#if __GLASGOW_HASKELL__ >= 702
-import GHC.Generics (Generic)
-#endif
-#if __GLASGOW_HASKELL__ >= 706
-import GHC.Generics (Generic1)
-#endif
-#if __GLASGOW_HASKELL__ >= 800 && defined(MIN_VERSION_template_haskell)
+import GHC.Generics (Generic, Generic1)
+#if defined(MIN_VERSION_template_haskell)
 import Language.Haskell.TH.Syntax (Lift)
 #endif
 import Linear.Metric
@@ -124,35 +108,26 @@ import qualified Data.Vector.Unboxed.Base as U
 -- >>> sum (V1 2)
 -- 2
 
---data V2 a = V2 !a !a deriving (Eq,Ord,Show,Read,Data,Typeable)
+--data V2 a = V2 !a !a deriving (Eq,Ord,Show,Read,Data)
 newtype V1 a = V1 a
-  deriving (Eq,Ord,Show,Read,Data,Typeable,
+  deriving (Eq,Ord,Show,Read,Data,
             Functor,Traversable,
             Epsilon,Storable,NFData
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
-           ,Generic
-#endif
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
-           ,Generic1
-#endif
-#if __GLASGOW_HASKELL__ >= 800 && defined(MIN_VERSION_template_haskell)
+           ,Generic,Generic1
+#if defined(MIN_VERSION_template_haskell)
            ,Lift
 #endif
            )
 
 instance Foldable V1 where
   foldMap f (V1 a) = f a
-#if __GLASGOW_HASKELL__ >= 710
   null _ = False
   length _ = 1
-#endif
 
-#if __GLASGOW_HASKELL__ >= 707
 instance Finite V1 where
   type Size V1 = 1
   toV (V1 a) = V (V.singleton a)
   fromV (V v) = V1 (v V.! 0)
-#endif
 
 instance Foldable1 V1 where
   foldMap1 f (V1 a) = f a
@@ -255,16 +230,12 @@ instance Floating a => Floating (V1 a) where
     {-# INLINE acosh #-}
 
 instance Hashable a => Hashable (V1 a) where
-#if (MIN_VERSION_hashable(1,2,1)) || !(MIN_VERSION_hashable(1,2,0))
   hash (V1 a) = hash a
-#endif
   hashWithSalt s (V1 a) = s `hashWithSalt` a
 
-#if (MIN_VERSION_hashable(1,2,5))
 instance Hashable1 V1 where
   liftHashWithSalt h s (V1 a) = h s a
   {-# INLINE liftHashWithSalt #-}
-#endif
 
 instance Metric V1 where
   dot (V1 a) (V1 b) = a * b
@@ -362,10 +333,8 @@ instance U.Unbox a => M.MVector U.MVector (V1 a) where
   basicUnsafeNew n = liftM MV_V1 (M.basicUnsafeNew n)
   basicUnsafeRead (MV_V1 v) i = liftM V1 (M.basicUnsafeRead v i)
   basicUnsafeWrite (MV_V1 v) i (V1 x) = M.basicUnsafeWrite v i x
-#if MIN_VERSION_vector(0,11,0)
   basicInitialize (MV_V1 v) = M.basicInitialize v
   {-# INLINE basicInitialize #-}
-#endif
 
 instance U.Unbox a => G.Vector U.Vector (V1 a) where
   {-# INLINE basicUnsafeFreeze #-}
@@ -415,7 +384,6 @@ instance Random a => Random (V1 a) where
   randomR (V1 a, V1 b) g = case randomR (a, b) g of (a', g') -> (V1 a', g')
   randomRs (V1 a, V1 b) g = V1 <$> randomRs (a, b) g
 
-#if (MIN_VERSION_transformers(0,5,0)) || !(MIN_VERSION_transformers(0,4,0))
 instance Eq1 V1 where
   liftEq f (V1 a) (V1 b) = f a b
 instance Ord1 V1 where
@@ -424,12 +392,6 @@ instance Show1 V1 where
   liftShowsPrec f _ d (V1 a) = showParen (d >= 10) $ showString "V1 " . f d a
 instance Read1 V1 where
   liftReadsPrec f _ = readsData $ readsUnaryWith f "V1" V1
-#else
-instance Eq1 V1 where eq1 = (==)
-instance Ord1 V1 where compare1 = compare
-instance Show1 V1 where showsPrec1 = showsPrec
-instance Read1 V1 where readsPrec1 = readsPrec
-#endif
 
 instance Field1 (V1 a) (V1 b) a b where
   _1 f (V1 x) = V1 <$> f x

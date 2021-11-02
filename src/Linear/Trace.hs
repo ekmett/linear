@@ -1,12 +1,8 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE DefaultSignatures #-}
-#if __GLASGOW_HASKELL__ >= 706
 {-# LANGUAGE PolyKinds #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 702 && __GLASGOW_HASKELL__ < 710
 {-# LANGUAGE Trustworthy #-}
-#endif
 ---------------------------------------------------------------------------
 -- |
 -- Copyright   :  (C) 2012-2015 Edward Kmett
@@ -33,9 +29,7 @@ import Linear.Plucker
 import Linear.Quaternion
 import Linear.V
 import Linear.Vector
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ > 704
 import Data.Complex
-#endif
 import Data.Distributive
 import Data.Foldable as Foldable
 import Data.Functor.Bind as Bind
@@ -95,13 +89,11 @@ instance Trace V4
 instance Trace Plucker
 instance Trace Quaternion
 
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ > 704
 instance Trace Complex where
   trace ((a :+ _) :+ (_ :+ b)) = a + b
   {-# INLINE trace #-}
   diagonal ((a :+ _) :+ (_ :+ b)) = a :+ b
   {-# INLINE diagonal #-}
-#endif
 
 instance (Trace f, Trace g) => Trace (Product f g) where
   trace (Pair xx yy) = trace (pfst <$> xx) + trace (psnd <$> yy) where

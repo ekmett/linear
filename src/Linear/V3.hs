@@ -5,17 +5,10 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE CPP #-}
-#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE DeriveGeneric #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 707
 {-# LANGUAGE DataKinds #-}
-#endif
-
-#if __GLASGOW_HASKELL__ >= 800
 {-# LANGUAGE DeriveLift #-}
-#endif
 
 #ifndef MIN_VERSION_hashable
 #define MIN_VERSION_hashable(x,y,z) 1
@@ -69,38 +62,27 @@ import Data.Functor.Classes
 import Data.Functor.Rep
 import qualified Data.Functor.WithIndex as WithIndex
 import Data.Hashable
-#if (MIN_VERSION_hashable(1,2,5))
 import Data.Hashable.Lifted
-#endif
 #if !(MIN_VERSION_base(4,11,0))
 import Data.Semigroup
 #endif
 import Data.Semigroup.Foldable
 import Data.Serialize as Cereal -- cereal
 import qualified Data.Traversable.WithIndex as WithIndex
-#if __GLASGOW_HASKELL__ >= 707
 import qualified Data.Vector as V
-#endif
 import qualified Data.Vector.Generic.Mutable as M
 import qualified Data.Vector.Generic as G
 import qualified Data.Vector.Unboxed.Base as U
 import Foreign.Ptr (castPtr)
 import Foreign.Storable (Storable(..))
 import GHC.Arr (Ix(..))
-#if __GLASGOW_HASKELL__ >= 702
-import GHC.Generics (Generic)
-#endif
-#if __GLASGOW_HASKELL__ >= 706
-import GHC.Generics (Generic1)
-#endif
-#if __GLASGOW_HASKELL__ >= 800 && defined(MIN_VERSION_template_haskell)
+import GHC.Generics (Generic, Generic1)
+#if defined(MIN_VERSION_template_haskell)
 import Language.Haskell.TH.Syntax (Lift)
 #endif
 import Linear.Epsilon
 import Linear.Metric
-#if __GLASGOW_HASKELL__ >= 707
 import Linear.V
-#endif
 import Linear.V2
 import Linear.Vector
 import System.Random (Random(..))
@@ -109,24 +91,17 @@ import System.Random (Random(..))
 -- >>> import Control.Lens hiding (index)
 
 -- | A 3-dimensional vector
-data V3 a = V3 !a !a !a deriving (Eq,Ord,Show,Read,Data,Typeable
-#if __GLASGOW_HASKELL__ >= 702
-                                 ,Generic
-#endif
-#if __GLASGOW_HASKELL__ >= 706
-                                 ,Generic1
-#endif
-#if __GLASGOW_HASKELL__ >= 800 && defined(MIN_VERSION_template_haskell)
+data V3 a = V3 !a !a !a deriving (Eq,Ord,Show,Read,Data
+                                 ,Generic,Generic1
+#if defined(MIN_VERSION_template_haskell)
                                  ,Lift
 #endif
                                  )
 
-#if __GLASGOW_HASKELL__ >= 707
 instance Finite V3 where
   type Size V3 = 3
   toV (V3 a b c) = V (V.fromListN 3 [a,b,c])
   fromV (V v) = V3 (v V.! 0) (v V.! 1) (v V.! 2)
-#endif
 
 instance Functor V3 where
   fmap f (V3 a b c) = V3 (f a) (f b) (f c)
@@ -137,10 +112,8 @@ instance Functor V3 where
 instance Foldable V3 where
   foldMap f (V3 a b c) = f a `mappend` f b `mappend` f c
   {-# INLINE foldMap #-}
-#if __GLASGOW_HASKELL__ >= 710
   null _ = False
   length _ = 3
-#endif
 
 instance Random a => Random (V3 a) where
   random g = case random g of
@@ -266,11 +239,9 @@ instance Hashable a => Hashable (V3 a) where
   hashWithSalt s (V3 a b c) = s `hashWithSalt` a `hashWithSalt` b `hashWithSalt` c
   {-# INLINE hashWithSalt #-}
 
-#if (MIN_VERSION_hashable(1,2,5))
 instance Hashable1 V3 where
   liftHashWithSalt h s (V3 a b c) = s `h` a `h` b `h` c
   {-# INLINE liftHashWithSalt #-}
-#endif
 
 instance Metric V3 where
   dot (V3 a b c) (V3 d e f) = a * d + b * e + c * f
@@ -450,10 +421,8 @@ instance U.Unbox a => M.MVector U.MVector (V3 a) where
        M.basicUnsafeWrite v o     x
        M.basicUnsafeWrite v (o+1) y
        M.basicUnsafeWrite v (o+2) z
-#if MIN_VERSION_vector(0,11,0)
   basicInitialize (MV_V3 _ v) = M.basicInitialize v
   {-# INLINE basicInitialize #-}
-#endif
 
 instance U.Unbox a => G.Vector U.Vector (V3 a) where
   {-# INLINE basicUnsafeFreeze #-}
@@ -505,7 +474,6 @@ instance Serialize a => Serialize (V3 a) where
   put = serializeWith Cereal.put
   get = deserializeWith Cereal.get
 
-#if (MIN_VERSION_transformers(0,5,0)) || !(MIN_VERSION_transformers(0,4,0))
 instance Eq1 V3 where
   liftEq k (V3 a b c) (V3 d e f) = k a d && k b e && k c f
 instance Ord1 V3 where
@@ -521,12 +489,6 @@ instance Read1 V3 where
 instance Show1 V3 where
   liftShowsPrec f _ d (V3 a b c) = showParen (d > 10) $
      showString "V3 " . f 11 a . showChar ' ' . f 11 b . showChar ' ' . f 11 c
-#else
-instance Eq1 V3 where eq1 = (==)
-instance Ord1 V3 where compare1 = compare
-instance Show1 V3 where showsPrec1 = showsPrec
-instance Read1 V3 where readsPrec1 = readsPrec
-#endif
 
 instance Field1 (V3 a) (V3 a) a a where
   _1 f (V3 x y z) = f x <&> \x' -> V3 x' y z

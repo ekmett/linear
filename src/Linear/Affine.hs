@@ -7,15 +7,11 @@
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE RankNTypes #-}
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE DeriveGeneric #-}
-#endif
 {-# LANGUAGE DeriveDataTypeable #-}
-#if defined(__GLASGOW_HASKELL__)
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-#endif
 
 #ifndef MIN_VERSION_hashable
 #define MIN_VERSION_hashable(x,y,z) 1
@@ -38,9 +34,7 @@ import Control.Monad (liftM)
 import Control.Lens
 import Data.Binary as Binary
 import Data.Bytes.Serial
-#if __GLASGOW_HASKELL__ >= 708
 import Data.Coerce
-#endif
 import Data.Complex (Complex)
 import Data.Data
 import Data.Distributive
@@ -51,15 +45,11 @@ import Data.Functor.Product
 import Data.Functor.Rep as Rep
 import Data.HashMap.Lazy (HashMap)
 import Data.Hashable
-#if (MIN_VERSION_hashable(1,2,5))
 import Data.Hashable.Lifted
-#endif
 import Data.IntMap (IntMap)
 import Data.Ix
+import Data.Kind
 import Data.Map (Map)
-#if !(MIN_VERSION_base(4,8,0))
-import Data.Monoid (Monoid(..))
-#endif
 #if !(MIN_VERSION_base(4,11,0))
 import Data.Semigroup (Semigroup)
 #endif
@@ -69,12 +59,7 @@ import qualified Data.Vector.Generic.Mutable as M
 import qualified Data.Vector.Generic as G
 import qualified Data.Vector.Unboxed.Base as U
 import Foreign.Storable
-#if __GLASGOW_HASKELL__ >= 702
-import GHC.Generics (Generic)
-#endif
-#if __GLASGOW_HASKELL__ >= 706
-import GHC.Generics (Generic1)
-#endif
+import GHC.Generics (Generic, Generic1)
 import Linear.Epsilon
 import Linear.Metric
 import Linear.Plucker
@@ -95,7 +80,7 @@ import System.Random (Random(..))
 -- > (a .+^ u) .+^ v  =  a .+^ (u ^+^ v)@
 -- > (a .-. b) ^+^ v  =  (a .+^ v) .-. q@
 class Additive (Diff p) => Affine p where
-  type Diff p :: * -> *
+  type Diff p :: Type -> Type
 
   infixl 6 .-.
   -- | Get the difference between two points as a vector offset.
@@ -160,23 +145,13 @@ newtype Point f a = P (f a)
            , Fractional , Num, Ix, Storable, Epsilon
            , Semigroup, Monoid
            , Random, Hashable
-#if __GLASGOW_HASKELL__ >= 702
-           , Generic
-#endif
-#if __GLASGOW_HASKELL__ >= 706
-           , Generic1
-#endif
-#if __GLASGOW_HASKELL__ >= 708
-           , Typeable, Data
-#endif
+           , Generic, Generic1, Data
            )
 
-#if __GLASGOW_HASKELL__ >= 707
 instance Finite f => Finite (Point f) where
   type Size (Point f) = Size f
   toV (P v) = toV v
   fromV v = P (fromV v)
-#endif
 
 instance NFData (f a) => NFData (Point f a) where
   rnf (P x) = rnf x
@@ -197,19 +172,9 @@ instance Serialize (f a) => Serialize (Point f a) where
   put (P p) = Cereal.put p
   get = P `liftM` Cereal.get
 
-#if (MIN_VERSION_hashable(1,2,5))
 instance Hashable1 f => Hashable1 (Point f) where
   liftHashWithSalt h s (P f) = liftHashWithSalt h s f
   {-# INLINE liftHashWithSalt #-}
-#endif
-
-#if __GLASGOW_HASKELL__ < 708
-instance forall f. Typeable1 f => Typeable1 (Point f) where
-  typeOf1 _ = mkTyConApp (mkTyCon3 "linear" "Linear.Affine" "Point") [] `mkAppTy`
-              typeOf1 (undefined :: f a)
-
-deriving instance (Data (f a), Typeable1 f, Typeable a) => Data (Point f a)
-#endif
 
 lensP :: Lens' (Point g a) (g a)
 lensP afb (P a) = P <$> afb a
@@ -225,7 +190,6 @@ instance Wrapped (Point f a) where
   _Wrapped' = _Point
   {-# INLINE _Wrapped' #-}
 
-#if __GLASGOW_HASKELL__ >= 708
 -- These are stolen from Data.Profunctor.Unsafe
 (.#) :: Coercible b a => (b -> c) -> (a -> b) -> a -> c
 f .# _ = coerce f
@@ -234,13 +198,6 @@ f .# _ = coerce f
 (#.) :: Coercible c b => (b -> c) -> (a -> b) -> a -> c
 (#.) _ = coerce (\x -> x :: b) :: forall a b. Coercible b a => a -> b
 {-# INLINE (#.) #-}
-#else
-(.#), (#.) :: (b -> c) -> (a -> b) -> a -> c
-(.#) = (.)
-{-# INLINE (.#) #-}
-(#.) = (.)
-{-# INLINE (#.) #-}
-#endif
 
 unP :: Point f a -> f a
 unP (P x) = x
@@ -250,11 +207,7 @@ unP (P x) = x
 -- role troubles. However, GHC 7.8 and above let us use
 -- explicit coercions for (>>-).
 instance Bind f => Bind (Point f) where
-#if __GLASGOW_HASKELL__ >= 708
   (>>-) = ((P .) . (. (unP .))) #. (>>-) .# unP
-#else
-  P m >>- f = P $ m >>- unP . f
-#endif
   join (P m) = P $ m >>- \(P m') -> m'
 
 instance Distributive f => Distributive (Point f) where
@@ -337,10 +290,8 @@ instance U.Unbox (f a) => M.MVector U.MVector (Point f a) where
   basicUnsafeNew n = MV_P `liftM` M.basicUnsafeNew n
   basicUnsafeRead (MV_P v) i = P `liftM` M.basicUnsafeRead v i
   basicUnsafeWrite (MV_P v) i (P x) = M.basicUnsafeWrite v i x
-#if MIN_VERSION_vector(0,11,0)
   basicInitialize (MV_P v) = M.basicInitialize v
   {-# INLINE basicInitialize #-}
-#endif
 
 instance U.Unbox (f a) => G.Vector U.Vector (Point f a) where
   {-# INLINE basicUnsafeFreeze #-}

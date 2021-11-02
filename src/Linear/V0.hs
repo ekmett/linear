@@ -4,19 +4,10 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-
-#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE Trustworthy #-}
-#endif
-
-#if __GLASGOW_HASKELL__ >= 707
 {-# LANGUAGE DataKinds #-}
-#endif
-
-#if __GLASGOW_HASKELL__ >= 800
 {-# LANGUAGE DeriveLift #-}
-#endif
 
 #ifndef MIN_VERSION_hashable
 #define MIN_VERSION_hashable(x,y,z) 1
@@ -65,26 +56,17 @@ import Data.Functor.Classes
 import Data.Functor.Rep
 import qualified Data.Functor.WithIndex as WithIndex
 import Data.Hashable
-#if (MIN_VERSION_hashable(1,2,5))
 import Data.Hashable.Lifted
-#endif
 import Data.Ix
 #if !(MIN_VERSION_base(4,11,0))
 import Data.Semigroup
 #endif
 import Data.Serialize -- cereal
 import qualified Data.Traversable.WithIndex as WithIndex
-#if __GLASGOW_HASKELL__ >= 707
 import qualified Data.Vector as V
-#endif
 import Foreign.Storable (Storable(..))
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
-import GHC.Generics (Generic)
-#endif
-#if __GLASGOW_HASKELL__ >= 706
-import GHC.Generics (Generic1)
-#endif
-#if __GLASGOW_HASKELL__ >= 800 && defined(MIN_VERSION_template_haskell)
+import GHC.Generics (Generic, Generic1)
+#if defined(MIN_VERSION_template_haskell)
 import Language.Haskell.TH.Syntax (Lift)
 #endif
 import qualified Data.Vector.Generic.Mutable as M
@@ -93,9 +75,7 @@ import qualified Data.Vector.Unboxed.Base as U
 import Linear.Metric
 import Linear.Epsilon
 import Linear.Vector
-#if __GLASGOW_HASKELL__ >= 707
 import Linear.V
-#endif
 import System.Random (Random(..))
 import Prelude hiding (sum)
 
@@ -113,24 +93,17 @@ import Prelude hiding (sum)
 -- >>> V0 + V0
 -- V0
 --
-data V0 a = V0 deriving (Eq,Ord,Show,Read,Ix,Enum,Data,Typeable
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
-                        ,Generic
-#endif
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
-                        ,Generic1
-#endif
-#if __GLASGOW_HASKELL__ >= 800 && defined(MIN_VERSION_template_haskell)
+data V0 a = V0 deriving (Eq,Ord,Show,Read,Ix,Enum,Data
+                        ,Generic,Generic1
+#if defined(MIN_VERSION_template_haskell)
                         ,Lift
 #endif
                         )
 
-#if __GLASGOW_HASKELL__ >= 707
 instance Finite V0 where
   type Size V0 = 0
   toV _ = V V.empty
   fromV _ = V0
-#endif
 
 instance Random (V0 a) where
   random g = (V0, g)
@@ -163,10 +136,8 @@ instance Functor V0 where
 instance Foldable V0 where
   foldMap _ V0 = mempty
   {-# INLINE foldMap #-}
-#if __GLASGOW_HASKELL__ >= 710
   null _ = True
   length _ = 0
-#endif
 
 instance Traversable V0 where
   traverse _ V0 = pure V0
@@ -282,18 +253,14 @@ instance Distributive V0 where
   {-# INLINE distribute #-}
 
 instance Hashable (V0 a) where
-#if (MIN_VERSION_hashable(1,2,1)) || !(MIN_VERSION_hashable(1,2,0))
   hash V0 = 0
   {-# INLINE hash #-}
-#endif
   hashWithSalt s V0 = s
   {-# INLINE hashWithSalt #-}
 
-#if (MIN_VERSION_hashable(1,2,5))
 instance Hashable1 V0 where
   liftHashWithSalt _ s V0 = s
   {-# INLINE liftHashWithSalt #-}
-#endif
 
 instance Epsilon (V0 a) where
   nearZero _ = True
@@ -362,10 +329,8 @@ instance M.MVector U.MVector (V0 a) where
   basicUnsafeNew n = return (MV_V0 n)
   basicUnsafeRead _ _ = return V0
   basicUnsafeWrite _ _ _ = return ()
-#if MIN_VERSION_vector(0,11,0)
   basicInitialize _ = return ()
   {-# INLINE basicInitialize #-}
-#endif
 
 instance G.Vector U.Vector (V0 a) where
   {-# INLINE basicUnsafeFreeze #-}
@@ -396,7 +361,6 @@ instance Bounded (V0 a) where
 instance NFData (V0 a) where
   rnf V0 = ()
 
-#if (MIN_VERSION_transformers(0,5,0)) || !(MIN_VERSION_transformers(0,4,0))
 instance Eq1 V0   where
   liftEq _ _ _ = True
 instance Ord1 V0  where
@@ -405,9 +369,3 @@ instance Show1 V0 where
   liftShowsPrec _ _ = showsPrec
 instance Read1 V0 where
   liftReadsPrec _ _ = readsPrec
-#else
-instance Eq1 V0   where eq1 = (==)
-instance Ord1 V0  where compare1 = compare
-instance Show1 V0 where showsPrec1 = showsPrec
-instance Read1 V0 where readsPrec1 = readsPrec
-#endif
