@@ -713,7 +713,7 @@ luDet :: ( Num a
 luDet a =
     let (l, u) = lu a
         p      = Foldable.foldl (*) 1
-    in (p (diagonal l)) * (p (diagonal u))
+    in p (diagonal l) * p (diagonal u)
 
 -- | Compute the determinant of a matrix using LU decomposition, using the
 --   vector's 'Finite' instance to provide an index.
