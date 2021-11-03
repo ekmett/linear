@@ -5,17 +5,10 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE CPP #-}
-#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE DeriveGeneric #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 707
 {-# LANGUAGE DataKinds #-}
-#endif
-
-#if __GLASGOW_HASKELL__ >= 800
 {-# LANGUAGE DeriveLift #-}
-#endif
 
 #ifndef MIN_VERSION_hashable
 #define MIN_VERSION_hashable(x,y,z) 1
@@ -75,38 +68,27 @@ import Data.Functor.Classes
 import Data.Functor.Rep
 import qualified Data.Functor.WithIndex as WithIndex
 import Data.Hashable
-#if (MIN_VERSION_hashable(1,2,5))
 import Data.Hashable.Lifted
-#endif
 #if !(MIN_VERSION_base(4,11,0))
 import Data.Semigroup
 #endif
 import Data.Semigroup.Foldable
 import Data.Serialize as Cereal
 import qualified Data.Traversable.WithIndex as WithIndex
-#if __GLASGOW_HASKELL__ >= 707
 import qualified Data.Vector as V
-#endif
 import qualified Data.Vector.Generic.Mutable as M
 import qualified Data.Vector.Generic as G
 import qualified Data.Vector.Unboxed.Base as U
 import Foreign.Ptr (castPtr)
 import Foreign.Storable (Storable(..))
 import GHC.Arr (Ix(..))
-#if __GLASGOW_HASKELL__ >= 702
-import GHC.Generics (Generic)
-#endif
-#if __GLASGOW_HASKELL__ >= 706
-import GHC.Generics (Generic1)
-#endif
-#if __GLASGOW_HASKELL__ >= 800 && defined(MIN_VERSION_template_haskell)
+import GHC.Generics (Generic, Generic1)
+#if defined(MIN_VERSION_template_haskell)
 import Language.Haskell.TH.Syntax (Lift)
 #endif
 import Linear.Epsilon
 import Linear.Metric
-#if __GLASGOW_HASKELL__ >= 707
 import Linear.V
-#endif
 import Linear.V2
 import Linear.V3
 import Linear.Vector
@@ -116,24 +98,17 @@ import System.Random (Random(..))
 -- >>> import Control.Lens hiding (index)
 
 -- | A 4-dimensional vector.
-data V4 a = V4 !a !a !a !a deriving (Eq,Ord,Show,Read,Data,Typeable
-#if __GLASGOW_HASKELL__ >= 702
-                                    ,Generic
-#endif
-#if __GLASGOW_HASKELL__ >= 706
-                                    ,Generic1
-#endif
-#if __GLASGOW_HASKELL__ >= 800 && defined(MIN_VERSION_template_haskell)
+data V4 a = V4 !a !a !a !a deriving (Eq,Ord,Show,Read,Data
+                                    ,Generic,Generic1
+#if defined(MIN_VERSION_template_haskell)
                                     ,Lift
 #endif
                                     )
 
-#if __GLASGOW_HASKELL__ >= 707
 instance Finite V4 where
   type Size V4 = 4
   toV (V4 a b c d) = V (V.fromListN 4 [a,b,c,d])
   fromV (V v) = V4 (v V.! 0) (v V.! 1) (v V.! 2) (v V.! 3)
-#endif
 
 instance Functor V4 where
   fmap f (V4 a b c d) = V4 (f a) (f b) (f c) (f d)
@@ -144,10 +119,8 @@ instance Functor V4 where
 instance Foldable V4 where
   foldMap f (V4 a b c d) = f a `mappend` f b `mappend` f c `mappend` f d
   {-# INLINE foldMap #-}
-#if __GLASGOW_HASKELL__ >= 710
   null _ = False
   length _ = 4
-#endif
 
 instance Random a => Random (V4 a) where
   random g = case random g of
@@ -288,11 +261,9 @@ instance Hashable a => Hashable (V4 a) where
   hashWithSalt s (V4 a b c d) = s `hashWithSalt` a `hashWithSalt` b `hashWithSalt` c `hashWithSalt` d
   {-# INLINE hashWithSalt #-}
 
-#if (MIN_VERSION_hashable(1,2,5))
 instance Hashable1 V4 where
   liftHashWithSalt h s (V4 a b c d) = s `h` a `h` b `h` c `h` d
   {-# INLINE liftHashWithSalt #-}
-#endif
 
 -- | A space that distinguishes orthogonal basis vectors '_x', '_y', '_z', '_w'. (It may have more.)
 class R3 t => R4 t where
@@ -593,9 +564,7 @@ instance U.Unbox a => M.MVector U.MVector (V4 a) where
        M.basicUnsafeWrite v (o+1) y
        M.basicUnsafeWrite v (o+2) z
        M.basicUnsafeWrite v (o+3) w
-#if MIN_VERSION_vector(0,11,0)
   basicInitialize (MV_V4 _ v) = M.basicInitialize v
-#endif
 
 instance U.Unbox a => G.Vector U.Vector (V4 a) where
   basicUnsafeFreeze (MV_V4 n v) = liftM ( V_V4 n) (G.basicUnsafeFreeze v)
@@ -644,7 +613,6 @@ instance Serialize a => Serialize (V4 a) where
   put = serializeWith Cereal.put
   get = deserializeWith Cereal.get
 
-#if (MIN_VERSION_transformers(0,5,0)) || !(MIN_VERSION_transformers(0,4,0))
 instance Eq1 V4 where
   liftEq k (V4 a b c d) (V4 e f g h) = k a e && k b f && k c g && k d h
 instance Ord1 V4 where
@@ -661,12 +629,6 @@ instance Read1 V4 where
 instance Show1 V4 where
   liftShowsPrec f _ z (V4 a b c d) = showParen (z > 10) $
      showString "V4 " . f 11 a . showChar ' ' . f 11 b . showChar ' ' . f 11 c . showChar ' ' . f 11 d
-#else
-instance Eq1 V4 where eq1 = (==)
-instance Ord1 V4 where compare1 = compare
-instance Show1 V4 where showsPrec1 = showsPrec
-instance Read1 V4 where readsPrec1 = readsPrec
-#endif
 
 instance Field1 (V4 a) (V4 a) a a where
   _1 f (V4 x y z w) = f x <&> \x' -> V4 x' y z w

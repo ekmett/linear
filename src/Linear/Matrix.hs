@@ -2,10 +2,8 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TypeFamilies #-}
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
-#endif
+{-# LANGUAGE TypeFamilies #-}
 
 ---------------------------------------------------------------------------
 -- |
@@ -35,7 +33,6 @@ module Linear.Matrix
   , _m22, _m23, _m24
   , _m32, _m33, _m34
   , _m42, _m43, _m44
-#if MIN_VERSION_base(4,8,0)
   , lu
   , luFinite
   , forwardSub
@@ -48,29 +45,22 @@ module Linear.Matrix
   , luInvFinite
   , luDet
   , luDetFinite
-#endif
   ) where
 
-#if __GLASGOW_HASKELL__ < 710
-import Control.Applicative
-#endif
 import Control.Lens hiding (index)
 import Control.Lens.Internal.Context
 import Data.Distributive
 import Data.Foldable as Foldable
 import Data.Functor.Rep
+import GHC.TypeLits
 import Linear.Quaternion
+import Linear.V
 import Linear.V2
 import Linear.V3
 import Linear.V4
 import Linear.Vector
 import Linear.Conjugate
 import Linear.Trace
-
-#if MIN_VERSION_base(4,8,0)
-import GHC.TypeLits
-import Linear.V
-#endif
 
 -- $setup
 -- >>> import Control.Lens hiding (index)
@@ -437,7 +427,6 @@ inv44 (V4 (V4 i00 i01 i02 i03)
                        (i20 * s3 - i21 * s1 + i22 * s0))
 {-# INLINE inv44 #-}
 
-#if MIN_VERSION_base(4,8,0)
 -- | Compute the (L, U) decomposition of a square matrix using Crout's
 --   algorithm. The 'Index' of the vectors must be 'Integral'.
 lu :: ( Num a
@@ -724,7 +713,7 @@ luDet :: ( Num a
 luDet a =
     let (l, u) = lu a
         p      = Foldable.foldl (*) 1
-    in (p (diagonal l)) * (p (diagonal u))
+    in p (diagonal l) * p (diagonal u)
 
 -- | Compute the determinant of a matrix using LU decomposition, using the
 --   vector's 'Finite' instance to provide an index.
@@ -739,4 +728,3 @@ luDetFinite :: ( Num a
             => m (m a)
             -> a
 luDetFinite = luDet . fmap toV . toV
-#endif

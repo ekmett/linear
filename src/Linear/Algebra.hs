@@ -2,9 +2,6 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
-#if __GLASGOW_HASKELL__ >= 800
-{-# OPTIONS_GHC -fno-warn-redundant-constraints #-} -- they are mathematically required, not redundant, damn it.
-#endif
 -----------------------------------------------------------------------------
 -- |
 -- License     :  BSD-style (see the file LICENSE)

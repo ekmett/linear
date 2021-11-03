@@ -1,3 +1,7 @@
+next [????.??.??]
+-----------------
+* Drop support for pre-8.0 versions of GHC.
+
 1.21.7 [2021.09.20]
 -------------------
 * Fix a build error when using `random-1.2.1` or later.

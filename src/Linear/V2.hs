@@ -5,17 +5,10 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE CPP #-}
-#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE DeriveGeneric #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 707
 {-# LANGUAGE DataKinds #-}
-#endif
-
-#if __GLASGOW_HASKELL__ >= 800
 {-# LANGUAGE DeriveLift #-}
-#endif
 
 #ifndef MIN_VERSION_hashable
 #define MIN_VERSION_hashable(x,y,z) 1
@@ -73,26 +66,17 @@ import Data.Functor.Classes
 import Data.Functor.Rep
 import qualified Data.Functor.WithIndex as WithIndex
 import Data.Hashable
-#if (MIN_VERSION_hashable(1,2,5))
 import Data.Hashable.Lifted
-#endif
 import Data.Semigroup
 import Data.Semigroup.Foldable
 import Data.Serialize as Cereal
 import qualified Data.Traversable.WithIndex as WithIndex
-#if __GLASGOW_HASKELL__ >= 707
 import qualified Data.Vector as V
-#endif
 import Foreign.Ptr (castPtr)
 import Foreign.Storable (Storable(..))
 import GHC.Arr (Ix(..))
-#if __GLASGOW_HASKELL__ >= 702
-import GHC.Generics (Generic)
-#endif
-#if __GLASGOW_HASKELL__ >= 706
-import GHC.Generics (Generic1)
-#endif
-#if __GLASGOW_HASKELL__ >= 800 && defined(MIN_VERSION_template_haskell)
+import GHC.Generics (Generic, Generic1)
+#if defined(MIN_VERSION_template_haskell)
 import Language.Haskell.TH.Syntax (Lift)
 #endif
 import qualified Data.Vector.Generic.Mutable as M
@@ -100,9 +84,7 @@ import qualified Data.Vector.Generic as G
 import qualified Data.Vector.Unboxed.Base as U
 import Linear.Metric
 import Linear.Epsilon
-#if __GLASGOW_HASKELL__ >= 707
 import Linear.V
-#endif
 import Linear.Vector
 import Linear.V1 (R1(..),ex)
 import Prelude hiding (sum)
@@ -129,24 +111,17 @@ import System.Random (Random(..))
 -- 3
 
 data V2 a = V2 !a !a deriving
-  (Eq,Ord,Show,Read,Data,Typeable
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
-  ,Generic
-#endif
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
-  ,Generic1
-#endif
-#if __GLASGOW_HASKELL__ >= 800 && defined(MIN_VERSION_template_haskell)
+  (Eq,Ord,Show,Read,Data
+  ,Generic,Generic1
+#if defined(MIN_VERSION_template_haskell)
   ,Lift
 #endif
   )
 
-#if __GLASGOW_HASKELL__ >= 707
 instance Finite V2 where
   type Size V2 = 2
   toV (V2 a b) = V (V.fromListN 2 [a,b])
   fromV (V v) = V2 (v V.! 0) (v V.! 1)
-#endif
 
 instance Random a => Random (V2 a) where
   random g = case random g of
@@ -167,10 +142,8 @@ instance Functor V2 where
 instance Foldable V2 where
   foldMap f (V2 a b) = f a `mappend` f b
   {-# INLINE foldMap #-}
-#if __GLASGOW_HASKELL__ >= 710
   null _ = False
   length _ = 2
-#endif
 
 instance Traversable V2 where
   traverse f (V2 a b) = V2 <$> f a <*> f b
@@ -198,11 +171,9 @@ instance Hashable a => Hashable (V2 a) where
   hashWithSalt s (V2 a b) = s `hashWithSalt` a `hashWithSalt` b
   {-# INLINE hashWithSalt #-}
 
-#if (MIN_VERSION_hashable(1,2,5))
 instance Hashable1 V2 where
   liftHashWithSalt h s (V2 a b) = s `h` a `h` b
   {-# INLINE liftHashWithSalt #-}
-#endif
 
 instance Additive V2 where
   zero = pure 0
@@ -432,10 +403,8 @@ instance U.Unbox a => M.MVector U.MVector (V2 a) where
     do let o = 2*i
        M.basicUnsafeWrite v o     x
        M.basicUnsafeWrite v (o+1) y
-#if MIN_VERSION_vector(0,11,0)
   basicInitialize (MV_V2 _ v) = M.basicInitialize v
   {-# INLINE basicInitialize #-}
-#endif
 
 instance U.Unbox a => G.Vector U.Vector (V2 a) where
   {-# INLINE basicUnsafeFreeze #-}
@@ -503,7 +472,6 @@ instance Serialize a => Serialize (V2 a) where
   put = serializeWith Cereal.put
   get = deserializeWith Cereal.get
 
-#if (MIN_VERSION_transformers(0,5,0)) || !(MIN_VERSION_transformers(0,4,0))
 instance Eq1 V2 where
   liftEq f (V2 a b) (V2 c d) = f a c && f b d
 instance Ord1 V2 where
@@ -512,12 +480,6 @@ instance Read1 V2 where
   liftReadsPrec f _ = readsData $ readsBinaryWith f f "V2" V2
 instance Show1 V2 where
   liftShowsPrec f _ d (V2 a b) = showsBinaryWith f f "V2" d a b
-#else
-instance Eq1 V2 where eq1 = (==)
-instance Ord1 V2 where compare1 = compare
-instance Show1 V2 where showsPrec1 = showsPrec
-instance Read1 V2 where readsPrec1 = readsPrec
-#endif
 
 instance Field1 (V2 a) (V2 a) a a where
   _1 f (V2 x y) = f x <&> \x' -> V2 x' y

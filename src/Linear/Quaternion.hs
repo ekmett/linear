@@ -5,17 +5,10 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE TypeFamilies #-}
-#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE DeriveGeneric #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 707
 {-# LANGUAGE DataKinds #-}
-#endif
-
-#if __GLASGOW_HASKELL__ >= 800
 {-# LANGUAGE DeriveLift #-}
-#endif
 
 #ifndef MIN_VERSION_hashable
 #define MIN_VERSION_hashable(x,y,z) 1
@@ -76,42 +69,28 @@ import Data.Functor.Classes
 import Data.Functor.Rep
 import qualified Data.Functor.WithIndex as WithIndex
 import Data.Hashable
-#if (MIN_VERSION_hashable(1,2,5))
 import Data.Hashable.Lifted
-#endif
 #if !(MIN_VERSION_base(4,11,0))
 import Data.Semigroup (Semigroup(..))
 #endif
 import Data.Serialize as Cereal
 import GHC.Arr (Ix(..))
 import qualified Data.Foldable as F
-#if !(MIN_VERSION_base(4,8,0))
-import Data.Monoid (Monoid(..))
-#endif
 import qualified Data.Traversable.WithIndex as WithIndex
-#if __GLASGOW_HASKELL__ >= 707
 import qualified Data.Vector as V
-#endif
 import qualified Data.Vector.Generic.Mutable as M
 import qualified Data.Vector.Generic as G
 import qualified Data.Vector.Unboxed.Base as U
 import Foreign.Ptr (castPtr, plusPtr)
 import Foreign.Storable (Storable(..))
-#if __GLASGOW_HASKELL__ >= 702
-import GHC.Generics (Generic)
-#endif
-#if __GLASGOW_HASKELL__ >= 706
-import GHC.Generics (Generic1)
-#endif
-#if __GLASGOW_HASKELL__ >= 800 && defined(MIN_VERSION_template_haskell)
+import GHC.Generics (Generic, Generic1)
+#if defined(MIN_VERSION_template_haskell)
 import Language.Haskell.TH.Syntax (Lift)
 #endif
 import Linear.Epsilon
 import Linear.Conjugate
 import Linear.Metric
-#if __GLASGOW_HASKELL__ >= 707
 import Linear.V
-#endif
 import Linear.V2
 import Linear.V3
 import Linear.V4
@@ -121,24 +100,17 @@ import System.Random (Random(..))
 
 -- | Quaternions
 data Quaternion a = Quaternion !a {-# UNPACK #-}!(V3 a)
-                    deriving (Eq,Ord,Read,Show,Data,Typeable
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 702
-                             ,Generic
-#endif
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 706
-                             ,Generic1
-#endif
-#if __GLASGOW_HASKELL__ >= 800 && defined(MIN_VERSION_template_haskell)
+                    deriving (Eq,Ord,Read,Show,Data
+                             ,Generic,Generic1
+#if defined(MIN_VERSION_template_haskell)
                              ,Lift
 #endif
                              )
 
-#if __GLASGOW_HASKELL__ >= 707
 instance Finite Quaternion where
   type Size Quaternion = 4
   toV (Quaternion a (V3 b c d)) = V (V.fromListN 4 [a, b, c, d])
   fromV (V v) = Quaternion (v V.! 0) (V3 (v V.! 1) (v V.! 2) (v V.! 3))
-#endif
 
 instance Random a => Random (Quaternion a) where
   random g = case random g of
@@ -247,10 +219,8 @@ instance Foldable Quaternion where
   {-# INLINE foldMap #-}
   foldr f z (Quaternion e v) = f e (F.foldr f z v)
   {-# INLINE foldr #-}
-#if __GLASGOW_HASKELL__ >= 710
   null _ = False
   length _ = 4
-#endif
 
 instance Traversable Quaternion where
   traverse f (Quaternion e v) = Quaternion <$> f e <*> traverse f v
@@ -307,11 +277,9 @@ instance Hashable a => Hashable (Quaternion a) where
   hashWithSalt s (Quaternion a b) = s `hashWithSalt` a `hashWithSalt` b
   {-# INLINE hashWithSalt #-}
 
-#if (MIN_VERSION_hashable(1,2,5))
 instance Hashable1 Quaternion where
   liftHashWithSalt h s (Quaternion a b) = liftHashWithSalt h (h s a) b
   {-# INLINE liftHashWithSalt #-}
-#endif
 
 qNaN :: RealFloat a => Quaternion a
 qNaN = Quaternion fNaN (V3 fNaN fNaN fNaN) where fNaN = 0/0
@@ -649,9 +617,7 @@ instance U.Unbox a => M.MVector U.MVector (Quaternion a) where
        M.basicUnsafeWrite v (o+1) y
        M.basicUnsafeWrite v (o+2) z
        M.basicUnsafeWrite v (o+3) w
-#if MIN_VERSION_vector(0,11,0)
   basicInitialize (MV_Quaternion _ v) = M.basicInitialize v
-#endif
 
 instance U.Unbox a => G.Vector U.Vector (Quaternion a) where
   basicUnsafeFreeze (MV_Quaternion n v) = liftM ( V_Quaternion n) (G.basicUnsafeFreeze v)
@@ -694,7 +660,6 @@ instance Serialize a => Serialize (Quaternion a) where
   put = serializeWith Cereal.put
   get = deserializeWith Cereal.get
 
-#if (MIN_VERSION_transformers(0,5,0)) || !(MIN_VERSION_transformers(0,4,0))
 instance Eq1 Quaternion where
   liftEq f (Quaternion a b) (Quaternion c d) = f a c && liftEq f b d
 instance Ord1 Quaternion where
@@ -703,12 +668,6 @@ instance Show1 Quaternion where
   liftShowsPrec f g d (Quaternion a b) = showsBinaryWith f (liftShowsPrec f g) "Quaternion" d a b
 instance Read1 Quaternion where
   liftReadsPrec f g = readsData $ readsBinaryWith f (liftReadsPrec f g) "Quaternion" Quaternion
-#else
-instance Eq1 Quaternion where eq1 = (==)
-instance Ord1 Quaternion where compare1 = compare
-instance Show1 Quaternion where showsPrec1 = showsPrec
-instance Read1 Quaternion where readsPrec1 = readsPrec
-#endif
 
 instance Field1 (Quaternion a) (Quaternion a) a a where
   _1 f (Quaternion w xyz) = f w <&> \w' -> Quaternion w' xyz
