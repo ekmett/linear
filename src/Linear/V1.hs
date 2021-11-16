@@ -121,6 +121,9 @@ newtype V1 a = V1 a
 
 instance Foldable V1 where
   foldMap f (V1 a) = f a
+#if MIN_VERSION_base(4,13,0)
+  foldMap' f (V1 a) = f a
+#endif
   null _ = False
   length _ = 1
 

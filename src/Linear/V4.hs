@@ -119,6 +119,10 @@ instance Functor V4 where
 instance Foldable V4 where
   foldMap f (V4 a b c d) = f a `mappend` f b `mappend` f c `mappend` f d
   {-# INLINE foldMap #-}
+#if MIN_VERSION_base(4,13,0)
+  foldMap' f (V4 a b c d) = ((f a `mappend` f b) `mappend` f c) `mappend` f d
+  {-# INLINE foldMap' #-}
+#endif
   null _ = False
   length _ = 4
 
