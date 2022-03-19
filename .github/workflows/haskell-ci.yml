@@ -8,9 +8,9 @@
 #
 # For more information, see https://github.com/haskell-CI/haskell-ci
 #
-# version: 0.13.20211114
+# version: 0.14.3
 #
-# REGENDATA ("0.13.20211114",["github","cabal.project"])
+# REGENDATA ("0.14.3",["github","cabal.project"])
 #
 name: Haskell-CI
 on:
@@ -28,15 +28,15 @@ jobs:
     strategy:
       matrix:
         include:
-          - compiler: ghc-9.2.1
+          - compiler: ghc-9.2.2
             compilerKind: ghc
-            compilerVersion: 9.2.1
+            compilerVersion: 9.2.2
             setup-method: ghcup
             allow-failure: false
-          - compiler: ghc-9.0.1
+          - compiler: ghc-9.0.2
             compilerKind: ghc
-            compilerVersion: 9.0.1
-            setup-method: hvr-ppa
+            compilerVersion: 9.0.2
+            setup-method: ghcup
             allow-failure: false
           - compiler: ghc-8.10.7
             compilerKind: ghc
@@ -76,7 +76,7 @@ jobs:
           apt-get install -y --no-install-recommends gnupg ca-certificates dirmngr curl git software-properties-common libtinfo5
           if [ "${{ matrix.setup-method }}" = ghcup ]; then
             mkdir -p "$HOME/.ghcup/bin"
-            curl -sL https://downloads.haskell.org/ghcup/0.1.17.3/x86_64-linux-ghcup-0.1.17.3 > "$HOME/.ghcup/bin/ghcup"
+            curl -sL https://downloads.haskell.org/ghcup/0.1.17.5/x86_64-linux-ghcup-0.1.17.5 > "$HOME/.ghcup/bin/ghcup"
             chmod a+x "$HOME/.ghcup/bin/ghcup"
             "$HOME/.ghcup/bin/ghcup" install ghc "$HCVER"
             "$HOME/.ghcup/bin/ghcup" install cabal 3.6.2.0
@@ -85,7 +85,7 @@ jobs:
             apt-get update
             apt-get install -y "$HCNAME"
             mkdir -p "$HOME/.ghcup/bin"
-            curl -sL https://downloads.haskell.org/ghcup/0.1.17.3/x86_64-linux-ghcup-0.1.17.3 > "$HOME/.ghcup/bin/ghcup"
+            curl -sL https://downloads.haskell.org/ghcup/0.1.17.5/x86_64-linux-ghcup-0.1.17.5 > "$HOME/.ghcup/bin/ghcup"
             chmod a+x "$HOME/.ghcup/bin/ghcup"
             "$HOME/.ghcup/bin/ghcup" install cabal 3.6.2.0
           fi
@@ -163,7 +163,7 @@ jobs:
       - name: cache (tools)
         uses: actions/cache@v2
         with:
-          key: ${{ runner.os }}-${{ matrix.compiler }}-tools-98d26823
+          key: ${{ runner.os }}-${{ matrix.compiler }}-tools-6cd610a0
           path: ~/.haskell-ci-tools
       - name: install cabal-plan
         run: |
@@ -247,7 +247,7 @@ jobs:
           cabal-docspec $ARG_COMPILER
       - name: hlint
         run: |
-          if [ $((HCNUMVER >= 90000 && HCNUMVER < 90200)) -ne 0 ] ; then (cd ${PKGDIR_linear} && hlint src) ; fi
+          if [ $((HCNUMVER >= 90000 && HCNUMVER < 90200)) -ne 0 ] ; then (cd ${PKGDIR_linear} && hlint -XHaskell2010 src) ; fi
       - name: cabal check
         run: |
           cd ${PKGDIR_linear} || false
