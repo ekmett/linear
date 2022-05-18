@@ -1,3 +1,7 @@
+next [????.??.??]
+-----------------
+* Allow building with `transformers-0.6.*`.
+
 1.21.8 [2021.11.15]
 -------------------
 * Allow building with `hashable-1.4.*`.
