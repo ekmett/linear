@@ -1,3 +1,7 @@
+next [????.??.??]
+-----------------
+* Allow building with `vector-0.13.*`.
+
 1.21.9 [2022.05.18]
 -------------------
 * Allow building with `transformers-0.6.*`.

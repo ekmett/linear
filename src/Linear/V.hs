@@ -85,6 +85,7 @@ import Data.Serialize as Cereal
 import qualified Data.Traversable.WithIndex as WithIndex
 import qualified Data.Vector as V
 import Data.Vector (Vector)
+import Data.Vector.Fusion.Util (Box(..))
 import qualified Data.Vector.Generic as G
 import qualified Data.Vector.Unboxed as U
 import qualified Data.Vector.Generic.Mutable as M
@@ -549,11 +550,15 @@ instance (Dim n, U.Unbox a) => M.MVector U.MVector (V n a) where
     go v vn d o j
       | j >= d = return ()
       | otherwise = do
-        a <- G.basicUnsafeIndexM vn j
+        a <- liftBox $ G.basicUnsafeIndexM vn j
         M.basicUnsafeWrite v o a
         go v vn d (o+1) (j+1)
   basicInitialize (MV_VN _ v) = M.basicInitialize v
   {-# INLINE basicInitialize #-}
+
+liftBox :: Monad m => Box a -> m a
+liftBox (Box a) = return a
+{-# INLINE liftBox #-}
 
 instance (Dim n, U.Unbox a) => G.Vector U.Vector (V n a) where
   {-# INLINE basicUnsafeFreeze #-}
