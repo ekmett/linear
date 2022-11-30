@@ -177,11 +177,11 @@ instance Hashable1 f => Hashable1 (Point f) where
   liftHashWithSalt h s (P f) = liftHashWithSalt h s f
   {-# INLINE liftHashWithSalt #-}
 
-lensP :: Lens' (Point g a) (g a)
+lensP :: Lens (Point f a) (Point g b) (f a) (g b)
 lensP afb (P a) = P <$> afb a
 {-# INLINE lensP #-}
 
-_Point :: Iso' (Point f a) (f a)
+_Point :: Iso (Point f a) (Point g b) (f a) (g b)
 _Point = iso (\(P a) -> a) P
 {-# INLINE _Point #-}
 
