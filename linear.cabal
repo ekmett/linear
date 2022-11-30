@@ -1,6 +1,6 @@
 name:          linear
 category:      Math, Algebra
-version:       1.21.10
+version:       1.22
 license:       BSD3
 cabal-version: >= 1.10
 license-file:  LICENSE
@@ -69,7 +69,7 @@ library
     unordered-containers >= 0.2.3 && < 0.3,
     vector               >= 0.12.1.2 && < 0.14,
     void                 >= 0.6   && < 1
-    
+
   if impl(ghc < 8.0)
     build-depends: semigroups >= 0.9 && < 1
 

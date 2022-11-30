@@ -1,3 +1,20 @@
+1.22 [????.??.??]
+-----------------
+* The types of `_Point` and `lensP` have been generalized:
+
+  ```diff
+  -_Point :: Iso' (Point f a) (f a)
+  +_Point :: Iso (Point f a) (Point g b) (f a) (g b)
+
+  -lensP :: Lens' (Point g a) (g a)
+  +lensP :: Lens (Point f a) (Point g b) (f a) (g b)
+  ```
+
+  There is a chance that existing uses of `_Point` or `lensP` will fail to
+  typecheck due to their more general types. You can use `_Point.simple` or
+  `lensP.simple` to restore their old, more restricted types (where `simple`
+  comes from `Control.Lens` in the `lens` library).
+
 1.21.10 [2022.06.21]
 --------------------
 * Allow building with `vector-0.13.*`.
