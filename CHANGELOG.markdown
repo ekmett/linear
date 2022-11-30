@@ -1,4 +1,4 @@
-1.22 [????.??.??]
+1.22 [2022.11.30]
 -----------------
 * The types of `_Point` and `lensP` have been generalized:
 
