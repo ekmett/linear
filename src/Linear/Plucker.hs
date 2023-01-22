@@ -53,7 +53,9 @@ module Linear.Plucker
   , e01, e02, e03, e12, e31, e23
   ) where
 
+#if !MIN_VERSION_base(4,18,0)
 import Control.Applicative
+#endif
 import Control.DeepSeq (NFData(rnf))
 import Control.Monad (liftM)
 import Control.Monad.Fix

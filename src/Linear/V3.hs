@@ -45,7 +45,9 @@ module Linear.V3
   , ex, ey, ez
   ) where
 
+#if !MIN_VERSION_base(4,18,0)
 import Control.Applicative
+#endif
 import Control.DeepSeq (NFData(rnf))
 import Control.Monad (liftM)
 import Control.Monad.Fix
