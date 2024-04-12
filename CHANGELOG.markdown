@@ -1,3 +1,10 @@
+1.23 [2024.04.12]
+-----------------
+* The direction of interpolation of `lerp` has been reversed;
+  now `lerp 0 a b == a` and `lerp 1 a b == b`.
+  This brings `lerp` in line not only with its implementation
+  in other languages and frameworks, but also with `slerp` in this package.
+
 1.22 [2022.11.30]
 -----------------
 * The types of `_Point` and `lensP` have been generalized:
