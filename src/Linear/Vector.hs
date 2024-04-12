@@ -133,8 +133,13 @@ class Functor f => Additive f where
   x ^-^ y = x ^+^ negated y
 
   -- | Linearly interpolate between two vectors.
+  --
+  -- /Since linear version 1.23, interpolation direction has been reversed; now/
+  --
+  -- prop> lerp 0 a b == a
+  -- prop> lerp 1 a b == b
   lerp :: Num a => a -> f a -> f a -> f a
-  lerp alpha u v = alpha *^ u ^+^ (1 - alpha) *^ v
+  lerp alpha u v = (1 - alpha) *^ u ^+^ alpha *^ v
   {-# INLINE lerp #-}
 
   -- | Apply a function to merge the 'non-zero' components of two vectors, unioning the rest of the values.
