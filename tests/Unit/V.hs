@@ -1,5 +1,5 @@
 {-# LANGUAGE DataKinds #-}
-module V (tests) where
+module Unit.V (tests) where
 
 import Control.DeepSeq (rnf)
 import qualified Data.Vector.Unboxed as U (fromList)

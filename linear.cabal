@@ -126,10 +126,12 @@ test-suite doctests
 
   build-depends: base, simple-reflect >= 0.3.1
 
-test-suite UnitTests
+test-suite test
   type:           exitcode-stdio-1.0
-  main-is:        UnitTests.hs
-  other-modules:  Plucker, Binary, V
+  main-is:        Test.hs
+  other-modules:  Unit.Binary
+                  Unit.Plucker
+                  Unit.V
   ghc-options:    -Wall -threaded
   hs-source-dirs: tests
   build-depends:

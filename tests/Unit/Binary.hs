@@ -1,4 +1,4 @@
-module Binary (tests) where
+module Unit.Binary (tests) where
 
 import Data.Binary.Put
 import Data.Binary.Get
