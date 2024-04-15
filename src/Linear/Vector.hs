@@ -136,8 +136,8 @@ class Functor f => Additive f where
   --
   -- /Since linear version 1.23, interpolation direction has been reversed; now/
   --
-  -- prop> lerp 0 a b == a
-  -- prop> lerp 1 a b == b
+  -- > lerp 0 a b == a
+  -- > lerp 1 a b == b
   lerp :: Num a => a -> f a -> f a -> f a
   lerp alpha u v = (1 - alpha) *^ u ^+^ alpha *^ v
   {-# INLINE lerp #-}
