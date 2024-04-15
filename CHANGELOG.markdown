@@ -1,4 +1,4 @@
-1.23 [2024.04.12]
+1.23 [2024.04.15]
 -----------------
 * The direction of interpolation of `lerp` has been reversed;
   now `lerp 0 a b == a` and `lerp 1 a b == b`.
