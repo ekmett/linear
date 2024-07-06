@@ -61,7 +61,7 @@ library
     deepseq              >= 1.1   && < 1.6,
     distributive         >= 0.5.1 && < 1,
     ghc-prim,
-    hashable             >= 1.2.7.0 && < 1.5,
+    hashable             >= 1.2.7.0 && < 1.6,
     indexed-traversable  >= 0.1.1 && < 0.2,
     lens                 >= 4.15.2 && < 6,
     random               >= 1.0   && < 1.3,
