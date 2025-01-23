@@ -76,7 +76,7 @@ import Linear.Metric
 import Linear.Epsilon
 import Linear.Vector
 import Linear.V
-import System.Random (Random(..))
+import System.Random (Random(..), Uniform, UniformRange)
 import Prelude hiding (sum)
 
 -- $setup
@@ -110,6 +110,10 @@ instance Random (V0 a) where
   randomR _ g = (V0, g)
   randomRs _ _ = repeat V0
   randoms _ = repeat V0
+
+instance Uniform (V0 a) where
+
+instance UniformRange (V0 a) where
 
 instance Serial1 V0 where
   serializeWith _ = serialize

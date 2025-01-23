@@ -93,7 +93,7 @@ import Linear.V2
 import Linear.V3
 import Linear.V4
 import Linear.Vector
-import System.Random (Random(..))
+import System.Random (Random(..), Uniform, UniformRange)
 
 -- | Plücker coordinates for lines in a 3-dimensional space.
 data Plucker a = Plucker !a !a !a !a !a !a deriving (Eq,Ord,Show,Read
@@ -123,6 +123,10 @@ instance Random a => Random (Plucker a) where
           (d'', g4) -> case randomR (e,e') g4 of
             (e'', g5) -> case randomR (f,f') g5 of
               (f'', g6) -> (Plucker a'' b'' c'' d'' e'' f'', g6)
+
+instance Uniform a => Uniform (Plucker a) where
+
+instance UniformRange a => UniformRange (Plucker a) where
 
 instance Functor Plucker where
   fmap g (Plucker a b c d e f) = Plucker (g a) (g b) (g c) (g d) (g e) (g f)

@@ -87,7 +87,7 @@ import Linear.Metric
 import Linear.V
 import Linear.V2
 import Linear.Vector
-import System.Random (Random(..))
+import System.Random (Random(..), Uniform, UniformRange)
 
 -- $setup
 -- >>> import Control.Lens hiding (index)
@@ -130,6 +130,10 @@ instance Random a => Random (V3 a) where
     (a'', g') -> case randomR (b,b') g' of
       (b'', g'') -> case randomR (c,c') g'' of
         (c'', g''') -> (V3 a'' b'' c'', g''')
+
+instance Uniform a => Uniform (V3 a) where
+
+instance UniformRange a => UniformRange (V3 a) where
 
 instance Traversable V3 where
   traverse f (V3 a b c) = V3 <$> f a <*> f b <*> f c
