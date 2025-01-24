@@ -15,6 +15,10 @@
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE DeriveGeneric #-}
 
+#ifndef MIN_VERSION_random
+#define MIN_VERSION_random(x,y,z) 1
+#endif
+
 #ifndef MIN_VERSION_hashable
 #define MIN_VERSION_hashable(x,y,z) 1
 #endif
@@ -104,6 +108,7 @@ import Prelude as P
 import Data.Semigroup
 #endif
 import System.Random (Random(..))
+import System.Random.Stateful (Uniform(..), UniformRange(..))
 
 class Dim n where
   reflectDim :: p n -> Int
@@ -148,6 +153,15 @@ instance KnownNat n => Dim (n :: Nat) where
 instance (Dim n, Random a) => Random (V n a) where
   random = runState (V <$> V.replicateM (reflectDim (Proxy :: Proxy n)) (state random))
   randomR (V ls,V hs) = runState (V <$> V.zipWithM (\l h -> state $ randomR (l,h)) ls hs)
+
+instance (Dim n, Uniform a) => Uniform (V n a) where
+  uniformM g = V <$> V.replicateM (reflectDim (Proxy :: Proxy n)) (uniformM g)
+
+instance (Dim n, UniformRange a) => UniformRange (V n a) where
+  uniformRM (V ls, V hs) g = V <$> V.zipWithM (\l h -> uniformRM (l, h) g) ls hs
+#if (MIN_VERSION_random(1,3,0))
+  isInRange (V ls, V hs) (V xs) = V.and $ V.zipWith3 (\l h x -> isInRange (l, h) x) ls hs xs
+#endif
 
 data ReifiedDim (s :: Type)
 
