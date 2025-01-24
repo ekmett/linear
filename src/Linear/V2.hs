@@ -88,7 +88,8 @@ import Linear.V
 import Linear.Vector
 import Linear.V1 (R1(..),ex)
 import Prelude hiding (sum)
-import System.Random (Random(..), Uniform, UniformRange)
+import System.Random (Random(..), Uniform)
+import System.Random.Stateful (UniformRange(..))
 
 -- $setup
 -- >>> import Control.Applicative
@@ -136,6 +137,7 @@ instance Random a => Random (V2 a) where
 instance Uniform a => Uniform (V2 a) where
 
 instance UniformRange a => UniformRange (V2 a) where
+  uniformRM (V2 a b, V2 c d) g = V2 <$> uniformRM (a, c) g <*> uniformRM (b, d) g
 
 instance Functor V2 where
   fmap f (V2 a b) = V2 (f a) (f b)

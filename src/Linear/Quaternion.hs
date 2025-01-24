@@ -96,7 +96,8 @@ import Linear.V3
 import Linear.V4
 import Linear.Vector
 import Prelude hiding (any)
-import System.Random (Random(..), Uniform, UniformRange)
+import System.Random (Random(..), Uniform)
+import System.Random.Stateful (UniformRange(..))
 
 -- | Quaternions
 data Quaternion a = Quaternion !a {-# UNPACK #-}!(V3 a)
@@ -123,6 +124,9 @@ instance Random a => Random (Quaternion a) where
 instance Uniform a => Uniform (Quaternion a) where
 
 instance UniformRange a => UniformRange (Quaternion a) where
+  uniformRM (Quaternion a b, Quaternion c d) g = Quaternion
+    <$> uniformRM (a, c) g
+    <*> uniformRM (b, d) g
 
 instance Functor Quaternion where
   fmap f (Quaternion e v) = Quaternion (f e) (fmap f v)

@@ -79,7 +79,8 @@ import Linear.Metric
 import Linear.Epsilon
 import Linear.Vector
 import Prelude hiding (sum)
-import System.Random (Random(..), Uniform, UniformRange)
+import System.Random (Random(..), Uniform)
+import System.Random.Stateful (UniformRange(..))
 #if !(MIN_VERSION_base(4,11,0))
 import Data.Semigroup
 #endif
@@ -390,6 +391,7 @@ instance Random a => Random (V1 a) where
 instance Uniform a => Uniform (V1 a) where
 
 instance UniformRange a => UniformRange (V1 a) where
+  uniformRM (V1 a, V1 b) g = V1 <$> uniformRM (a, b) g
 
 instance Eq1 V1 where
   liftEq f (V1 a) (V1 b) = f a b
