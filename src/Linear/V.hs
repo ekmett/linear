@@ -15,26 +15,6 @@
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE DeriveGeneric #-}
 
-#ifndef MIN_VERSION_random
-#define MIN_VERSION_random(x,y,z) 1
-#endif
-
-#ifndef MIN_VERSION_hashable
-#define MIN_VERSION_hashable(x,y,z) 1
-#endif
-
-#ifndef MIN_VERSION_reflection
-#define MIN_VERSION_reflection(x,y,z) 1
-#endif
-
-#ifndef MIN_VERSION_transformers
-#define MIN_VERSION_transformers(x,y,z) 1
-#endif
-
-#ifndef MIN_VERSION_base
-#define MIN_VERSION_base(x,y,z) 1
-#endif
-
 -----------------------------------------------------------------------------
 -- |
 -- Copyright   :  (C) 2012-2015 Edward Kmett

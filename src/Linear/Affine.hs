@@ -14,10 +14,6 @@
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-#ifndef MIN_VERSION_hashable
-#define MIN_VERSION_hashable(x,y,z) 1
-#endif
-
 -----------------------------------------------------------------------------
 -- |
 -- License     :  BSD-style (see the file LICENSE)
