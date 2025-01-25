@@ -1,3 +1,8 @@
+next [????.??.??]
+-----------------
+* Add `Uniform` and `UniformRange` instances for `Plucker`, `Quaternion`, `V`,
+  and `V{0,1,2,3,4}`.
+
 1.23 [2024.04.15]
 -----------------
 * The direction of interpolation of `lerp` has been reversed;
