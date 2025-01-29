@@ -10,6 +10,7 @@
 -----------------------------------------------------------------------------
 module Linear.Epsilon
   ( Epsilon(..)
+  , aboutEqual
   ) where
 import Data.Complex (Complex, magnitude)
 import Foreign.C.Types (CFloat, CDouble)
@@ -30,6 +31,13 @@ import Foreign.C.Types (CFloat, CDouble)
 class Num a => Epsilon a where
   -- | Determine if a quantity is near zero.
   nearZero :: a -> Bool
+
+-- | Equality up to epsilon
+--
+-- @'aboutEqual' a b@ is true iff @|a - b| < ε@
+aboutEqual :: Epsilon a => a -> a -> Bool
+aboutEqual a b = nearZero (a - b)
+
 
 -- | @'abs' a '<=' 1e-6@
 instance Epsilon Float where
