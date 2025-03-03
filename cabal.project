@@ -1,1 +1,11 @@
 packages: .
+
+-- Ensure that cabal doesn't pick a bad build plan that uses
+-- test-framework-quickcheck2-0.3.0.3 on GHC 8.6 or earlier, which will fail
+-- to build. This is really a test-framework-quickcheck2 issue, but that package
+-- is on life support. (See https://github.com/haskell/test-framework/issues/62)
+--
+-- In the long term, we should switch from test-framework over to tasty.
+-- See https://github.com/ekmett/lens/issues/1090.
+constraints:
+  test-framework-quickcheck2 > 0.3.0.3
