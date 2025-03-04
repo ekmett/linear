@@ -219,7 +219,6 @@ jobs:
           if [ $((HCNUMVER >= 80200)) -ne 0 ] ; then echo "package linear" >> cabal.project ; fi
           if [ $((HCNUMVER >= 80200)) -ne 0 ] ; then echo "    ghc-options: -Werror=missing-methods" >> cabal.project ; fi
           cat >> cabal.project <<EOF
-          constraints: test-framework-quickcheck2 > 0.3.0.3
           EOF
           $HCPKG list --simple-output --names-only | perl -ne 'for (split /\s+/) { print "constraints: any.$_ installed\n" unless /^(linear)$/; }' >> cabal.project.local
           cat cabal.project
