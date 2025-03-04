@@ -1,3 +1,7 @@
+next [????.??.??]
+-----------------
+* Replace `test-framework` with `tasty` in the test suite.
+
 1.23.1 [2025.03.03]
 -------------------
 * Add `Uniform` and `UniformRange` instances for `Plucker`, `Quaternion`, `V`,
