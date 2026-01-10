@@ -1,6 +1,7 @@
 next [????.??.??]
 -----------------
-* Remove unused `ghc-prim` dependency.
+* Remove unused `ghc-prim`, `tagged, `transformers-compat`, and `void`
+  dependencies.
 
 1.23.2 [2025.06.17]
 -------------------

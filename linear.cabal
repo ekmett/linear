@@ -67,12 +67,9 @@ library
     random               >= 1.2   && < 1.4,
     reflection           >= 2     && < 3,
     semigroupoids        >= 5.2.1 && < 7,
-    tagged               >= 0.8.6 && < 1,
     transformers         >= 0.5   && < 0.7,
-    transformers-compat  >= 0.5.0.4 && < 1,
     unordered-containers >= 0.2.3 && < 0.3,
-    vector               >= 0.12.1.2 && < 0.14,
-    void                 >= 0.6   && < 1
+    vector               >= 0.12.1.2 && < 0.14
 
   if flag(template-haskell) && impl(ghc)
     build-depends: template-haskell >= 2.11.1.0 && < 3.0
