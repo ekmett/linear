@@ -74,9 +74,6 @@ library
     vector               >= 0.12.1.2 && < 0.14,
     void                 >= 0.6   && < 1
 
-  if impl(ghc < 8.0)
-    build-depends: semigroups >= 0.9 && < 1
-
   if flag(template-haskell) && impl(ghc)
     build-depends: template-haskell >= 2.11.1.0 && < 3.0
 
