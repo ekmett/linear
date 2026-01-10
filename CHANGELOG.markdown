@@ -1,5 +1,5 @@
-next [????.??.??]
------------------
+1.23.3 [2026.01.10]
+-------------------
 * Remove unused `ghc-prim`, `tagged, `transformers-compat`, and `void`
   dependencies.
 
