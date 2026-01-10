@@ -1,3 +1,7 @@
+next [????.??.??]
+-----------------
+* Remove unused `ghc-prim` dependency.
+
 1.23.2 [2025.06.17]
 -------------------
 * Replace `test-framework` with `tasty` in the test suite.
