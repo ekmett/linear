@@ -4,6 +4,9 @@ unconstrained:          False
 -- irc-channels:           irc.freenode.org#haskell-lens
 irc-if-in-origin-repo:  True
 docspec:                True
+-- GHC thinks the simple-reflect dependency in the doctests test suite is
+-- unused, but it actually is needed for cabal-docspec to work.
+error-unused-packages:  False
 
 constraint-set no-template-haskell
   constraints: linear -template-haskell

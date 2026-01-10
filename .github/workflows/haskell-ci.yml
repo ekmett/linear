@@ -219,8 +219,6 @@ jobs:
           echo "packages: ${PKGDIR_linear}" >> cabal.project
           if [ $((HCNUMVER >= 80200)) -ne 0 ] ; then echo "package linear" >> cabal.project ; fi
           if [ $((HCNUMVER >= 80200)) -ne 0 ] ; then echo "    ghc-options: -Werror=missing-methods -Werror=missing-fields" >> cabal.project ; fi
-          if [ $((HCNUMVER >= 90400)) -ne 0 ] ; then echo "package linear" >> cabal.project ; fi
-          if [ $((HCNUMVER >= 90400)) -ne 0 ] ; then echo "    ghc-options: -Werror=unused-packages" >> cabal.project ; fi
           if [ $((HCNUMVER >= 90000)) -ne 0 ] ; then echo "package linear" >> cabal.project ; fi
           if [ $((HCNUMVER >= 90000)) -ne 0 ] ; then echo "    ghc-options: -Werror=incomplete-patterns -Werror=incomplete-uni-patterns" >> cabal.project ; fi
           cat >> cabal.project <<EOF
