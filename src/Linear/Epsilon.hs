@@ -1,3 +1,4 @@
+{-# LANGUAGE DefaultSignatures #-}
 -----------------------------------------------------------------------------
 -- |
 -- Copyright   :  (C) 2012-2015 Edward Kmett
@@ -9,10 +10,33 @@
 -- Testing for values "near" zero
 -----------------------------------------------------------------------------
 module Linear.Epsilon
-  ( Epsilon(..)
+  ( MkEpsilon(..)
+  , Epsilon(..)
+  , aboutEqual
   ) where
 import Data.Complex (Complex, magnitude)
 import Foreign.C.Types (CFloat, CDouble)
+
+-- | Provides a near-zero quantity
+class MkEpsilon a where
+  -- | A near-zero quantity
+  epsilon :: a
+
+-- | ε = 1e-6
+instance MkEpsilon Float where
+  epsilon = 1e-6
+
+-- | ε = 1e-12
+instance MkEpsilon Double where
+  epsilon = 1e-12
+
+-- | ε = 1e-6
+instance MkEpsilon CFloat where
+  epsilon = 1e-6
+
+-- | ε = 1e-12
+instance MkEpsilon CDouble where
+  epsilon = 1e-12
 
 -- | Provides a fairly subjective test to see if a quantity is near zero.
 --
@@ -30,22 +54,26 @@ import Foreign.C.Types (CFloat, CDouble)
 class Num a => Epsilon a where
   -- | Determine if a quantity is near zero.
   nearZero :: a -> Bool
+  default nearZero :: (MkEpsilon a, Ord a) => a -> Bool
+  nearZero a = abs a <= epsilon
+
+-- | Equality up to epsilon
+--
+-- @'aboutEqual' a b@ is true iff @|a - b| < ε@
+aboutEqual :: Epsilon a => a -> a -> Bool
+aboutEqual a b = nearZero (a - b)
 
 -- | @'abs' a '<=' 1e-6@
 instance Epsilon Float where
-  nearZero a = abs a <= 1e-6
 
 -- | @'abs' a '<=' 1e-12@
 instance Epsilon Double where
-  nearZero a = abs a <= 1e-12
 
 -- | @'abs' a '<=' 1e-6@
 instance Epsilon CFloat where
-  nearZero a = abs a <= 1e-6
 
 -- | @'abs' a '<=' 1e-12@
 instance Epsilon CDouble where
-  nearZero a = abs a <= 1e-12
 
 instance (Epsilon a, RealFloat a) => Epsilon (Complex a) where
   nearZero = nearZero . magnitude
