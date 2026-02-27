@@ -457,7 +457,7 @@ squaredError :: Num a => Plucker a -> a
 squaredError v = v >< v
 {-# INLINE squaredError #-}
 
--- | This isn't th actual metric because this bilinear form gives rise to an isotropic quadratic space
+-- | This isn't the actual metric because this bilinear form gives rise to an isotropic quadratic space
 infixl 5 ><
 (><) :: Num a => Plucker a -> Plucker a -> a
 Plucker a b c d e f >< Plucker g h i j k l = a*l-b*k+c*j+d*i-e*h+f*g
