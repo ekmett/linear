@@ -423,9 +423,23 @@ instance MonadFix V2 where
   mfix f = V2 (let V2 a _ = f a in a)
               (let V2 _ a = f a in a)
 
+-- | Returns a unit vector according to an angle given in radians.
+--
+-- >>> angle 0
+-- V2 1.0 0.0
+--
+-- >>> angle (pi / 2)
+-- V2 6.123233995736766e-17 1.0
 angle :: Floating a => a -> V2 a
 angle a = V2 (cos a) (sin a)
 
+-- | The vector's angle in radians from the x-axis in the range @[-pi\/2, 3\/2 * pi)@.
+--
+-- >>> unangle (V2 0 (-1))
+-- -1.5707963267948966
+--
+-- >>> unangle (V2 (-1) 0)
+-- 3.141592653589793
 unangle :: (Floating a, Ord a) => V2 a -> a
 unangle a@(V2 ax ay) =
   let alpha = asin $ ay / norm a
