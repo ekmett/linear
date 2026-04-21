@@ -27,37 +27,37 @@ import Test.Tasty.QuickCheck (testProperty)
   testname @V4 @Rational
 
 prop_addAssoc :: Property
-prop_addAssoc = ALLVECTORS (prop) .&&. prop3_V @Rational prop
+prop_addAssoc = ALLVECTORS(prop) .&&. prop3_V @Rational prop
  where
   prop :: (Eq (v a), Additive v, Num a) => v a -> v a -> v a -> Bool
   prop a b c = ((a ^+^ b) ^+^ c) == (a ^+^ (b ^+^ c))
 
 prop_addCommut :: Property
-prop_addCommut = ALLVECTORS (prop) .&&. prop2_V @Rational prop
+prop_addCommut = ALLVECTORS(prop) .&&. prop2_V @Rational prop
  where
   prop :: (Eq (v a), Additive v, Num a) => v a -> v a -> Bool
   prop a b = (a ^+^ b) == (b ^+^ a)
 
 prop_LRScalarProduct :: Property
-prop_LRScalarProduct = ALLVECTORS (prop) .&&. prop1_V @Rational prop
+prop_LRScalarProduct = ALLVECTORS(prop) .&&. prop1_V @Rational prop
  where
   prop :: (Eq (v a), Functor v, Num a) => v a -> a -> Bool
   prop v a = v ^* a == a *^ v
 
 prop_distScalarR :: Property
-prop_distScalarR = ALLVECTORS (prop) .&&. prop2_V @Rational prop
+prop_distScalarR = ALLVECTORS(prop) .&&. prop2_V @Rational prop
  where
   prop :: (Eq (v a), Additive v, Num a) => v a -> v a -> a -> Bool
   prop a b c = (a ^+^ b) ^* c == (a ^* c) ^+^ (b ^* c)
 
 prop_distScalarL :: Property
-prop_distScalarL = ALLVECTORS (prop) .&&. prop2_V @Rational prop
+prop_distScalarL = ALLVECTORS(prop) .&&. prop2_V @Rational prop
  where
   prop :: (Eq (v a), Additive v, Num a) => v a -> v a -> a -> Bool
   prop a b c = c *^ (a ^+^ b) == (c *^ a) ^+^ (c *^ b)
 
 prop_negateVector :: Property
-prop_negateVector = ALLVECTORS (prop) .&&. prop1_V @Rational prop
+prop_negateVector = ALLVECTORS(prop) .&&. prop1_V @Rational prop
  where
   prop :: (Eq (v a), Additive v, Num a) => v a -> Bool
   prop a = (a ^+^ negated a) == zero

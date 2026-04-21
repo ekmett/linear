@@ -25,13 +25,13 @@ import Test.Tasty.QuickCheck (testProperty)
   prop @V4 @Rational
 
 prop_dotCommut :: Property
-prop_dotCommut = ALLVECTORS (prop) .&&. prop2_V @Rational prop
+prop_dotCommut = ALLVECTORS(prop) .&&. prop2_V @Rational prop
  where
   prop :: (Metric v, Num a, Eq a) => v a -> v a -> Bool
   prop a b = a `dot` b == b `dot` a
 
 prop_dotDist :: Property
-prop_dotDist = ALLVECTORS (prop) .&&. prop3_V @Rational prop
+prop_dotDist = ALLVECTORS(prop) .&&. prop3_V @Rational prop
  where
   prop :: (Metric v, Num a, Eq a) => v a -> v a -> v a -> Bool
   prop a b c = (a ^+^ b) `dot` c == (a `dot` c) + (b `dot` c)

@@ -86,39 +86,39 @@ instance SquareMatrix V4 where
 
 -- Properties of general matrices
 prop_addCommut :: Property
-prop_addCommut = ALLMATRIX (prop) .&&. VMATRIX2 (prop)
+prop_addCommut = ALLMATRIX(prop) .&&. VMATRIX2(prop)
  where
   prop :: (Eq (m (n a)), Additive m, Additive n, Num a) => m (n a) -> m (n a) -> Bool
   prop a b = (a !+! b) == (b !+! a)
 
 prop_addAssoc :: Property
-prop_addAssoc = ALLMATRIX (prop) .&&. VMATRIX3 (prop)
+prop_addAssoc = ALLMATRIX(prop) .&&. VMATRIX3(prop)
  where
   prop :: (Eq (m (n a)), Additive m, Additive n, Num a) => m (n a) -> m (n a) -> m (n a) -> Bool
   prop a b c = ((a !+! b) !+! c) == (a !+! (b !+! c))
 
 prop_distOfScalar :: Property
-prop_distOfScalar = ALLMATRIX (prop) .&&. VMATRIX2 (prop)
+prop_distOfScalar = ALLMATRIX(prop) .&&. VMATRIX2(prop)
  where
   prop :: (Eq (m (n a)), Additive m, Additive n, Foldable m, Num a)
     => m (n a) -> m (n a) -> a -> Bool
   prop b c a = a *!! (b !+! c) == ((a *!! b) !+! (a *!! c))
 
 prop_LRScalar :: Property
-prop_LRScalar = ALLMATRIX (prop) .&&. VMATRIX1 (prop)
+prop_LRScalar = ALLMATRIX(prop) .&&. VMATRIX1(prop)
  where
   prop :: (Functor m, Functor n, Num a, Eq (m (n a))) => m (n a) -> a -> Bool
   prop m a = m !!* a == a *!! m
 
 -- Transpose properties
 prop_transpose :: Property
-prop_transpose = ALLMATRIX (prop) .&&. VMATRIX1 (prop)
+prop_transpose = ALLMATRIX(prop) .&&. VMATRIX1(prop)
  where
   prop :: (Eq (m (n a)), Distributive m, Distributive n) => m (n a) -> Bool
   prop a = transpose (transpose a) == a
 
 prop_transposeDistAdd :: Property
-prop_transposeDistAdd = ALLMATRIX (prop) .&&. VMATRIX2 (prop)
+prop_transposeDistAdd = ALLMATRIX(prop) .&&. VMATRIX2(prop)
  where
   prop :: ( Eq (n (m a)), Additive m, Distributive m, Distributive n,
     Additive n , Num a)
@@ -126,7 +126,7 @@ prop_transposeDistAdd = ALLMATRIX (prop) .&&. VMATRIX2 (prop)
   prop a b = transpose (a !+! b) == (transpose a !+! transpose b)
 
 prop_transposeDistMul :: Property
-prop_transposeDistMul = ALLMATRIX (prop)
+prop_transposeDistMul = ALLMATRIX(prop)
  where
   prop :: ( Additive m, Foldable m, Distributive m, Distributive n, Foldable n
     , Additive n, Num a, Eq (m (m a)))
@@ -135,14 +135,14 @@ prop_transposeDistMul = ALLMATRIX (prop)
 
 -- Identity properties
 prop_identityNeutralL :: Property
-prop_identityNeutralL = ALLMATRIX (prop) .&&. VMATRIX1 (prop)
+prop_identityNeutralL = ALLMATRIX(prop) .&&. VMATRIX1(prop)
  where
   prop :: ( Eq (m (n a)), Functor m, Additive n, Traversable n, Applicative n, Num a)
     => m (n a) -> Bool
   prop a = a !*! identity == a
 
 prop_identityNeutralR :: Property
-prop_identityNeutralR = ALLMATRIX (prop) .&&. VMATRIX1 (prop)
+prop_identityNeutralR = ALLMATRIX(prop) .&&. VMATRIX1(prop)
  where
   prop :: ( Eq (m (n a)), Additive m, Foldable m, Traversable m,
     Applicative m, Additive n, Num a)
@@ -151,14 +151,14 @@ prop_identityNeutralR = ALLMATRIX (prop) .&&. VMATRIX1 (prop)
 
 -- Properties of square matrices
 prop_mulAssoc :: Property
-prop_mulAssoc = SQUAREMATRIX (prop)
+prop_mulAssoc = SQUAREMATRIX(prop)
  where
   prop :: (Eq (m (m a)), Additive m, Foldable m, Num a)
     => m (m a) -> m (m a) -> m (m a) -> Bool
   prop a b c = ((a !*! b) !*! c) == (a !*! (b !*! c))
 
 prop_distOfMatrix :: Property
-prop_distOfMatrix = SQUAREMATRIX (prop)
+prop_distOfMatrix = SQUAREMATRIX(prop)
  where
   prop :: (Eq (m (m a)), Additive m, Foldable m, Num a)
     => m (m a) -> m (m a) -> m (m a) -> Bool
@@ -166,14 +166,14 @@ prop_distOfMatrix = SQUAREMATRIX (prop)
 
 -- Inverse properties
 prop_inv :: Property
-prop_inv = SQUAREMATRIX (prop)
+prop_inv = SQUAREMATRIX(prop)
  where
   prop :: (Additive m, Fractional a, SquareMatrix m, Eq (m (m a)), Eq a)
     => m (m a) -> Property
   prop a = (det a /= 0) ==> inv (inv a) == a
 
 prop_invIdent :: Property
-prop_invIdent = SQUAREMATRIX (prop)
+prop_invIdent = SQUAREMATRIX(prop)
  where
   prop :: ( Additive m, Foldable m, Traversable m, Applicative m, Fractional a
     , SquareMatrix m, Eq (m (m a)), Eq a )
@@ -181,7 +181,7 @@ prop_invIdent = SQUAREMATRIX (prop)
   prop a = det a /= 0 ==> a !*! inv a == identity
 
 prop_invMult :: Property
-prop_invMult = SQUAREMATRIX (prop)
+prop_invMult = SQUAREMATRIX(prop)
  where
   prop :: ( Additive m, Foldable m, Fractional a, SquareMatrix m, Eq a, Eq (m (m a)))
     => m (m a) -> m (m a) -> Property
@@ -189,21 +189,21 @@ prop_invMult = SQUAREMATRIX (prop)
 
 -- Determinant properties
 prop_detTranspose :: Property
-prop_detTranspose = SQUAREMATRIX (prop)
+prop_detTranspose = SQUAREMATRIX(prop)
  where
   prop :: (Additive m, Distributive m, Fractional a, SquareMatrix m, Eq a)
     => m (m a) -> Bool
   prop a = det (transpose a) == det a
 
 prop_detProd :: Property
-prop_detProd = SQUAREMATRIX (prop)
+prop_detProd = SQUAREMATRIX(prop)
  where
   prop :: (Additive m, Foldable m, Fractional a, SquareMatrix m, Eq a)
     => m (m a) -> m (m a) -> Bool
   prop a b = det (a !*! b) == det a * det b
 
 prop_detScalarPow :: Property
-prop_detScalarPow = SQUAREMATRIX (prop)
+prop_detScalarPow = SQUAREMATRIX(prop)
  where
   prop :: (Additive m, Fractional a, Foldable m, SquareMatrix m, Eq a)
     => m (m a) -> a -> Bool
@@ -213,19 +213,19 @@ prop_detScalarPow = SQUAREMATRIX (prop)
 
 -- Trace properties
 prop_traceLinear :: Property
-prop_traceLinear = SQUAREMATRIX (prop) .&&. prop @(V 10) @Rational
+prop_traceLinear = SQUAREMATRIX(prop) .&&. prop @(V 10) @Rational
  where
   prop :: (Trace m, Additive m, Num a, Eq a) => m (m a) -> m (m a) -> Bool
   prop a b = trace (a !+! b) == (trace a + trace b)
 
 prop_traceTranspose :: Property
-prop_traceTranspose = SQUAREMATRIX (prop) .&&. prop @(V 10) @Rational
+prop_traceTranspose = SQUAREMATRIX(prop) .&&. prop @(V 10) @Rational
  where
   prop :: (Trace m, Distributive m, Num a, Eq a) => m (m a) -> Bool
   prop a = trace a == trace (transpose a)
 
 prop_traceSwap :: Property
-prop_traceSwap = SQUAREMATRIX (prop) .&&. prop @(V 15) @Rational
+prop_traceSwap = SQUAREMATRIX(prop) .&&. prop @(V 15) @Rational
  where
   prop :: (Foldable m, Trace m, Additive m, Eq a, Num a)
     => m (m a) -> m (m a) -> Bool
